@@ -1,10 +1,12 @@
 import React from 'react';
+import { GetServerSideProps } from 'next';
 import Link from 'next/link';
+import { connectToDb, registration } from '../../db';
 import styled from 'styled-components';
-import { useQuery } from 'react-query';
-import Layout from '../components/Layout';
-import { Registration } from '../interfaces';
-import { formatDate } from '../utils';
+import { Registration } from '../../interfaces';
+import { formatPhoneNumber } from '../../utils';
+import { sessionsData } from '../../data';
+import Layout from '../../components/Layout';
 
 const HomeStyles = styled.div`
   padding: 5rem 1.5rem;
@@ -144,49 +146,53 @@ const HomeStyles = styled.div`
   }
 `;
 
-export default function Home() {
-  const { isLoading, isError, data, error } = useQuery(
-    'registrations',
-    async () => {
-      const response = await fetch('/api/get-registrations');
+type Props = {
+  registrations: Registration[];
+  id: string;
+};
 
-      if (!response.ok) {
-        throw new Error('Failed to fetch!');
-      }
+export default function Index({ registrations, id }: Props) {
+  const [session] = React.useState(() => {
+    return sessionsData.find(s => s.id === id);
+  });
+  const [sortedRegistrations] = React.useState(() => {
+    return registrations.reduce(
+      (acc: Registration[], currReg: Registration) => {
+        currReg.sessions.forEach(s => {
+          if (s.id === id && s.attending === true) {
+            acc.push(currReg);
+          }
+        });
 
-      return await response.json();
-    }
-  );
+        return acc;
+      },
+      []
+    );
+  });
 
-  if (isLoading) {
-    return <div>Loading...</div>;
-  }
-
-  if (isError && error instanceof Error) {
-    return <div>Error: {error.message}</div>;
-  }
+  console.log(sortedRegistrations);
 
   return (
     <Layout>
       <HomeStyles>
         <div className="wrapper">
-          <h2>2021 WBYOC - Master List</h2>
+          <h2>
+            {session?.name} [{sortedRegistrations.length}]
+          </h2>
           <div className="table-wrapper">
             <table>
               <thead>
                 <tr>
-                  <th>Date</th>
                   <th>Name</th>
                   <th>Sessions</th>
-                  {/* <th>Contact</th> */}
+                  <th>Contact</th>
                   <th className="status">Status</th>
                   <th></th>
                 </tr>
               </thead>
               <tbody>
-                {data.registrations.map((r: Registration) => (
+                {sortedRegistrations.map((r: Registration) => (
                   <tr key={r._id}>
-                    <td className="date">{formatDate(`${r.createdAt}`)}</td>
                     <td className="name">
                       {r.firstName} {r.lastName}
                     </td>
@@ -204,14 +210,14 @@ export default function Home() {
                         ))}
                       </div>
                     </td>
-                    {/* <td>
+                    <td>
                       <div className="contact">
                         <div className="email">
                           <a href={`mailto:${r.email}`}>{r.email}</a>
                         </div>
                         <div>{formatPhoneNumber(r.phone)}</div>
                       </div>
-                    </td> */}
+                    </td>
                     <td className="status">
                       {r.paymentStatus === 'succeeded' && (
                         <span className="paid">Paid</span>
@@ -242,3 +248,31 @@ export default function Home() {
     </Layout>
   );
 }
+
+export const getServerSideProps: GetServerSideProps = async context => {
+  try {
+    const id = Array.isArray(context.query.id)
+      ? context.query.id[0]
+      : context.query.id;
+
+    if (!id) {
+      throw new Error('No query id provided.');
+    }
+
+    const { db } = await connectToDb();
+    const response = await registration.getRegistrations(db);
+
+    return {
+      props: {
+        registrations: response,
+        id: context.query.id,
+      },
+    };
+  } catch (error) {
+    return {
+      props: {
+        error: error.message,
+      },
+    };
+  }
+};
