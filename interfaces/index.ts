@@ -1,3 +1,13 @@
+export interface FilmedGame {
+  _id: string;
+  camp?: 'kaukauna' | 'plymouth';
+  session?: 'hs' | 'mc' | 'wc';
+  day?: 'friday' | 'saturday' | 'sunday';
+  abbreviation: string;
+  name: string;
+  url: string;
+}
+
 export interface Session {
   id: string;
   name: string;
@@ -10,6 +20,7 @@ export interface Session {
   price: number;
   isChecked: boolean;
   attending: boolean;
+  filmedGames: FilmedGame[];
 }
 
 export interface Registration {

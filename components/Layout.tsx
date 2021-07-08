@@ -1,6 +1,8 @@
 import React from 'react';
+import { useRouter } from 'next/router';
 import Link from 'next/link';
 import styled, { createGlobalStyle } from 'styled-components';
+import { sessionsData } from '../data';
 import Sidebar from './Sidebar';
 
 const GlobalStyles = createGlobalStyle`
@@ -184,11 +186,12 @@ const LayoutStyles = styled.div`
 
   nav {
     display: flex;
-    justify-content: flex-end;
-    gap: 0 2rem;
+    justify-content: space-between;
+    align-items: center;
+    gap: 0 3rem;
 
     a {
-      font-size: 1rem;
+      font-size: 0.9375rem;
       font-weight: 500;
       color: #6b7280;
 
@@ -225,7 +228,16 @@ type Props = {
 };
 
 export default function Layout({ children }: Props) {
+  const router = useRouter();
   const [isOpen, setIsOpen] = React.useState(false);
+
+  React.useEffect(() => {
+    setIsOpen(false);
+  }, [router.query.sessionId]);
+
+  const handleBlur = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    router.push(`/session?id=${e.target.value}`);
+  };
 
   return (
     <LayoutStyles>
@@ -254,11 +266,28 @@ export default function Layout({ children }: Props) {
         </button>
         <nav>
           <Link href="/">
-            <a>Home</a>
+            <a>2021 Master Registrations List</a>
+          </Link>
+          <Link href="/campers-filmed-games?camp=Kaukauna&sessionId=1">
+            <a>Kau. Film Schedule</a>
+          </Link>
+          <Link href="/campers-filmed-games?camp=Plymouth&sessionId=1">
+            <a>Ply. Film Schedule</a>
+          </Link>
+          <Link href="/add-game-to-film-schedule">
+            <a>Add Game to Schdule</a>
           </Link>
           <Link href="/add-offline-registration">
-            <a>Add a Registration</a>
+            <a>Add Registration</a>
           </Link>
+          <select onBlur={handleBlur}>
+            <option value="default">Select a session</option>
+            {sessionsData.map(s => (
+              <option key={s.id} value={s.id}>
+                {s.name}
+              </option>
+            ))}
+          </select>
         </nav>
       </header>
       {children}

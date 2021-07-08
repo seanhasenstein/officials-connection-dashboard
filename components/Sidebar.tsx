@@ -9,6 +9,12 @@ const SidebarStyles = styled.div`
   top: 0;
   left: 0;
 
+  h4 {
+    margin: 0 0 1rem;
+    font-size: 1rem;
+    font-weight: 700;
+  }
+
   .wrapper {
     padding: 3.5rem 4rem;
     min-height: 100vh;
@@ -28,15 +34,24 @@ const SidebarStyles = styled.div`
   }
 
   .sidebar-item {
-    margin: 0.875rem 0;
+    border-bottom: 1px solid #e5e7eb;
+
+    &:first-of-type {
+      border-top: 1px solid #e5e7eb;
+    }
   }
 
   a {
+    padding: 0.625rem 0.5rem;
+    display: flex;
+    font-size: 0.8125rem;
     font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.025em;
     color: #4b5563;
 
     &:hover {
-      text-decoration: underline;
+      background-color: #f3f4f6;
       color: #111827;
     }
   }
@@ -69,15 +84,16 @@ type Props = {
 export default function Sidebar({ isOpen, setIsOpen }: Props) {
   React.useEffect(() => {
     const handleEscapeKey = (e: KeyboardEvent) => {
-      console.log(e.key);
       if (e.key === 'Escape') setIsOpen(false);
     };
 
     if (isOpen) {
+      document.body.style.overflow = 'hidden';
       document.addEventListener('keydown', handleEscapeKey);
     }
 
     return () => {
+      document.body.style.overflow = 'inherit';
       document.removeEventListener('keydown', handleEscapeKey);
     };
   }, [setIsOpen, isOpen]);
@@ -102,9 +118,19 @@ export default function Sidebar({ isOpen, setIsOpen }: Props) {
             />
           </svg>
         </button>
-        {sessionsData.map(s => (
+        {/* {sessionsData.map(s => (
           <div key={s.id} className="sidebar-item">
             <Link href={`/session?id=${s.id}`}>
+              <a>{s.name}</a>
+            </Link>
+          </div>
+        ))} */}
+        <h4>Session Film Schedules:</h4>
+        {sessionsData.map(s => (
+          <div key={s.id} className="sidebar-item">
+            <Link
+              href={`/campers-filmed-games?camp=${s.location}&sessionId=${s.id}`}
+            >
               <a>{s.name}</a>
             </Link>
           </div>

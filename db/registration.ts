@@ -6,7 +6,7 @@ export async function addRegistration(db: Db, registration: Registration) {
     const result = await db.collection('registrations').insertOne(registration);
     return result.ops[0];
   } catch (error) {
-    console.log(error);
+    console.error(error);
     throw new Error(error.message);
   }
 }
@@ -24,10 +24,9 @@ export async function updateRegistration(
         { $set: registration },
         { returnDocument: 'after' }
       );
-    console.log(result.value);
     return result.value;
   } catch (error) {
-    console.log(error);
+    console.error(error);
     throw new Error(error.message);
   }
 }
@@ -49,7 +48,7 @@ export const getRegistration = async (db: Db, id: string) => {
       updatedAt: result.updatedAt.toString(),
     };
   } catch (error) {
-    console.log(error);
+    console.error(error);
     throw new Error(error.message);
   }
 };
@@ -83,7 +82,7 @@ export const getRegistrations = async (
 
     return await result;
   } catch (error) {
-    console.log(error);
+    console.error(error);
     throw new Error(error.message);
   }
 };
