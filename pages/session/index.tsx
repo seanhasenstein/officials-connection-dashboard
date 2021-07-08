@@ -28,12 +28,42 @@ const HomeStyles = styled.div`
   }
 
   h3 {
-    margin: 0 0 3.5rem;
+    margin: 0;
     font-weight: 500;
     text-transform: uppercase;
     letter-spacing: 0.15em;
     text-align: center;
     color: #9ca3af;
+  }
+
+  h4 {
+    margin: 0 0 1rem;
+    padding: 0 1rem;
+    font-size: 1rem;
+    font-weight: 600;
+    color: #6b7280;
+    text-transform: uppercase;
+    letter-spacing: 0.0375em;
+
+    span {
+      margin-left: 0.375rem;
+    }
+  }
+
+  .section {
+    margin: 4rem 0 0;
+  }
+
+  .no-attending-registrations {
+    margin: 4rem 0 0;
+    padding: 1.25rem 0;
+    text-align: center;
+    font-size: 1.125rem;
+    font-weight: 500;
+    color: #4b5563;
+    background-color: #edf0f3;
+    border-top: 1px solid #dadde2;
+    border-bottom: 1px solid #dadde2;
   }
 
   .table-wrapper {
@@ -195,7 +225,10 @@ const HomeStyles = styled.div`
 `;
 
 type Props = {
-  registrations: Registration[];
+  registrations: {
+    attending: Registration[];
+    notAttending: Registration[];
+  };
   session: Session;
 };
 
@@ -206,121 +239,257 @@ export default function Index({ registrations, session }: Props) {
         <div className="wrapper">
           <h2>2021 WBYOC Registrations</h2>
           <h3>[{session?.name}]</h3>
-          <div className="table-wrapper">
-            <table>
-              <thead>
-                <tr>
-                  <th>Name</th>
-                  <th>Sessions</th>
-                  <th>Contact</th>
-                  <th className="status">Status</th>
-                  <th className="text-right">[{registrations.length}]</th>
-                </tr>
-              </thead>
-              <tbody>
-                {registrations.map((r: Registration) => (
-                  <tr key={r._id}>
-                    <td className="name">
-                      {r.firstName} {r.lastName}
-                    </td>
-                    <td>
-                      <div className="sessions">
-                        {r.sessions.map(s => (
-                          <div key={s.id}>
-                            {s.attending ? (
-                              <span className="attending">
-                                <svg
-                                  xmlns="http://www.w3.org/2000/svg"
-                                  viewBox="0 0 20 20"
-                                  fill="currentColor"
-                                >
-                                  <path
-                                    fillRule="evenodd"
-                                    d="M6.267 3.455a3.066 3.066 0 001.745-.723 3.066 3.066 0 013.976 0 3.066 3.066 0 001.745.723 3.066 3.066 0 012.812 2.812c.051.643.304 1.254.723 1.745a3.066 3.066 0 010 3.976 3.066 3.066 0 00-.723 1.745 3.066 3.066 0 01-2.812 2.812 3.066 3.066 0 00-1.745.723 3.066 3.066 0 01-3.976 0 3.066 3.066 0 00-1.745-.723 3.066 3.066 0 01-2.812-2.812 3.066 3.066 0 00-.723-1.745 3.066 3.066 0 010-3.976 3.066 3.066 0 00.723-1.745 3.066 3.066 0 012.812-2.812zm7.44 5.252a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
-                                    clipRule="evenodd"
-                                  />
-                                </svg>
-                              </span>
-                            ) : (
-                              <span className="not-attending">
-                                <svg
-                                  xmlns="http://www.w3.org/2000/svg"
-                                  viewBox="0 0 20 20"
-                                  fill="currentColor"
-                                >
-                                  <path
-                                    fillRule="evenodd"
-                                    d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z"
-                                    clipRule="evenodd"
-                                  />
-                                </svg>
-                              </span>
-                            )}
-                            {s.name}
+          {registrations.attending.length > 0 ? (
+            <div className="section">
+              <h4>
+                Attending<span>({registrations.attending.length})</span>
+              </h4>
+              <div className="table-wrapper">
+                <table>
+                  <thead>
+                    <tr>
+                      <th>Name</th>
+                      <th>Sessions</th>
+                      <th>Contact</th>
+                      <th className="status">Status</th>
+                      <th />
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {registrations.attending.map((r: Registration) => (
+                      <tr key={r._id}>
+                        <td className="name">
+                          {r.firstName} {r.lastName}
+                        </td>
+                        <td>
+                          <div className="sessions">
+                            {r.sessions.map(s => (
+                              <div key={s.id}>
+                                {s.attending ? (
+                                  <span className="attending">
+                                    <svg
+                                      xmlns="http://www.w3.org/2000/svg"
+                                      viewBox="0 0 20 20"
+                                      fill="currentColor"
+                                    >
+                                      <path
+                                        fillRule="evenodd"
+                                        d="M6.267 3.455a3.066 3.066 0 001.745-.723 3.066 3.066 0 013.976 0 3.066 3.066 0 001.745.723 3.066 3.066 0 012.812 2.812c.051.643.304 1.254.723 1.745a3.066 3.066 0 010 3.976 3.066 3.066 0 00-.723 1.745 3.066 3.066 0 01-2.812 2.812 3.066 3.066 0 00-1.745.723 3.066 3.066 0 01-3.976 0 3.066 3.066 0 00-1.745-.723 3.066 3.066 0 01-2.812-2.812 3.066 3.066 0 00-.723-1.745 3.066 3.066 0 010-3.976 3.066 3.066 0 00.723-1.745 3.066 3.066 0 012.812-2.812zm7.44 5.252a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
+                                        clipRule="evenodd"
+                                      />
+                                    </svg>
+                                  </span>
+                                ) : (
+                                  <span className="not-attending">
+                                    <svg
+                                      xmlns="http://www.w3.org/2000/svg"
+                                      viewBox="0 0 20 20"
+                                      fill="currentColor"
+                                    >
+                                      <path
+                                        fillRule="evenodd"
+                                        d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z"
+                                        clipRule="evenodd"
+                                      />
+                                    </svg>
+                                  </span>
+                                )}
+                                {s.name}
+                              </div>
+                            ))}
                           </div>
-                        ))}
-                      </div>
-                    </td>
-                    <td>
-                      <div className="contact">
-                        <div className="email">
-                          <a href={`mailto:${r.email}`}>{r.email}</a>
-                        </div>
-                        <div>{formatPhoneNumber(r.phone)}</div>
-                      </div>
-                    </td>
-                    <td className="status">
-                      {r.paymentStatus === 'succeeded' && (
-                        <span className="paid">Paid</span>
-                      )}
-                      {r.paymentStatus === 'fully_refunded' && (
-                        <span className="refunded">Fully refunded</span>
-                      )}
-                      {r.paymentStatus === 'unpaid' && (
-                        <span className="unpaid">Needs to pay</span>
-                      )}
-                    </td>
-                    <td className="links">
-                      <Link href={`/registration?id=${r._id}`}>
-                        <a>
-                          <svg
-                            xmlns="http://www.w3.org/2000/svg"
-                            fill="none"
-                            viewBox="0 0 24 24"
-                            stroke="currentColor"
-                          >
-                            <path
-                              strokeLinecap="round"
-                              strokeLinejoin="round"
-                              strokeWidth={2}
-                              d="M4 6h16M4 12h16M4 18h16"
-                            />
-                          </svg>
-                        </a>
-                      </Link>
-                      <Link href={`/registration/edit?id=${r._id}`}>
-                        <a>
-                          <svg
-                            xmlns="http://www.w3.org/2000/svg"
-                            fill="none"
-                            viewBox="0 0 24 24"
-                            stroke="currentColor"
-                          >
-                            <path
-                              strokeLinecap="round"
-                              strokeLinejoin="round"
-                              strokeWidth={2}
-                              d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4"
-                            />
-                          </svg>
-                        </a>
-                      </Link>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
+                        </td>
+                        <td>
+                          <div className="contact">
+                            <div className="email">
+                              <a href={`mailto:${r.email}`}>{r.email}</a>
+                            </div>
+                            <div>{formatPhoneNumber(r.phone)}</div>
+                          </div>
+                        </td>
+                        <td className="status">
+                          {r.paymentStatus === 'succeeded' && (
+                            <span className="paid">Paid</span>
+                          )}
+                          {r.paymentStatus === 'fully_refunded' && (
+                            <span className="refunded">Fully refunded</span>
+                          )}
+                          {r.paymentStatus === 'unpaid' && (
+                            <span className="unpaid">Needs to pay</span>
+                          )}
+                        </td>
+                        <td className="links">
+                          <Link href={`/registration?id=${r._id}`}>
+                            <a>
+                              <svg
+                                xmlns="http://www.w3.org/2000/svg"
+                                fill="none"
+                                viewBox="0 0 24 24"
+                                stroke="currentColor"
+                              >
+                                <path
+                                  strokeLinecap="round"
+                                  strokeLinejoin="round"
+                                  strokeWidth={2}
+                                  d="M4 6h16M4 12h16M4 18h16"
+                                />
+                              </svg>
+                            </a>
+                          </Link>
+                          <Link href={`/registration/edit?id=${r._id}`}>
+                            <a>
+                              <svg
+                                xmlns="http://www.w3.org/2000/svg"
+                                fill="none"
+                                viewBox="0 0 24 24"
+                                stroke="currentColor"
+                              >
+                                <path
+                                  strokeLinecap="round"
+                                  strokeLinejoin="round"
+                                  strokeWidth={2}
+                                  d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4"
+                                />
+                              </svg>
+                            </a>
+                          </Link>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          ) : (
+            <div className="no-attending-registrations">
+              No one is currently registered to attend this session.
+            </div>
+          )}
+          {registrations.notAttending.length > 0 && (
+            <div className="section">
+              <h4>
+                No Longer Attending
+                <span>({registrations.notAttending.length})</span>
+              </h4>
+              <div className="table-wrapper">
+                <table>
+                  <thead>
+                    <tr>
+                      <th>Name</th>
+                      <th>Sessions</th>
+                      <th>Contact</th>
+                      <th className="status">Status</th>
+                      <th className="text-right">
+                        [{registrations.notAttending.length}]
+                      </th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {registrations.notAttending.map((r: Registration) => (
+                      <tr key={r._id}>
+                        <td className="name">
+                          {r.firstName} {r.lastName}
+                        </td>
+                        <td>
+                          <div className="sessions">
+                            {r.sessions.map(s => (
+                              <div key={s.id}>
+                                {s.attending ? (
+                                  <span className="attending">
+                                    <svg
+                                      xmlns="http://www.w3.org/2000/svg"
+                                      viewBox="0 0 20 20"
+                                      fill="currentColor"
+                                    >
+                                      <path
+                                        fillRule="evenodd"
+                                        d="M6.267 3.455a3.066 3.066 0 001.745-.723 3.066 3.066 0 013.976 0 3.066 3.066 0 001.745.723 3.066 3.066 0 012.812 2.812c.051.643.304 1.254.723 1.745a3.066 3.066 0 010 3.976 3.066 3.066 0 00-.723 1.745 3.066 3.066 0 01-2.812 2.812 3.066 3.066 0 00-1.745.723 3.066 3.066 0 01-3.976 0 3.066 3.066 0 00-1.745-.723 3.066 3.066 0 01-2.812-2.812 3.066 3.066 0 00-.723-1.745 3.066 3.066 0 010-3.976 3.066 3.066 0 00.723-1.745 3.066 3.066 0 012.812-2.812zm7.44 5.252a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
+                                        clipRule="evenodd"
+                                      />
+                                    </svg>
+                                  </span>
+                                ) : (
+                                  <span className="not-attending">
+                                    <svg
+                                      xmlns="http://www.w3.org/2000/svg"
+                                      viewBox="0 0 20 20"
+                                      fill="currentColor"
+                                    >
+                                      <path
+                                        fillRule="evenodd"
+                                        d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z"
+                                        clipRule="evenodd"
+                                      />
+                                    </svg>
+                                  </span>
+                                )}
+                                {s.name}
+                              </div>
+                            ))}
+                          </div>
+                        </td>
+                        <td>
+                          <div className="contact">
+                            <div className="email">
+                              <a href={`mailto:${r.email}`}>{r.email}</a>
+                            </div>
+                            <div>{formatPhoneNumber(r.phone)}</div>
+                          </div>
+                        </td>
+                        <td className="status">
+                          {r.paymentStatus === 'succeeded' && (
+                            <span className="paid">Paid</span>
+                          )}
+                          {r.paymentStatus === 'fully_refunded' && (
+                            <span className="refunded">Fully refunded</span>
+                          )}
+                          {r.paymentStatus === 'unpaid' && (
+                            <span className="unpaid">Needs to pay</span>
+                          )}
+                        </td>
+                        <td className="links">
+                          <Link href={`/registration?id=${r._id}`}>
+                            <a>
+                              <svg
+                                xmlns="http://www.w3.org/2000/svg"
+                                fill="none"
+                                viewBox="0 0 24 24"
+                                stroke="currentColor"
+                              >
+                                <path
+                                  strokeLinecap="round"
+                                  strokeLinejoin="round"
+                                  strokeWidth={2}
+                                  d="M4 6h16M4 12h16M4 18h16"
+                                />
+                              </svg>
+                            </a>
+                          </Link>
+                          <Link href={`/registration/edit?id=${r._id}`}>
+                            <a>
+                              <svg
+                                xmlns="http://www.w3.org/2000/svg"
+                                fill="none"
+                                viewBox="0 0 24 24"
+                                stroke="currentColor"
+                              >
+                                <path
+                                  strokeLinecap="round"
+                                  strokeLinejoin="round"
+                                  strokeWidth={2}
+                                  d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4"
+                                />
+                              </svg>
+                            </a>
+                          </Link>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          )}
         </div>
       </HomeStyles>
     </Layout>
@@ -338,28 +507,38 @@ export const getServerSideProps: GetServerSideProps = async context => {
     }
 
     const { db } = await connectToDb();
-    const response = await registration.getRegistrations(db);
+    const response = await registration.getRegistrations(db, {
+      'sessions.id': context.query.id,
+    });
 
     const session = sessionsData.find(s => s.id === context.query.id);
 
-    const sessionRegistrations = response.filter((s: Registration) => {
-      let shouldSave = false;
-      s.sessions.forEach(session => {
-        if (session.id === context.query.id) {
-          shouldSave = true;
-        }
-      });
-      return shouldSave;
-    });
-
-    const registrations = sessionRegistrations.sort((a, b) => {
+    const registrations = response.sort((a, b) => {
       if (a.lastName === b.lastName) return a.firstName < b.lastName ? -1 : 1;
       return a.lastName < b.lastName ? -1 : 1;
     });
 
+    const sortedRegistrations = registrations.reduce(
+      (acc, currReg: Registration) => {
+        currReg.sessions.forEach(s => {
+          if (s.id === context.query.id && s.attending) {
+            acc.attending.push(currReg);
+            return;
+          } else if (s.id === context.query.id) {
+            acc.notAttending.push(currReg);
+          }
+        });
+        return acc;
+      },
+      { attending: [], notAttending: [] }
+    );
+
     return {
       props: {
-        registrations,
+        registrations: {
+          attending: sortedRegistrations.attending,
+          notAttending: sortedRegistrations.notAttending,
+        },
         session,
       },
     };
