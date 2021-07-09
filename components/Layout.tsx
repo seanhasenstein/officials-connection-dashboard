@@ -236,6 +236,7 @@ export default function Layout({ children }: Props) {
   }, [router.query.sessionId]);
 
   const handleBlur = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    if (e.target.value === 'default') return;
     router.push(`/session?id=${e.target.value}`);
   };
 
