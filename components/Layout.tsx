@@ -269,10 +269,10 @@ export default function Layout({ children }: Props) {
           <Link href="/">
             <a>2021 Master Registrations List</a>
           </Link>
-          <Link href="/campers-filmed-games?camp=Kaukauna&sessionId=1">
+          <Link href="/filmed-games?camp=kaukauna">
             <a>Kau. Film Schedule</a>
           </Link>
-          <Link href="/campers-filmed-games?camp=Plymouth&sessionId=1">
+          <Link href="/filmed-games?camp=plymouth">
             <a>Ply. Film Schedule</a>
           </Link>
           <Link href="/add-game-to-film-schedule">

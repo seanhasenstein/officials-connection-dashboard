@@ -201,8 +201,6 @@ export default function Edit({ registration }: Props) {
 
               const result = await response.json();
 
-              console.log(result);
-
               if (result.success) {
                 router.push(`/registration?id=${result.data._id}`);
               }

@@ -25,7 +25,6 @@ type Props = {
 };
 
 export default function Registration({ registration }: Props) {
-  console.log(registration);
   return (
     <Layout>
       <RegistrationStyles>

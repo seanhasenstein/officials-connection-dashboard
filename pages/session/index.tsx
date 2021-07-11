@@ -514,7 +514,7 @@ export const getServerSideProps: GetServerSideProps = async context => {
     const session = sessionsData.find(s => s.id === context.query.id);
 
     const registrations = response.sort((a, b) => {
-      if (a.lastName === b.lastName) return a.firstName < b.lastName ? -1 : 1;
+      if (a.lastName === b.lastName) return a.firstName < b.firstName ? -1 : 1;
       return a.lastName < b.lastName ? -1 : 1;
     });
 

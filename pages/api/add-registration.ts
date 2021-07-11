@@ -43,7 +43,7 @@ const handler = nc<Request, NextApiResponse>()
 
       res.json({ success: true, data });
     } catch (error) {
-      console.log(error);
+      console.error(error);
       res.json({ error: error.message });
     }
   });

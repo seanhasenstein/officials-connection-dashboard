@@ -5,6 +5,7 @@ export interface FilmedGame {
   day?: 'friday' | 'saturday' | 'sunday';
   abbreviation: string;
   name: string;
+  clinician: string;
   url: string;
 }
 
