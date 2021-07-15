@@ -1,11 +1,10 @@
 import { NextApiResponse } from 'next';
 import nc from 'next-connect';
-import database from '../../middleware/db';
-import { registration } from '../../db';
-import { Request } from '../../interfaces/api';
-import { removeNonDigits } from '../../utils';
-import { Session } from '../../interfaces';
-import { sessionsData } from '../../data';
+import database from '../../../middleware/db';
+import { registrations } from '../../../db';
+import { removeNonDigits } from '../../../utils';
+import { Request, Session } from '../../../interfaces';
+import { sessionsData } from '../../../data';
 
 type CalcSubtotalParams = {
   subtotal: number;
@@ -76,13 +75,13 @@ const handler = nc<Request, NextApiResponse>()
         updatedAt: new Date(),
       };
 
-      const data = await registration.updateRegistration(
+      const data = await registrations.updateRegistration(
         req.db,
         req.body._id,
         document
       );
 
-      res.json({ success: true, data });
+      res.json({ registration: data });
     } catch (error) {
       console.error(error);
       res.json({ error: error.message });

@@ -1,5 +1,5 @@
-import * as registration from './registration';
-import * as film from './film';
+import * as registrations from './registrations';
+import * as games from './games';
 
 export { connectToDb } from './connect';
-export { registration, film };
+export { registrations, games };

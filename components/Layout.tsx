@@ -237,7 +237,7 @@ export default function Layout({ children }: Props) {
 
   const handleBlur = (e: React.ChangeEvent<HTMLSelectElement>) => {
     if (e.target.value === 'default') return;
-    router.push(`/session?id=${e.target.value}`);
+    router.push(`/registrations/session?id=${e.target.value}`);
   };
 
   return (
@@ -267,19 +267,19 @@ export default function Layout({ children }: Props) {
         </button>
         <nav>
           <Link href="/">
-            <a>2021 Master Registrations List</a>
+            <a>All 2021 Registrations</a>
           </Link>
-          <Link href="/filmed-games?camp=kaukauna">
-            <a>Kau. Film Schedule</a>
+          <Link href="/games?camp=kaukauna">
+            <a>Kau. Games</a>
           </Link>
-          <Link href="/filmed-games?camp=plymouth">
-            <a>Ply. Film Schedule</a>
+          <Link href="/games?camp=plymouth">
+            <a>Ply. Games</a>
           </Link>
-          <Link href="/add-game-to-film-schedule">
-            <a>Add Game to Schdule</a>
+          <Link href="/games/add">
+            <a>Add a Game</a>
           </Link>
-          <Link href="/add-offline-registration">
-            <a>Add Registration</a>
+          <Link href="/registrations/add">
+            <a>Add a Registration</a>
           </Link>
           <select onBlur={handleBlur}>
             <option value="default">Select a session</option>

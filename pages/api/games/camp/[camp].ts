@@ -1,17 +1,16 @@
 import { NextApiResponse } from 'next';
 import nc from 'next-connect';
-import database from '../../middleware/db';
-import { registration } from '../../db';
-import { Request } from '../../interfaces/api';
+import database from '../../../../middleware/db';
+import { games } from '../../../../db';
+import { Request } from '../../../../interfaces';
 
 const handler = nc<Request, NextApiResponse>()
   .use(database)
   .get(async (req, res) => {
     try {
-      const result = await registration.getRegistrations(req.db);
-      res.send({ registrations: result });
+      const result = await games.getGames(req.db, { camp: req.query.camp });
+      res.send({ games: result });
     } catch (error) {
-      // todo: add error handling
       console.error(error);
       res.send({ error: error.message });
     }

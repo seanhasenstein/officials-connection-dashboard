@@ -118,18 +118,11 @@ export default function Sidebar({ isOpen, setIsOpen }: Props) {
             />
           </svg>
         </button>
-        {/* {sessionsData.map(s => (
-          <div key={s.id} className="sidebar-item">
-            <Link href={`/session?id=${s.id}`}>
-              <a>{s.name}</a>
-            </Link>
-          </div>
-        ))} */}
         <h4>Session Film Schedules:</h4>
         {sessionsData.map(s => (
           <div key={s.id} className="sidebar-item">
             <Link
-              href={`/campers-filmed-games?camp=${s.location}&sessionId=${s.id}`}
+              href={`/games/update-schedule?camp=${s.location}&sessionId=${s.id}`}
             >
               <a>{s.name}</a>
             </Link>

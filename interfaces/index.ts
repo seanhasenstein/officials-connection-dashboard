@@ -1,11 +1,14 @@
-export interface FilmedGame {
-  _id: string;
-  camp?: 'kaukauna' | 'plymouth';
-  session?: 'hs' | 'mc' | 'wc';
-  day?: 'friday' | 'saturday' | 'sunday';
+import { NextApiRequest } from 'next';
+import { Db, MongoClient } from 'mongodb';
+
+export interface Game {
+  _id?: string;
+  camp?: string;
+  session?: string;
+  day?: string;
   abbreviation: string;
   name: string;
-  clinician: string;
+  clinician?: string;
   url: string;
 }
 
@@ -20,12 +23,12 @@ export interface Session {
   mechanics: number;
   price: number;
   isChecked: boolean;
-  attending: boolean;
-  filmedGames: FilmedGame[];
+  attending?: boolean;
+  filmedGames?: Game[];
 }
 
 export interface Registration {
-  _id?: string;
+  _id: string;
   firstName: string;
   lastName: string;
   email: string;
@@ -59,4 +62,43 @@ export interface Registration {
   stripeId?: string;
   createdAt: Date;
   updatedAt: Date;
+}
+
+export interface RegistrationInput {
+  firstName: string;
+  lastName: string;
+  email: string;
+  phone: string;
+  address: {
+    street: string;
+    street2: string;
+    city: string;
+    state: string;
+    zipcode: string;
+  };
+  wiaaInformation: {
+    wiaaClass: string;
+    wiaaNumber: string;
+    associations: string;
+  };
+  foodAllergies: string;
+  emergencyContact: {
+    name: string;
+    phone: string;
+  };
+  sessions: string[];
+  hsCrewDeal: string;
+  crewMembers: string[];
+  paymentStatus: string;
+  paymentMethod: string;
+  checkNumber?: string;
+  notes?: string | string[];
+  createdAt: Date;
+  updatedAt: Date;
+}
+
+export interface Request extends NextApiRequest {
+  db: Db;
+  dbClient: MongoClient;
+  query: { [key: string]: string | string[] };
 }

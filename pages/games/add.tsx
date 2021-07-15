@@ -1,12 +1,11 @@
-import { GetServerSideProps } from 'next';
 import { useRouter } from 'next/router';
 import styled from 'styled-components';
+import { useMutation, useQueryClient } from 'react-query';
 import { Formik, Form, Field, ErrorMessage } from 'formik';
-import { connectToDb, film } from '../../db';
+import { Game } from '../../interfaces';
 import Layout from '../../components/Layout';
-import { FilmedGame } from '../../interfaces';
 
-const UpdateFilmedGameStyles = styled.div`
+const FilmedGameScheduleStyles = styled.div`
   padding: 0 1.5rem;
   width: 100%;
 
@@ -92,47 +91,54 @@ const UpdateFilmedGameStyles = styled.div`
   }
 `;
 
-type Props = {
-  game: FilmedGame;
-  error: string;
-};
-
-export default function UpdateFilmedGame({ game, error }: Props) {
+export default function FilmedGameSchedule() {
   const router = useRouter();
+  const queryClient = useQueryClient();
+  const mutation = useMutation(
+    async (game: Game) => {
+      const response = await fetch(`/api/games/add`, {
+        method: 'POST',
+        body: JSON.stringify(game),
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
 
-  if (error) {
-    return (
-      <Layout>
-        <UpdateFilmedGameStyles>
-          <div className="wrapper">
-            <p>Error: {error}</p>
-          </div>
-        </UpdateFilmedGameStyles>
-      </Layout>
-    );
-  }
+      if (!response.ok) {
+        throw new Error('Failed to add the game.');
+      }
+
+      const data = await response.json();
+      return data;
+    },
+    {
+      onSuccess: data => {
+        queryClient.invalidateQueries(['games', data.game.camp]);
+        router.push(`/games/${data.game._id}`);
+      },
+    }
+  );
 
   return (
     <Layout>
-      <UpdateFilmedGameStyles>
+      <FilmedGameScheduleStyles>
         <div className="wrapper">
           <h2>Add a game to the film schedule</h2>
+          <p>
+            This game will be available when adding games to the campers game
+            film schedule.
+          </p>
           <Formik
-            initialValues={game}
+            initialValues={{
+              camp: 'kaukauna',
+              session: 'hs',
+              day: 'friday',
+              name: '',
+              abbreviation: '',
+              url: '',
+            }}
             onSubmit={async values => {
-              // eslint-disable-next-line
-              const { _id, ...game } = values;
-              const response = await fetch('/api/update-filmed-game', {
-                method: 'post',
-                body: JSON.stringify({ _id: values._id, game }),
-                headers: { 'Content-Type': 'application/json' },
-              });
-
-              const result = await response.json();
-
-              if (result.success) {
-                router.push(`/filmed-games?camp=${result.data.camp}`);
-              }
+              await mutation.mutate(values);
             }}
           >
             {({ isSubmitting }) => (
@@ -246,10 +252,6 @@ export default function UpdateFilmedGame({ game, error }: Props) {
                   />
                 </div>
                 <div className="item">
-                  <label htmlFor="clinician">Clinician</label>
-                  <Field name="clinician" id="clinician" />
-                </div>
-                <div className="item">
                   <label htmlFor="url">YouTube URL</label>
                   <Field name="url" id="url" />
                 </div>
@@ -260,34 +262,7 @@ export default function UpdateFilmedGame({ game, error }: Props) {
             )}
           </Formik>
         </div>
-      </UpdateFilmedGameStyles>
+      </FilmedGameScheduleStyles>
     </Layout>
   );
 }
-
-export const getServerSideProps: GetServerSideProps = async context => {
-  try {
-    const id = Array.isArray(context.query.id)
-      ? context.query.id[0]
-      : context.query.id;
-
-    if (!id) {
-      throw new Error('No query id provided.');
-    }
-
-    const { db } = await connectToDb();
-    const response = await film.getFilmedGame(db, { _id: context.query.id });
-
-    return {
-      props: {
-        game: { ...response },
-      },
-    };
-  } catch (error) {
-    return {
-      props: {
-        error: error.message,
-      },
-    };
-  }
-};

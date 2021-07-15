@@ -1,16 +1,45 @@
 import React from 'react';
-import { GetServerSideProps } from 'next';
 import { useRouter } from 'next/router';
-import Link from 'next/link';
+import { useMutation, useQueryClient } from 'react-query';
 import styled from 'styled-components';
-import { Formik, Form, Field } from 'formik';
-import { connectToDb, registration } from '../../db';
-import { Registration } from '../../interfaces';
-import Layout from '../../components/Layout';
+import { Formik, Field, Form } from 'formik';
+import { RegistrationInput } from '../../interfaces';
 import { unitedStates, sessionsData } from '../../data';
-import { formatPhoneNumber } from '../../utils';
+import Layout from '../../components/Layout';
 
-const EditStyles = styled.div`
+const initialValues = {
+  firstName: '',
+  lastName: '',
+  email: '',
+  phone: '',
+  address: {
+    street: '',
+    street2: '',
+    city: '',
+    state: '',
+    zipcode: '',
+  },
+  sessions: [],
+  hsCrewDeal: 'false',
+  crewMembers: ['', ''],
+  wiaaInformation: {
+    wiaaClass: '',
+    wiaaNumber: '',
+    associations: '',
+  },
+  foodAllergies: '',
+  emergencyContact: {
+    name: '',
+    phone: '',
+  },
+  paymentMethod: '',
+  paymentStatus: '',
+  paymentAmount: 0,
+  checkNumber: '',
+  notes: '',
+};
+
+const AddRegistrationStyles = styled.div`
   padding: 0 1.5rem;
   width: 100%;
 
@@ -84,129 +113,53 @@ const EditStyles = styled.div`
   label {
     margin: 0 0 0.375rem;
   }
-
-  .actions {
-    margin: 1.75rem 0 0;
-    display: flex;
-    justify-content: flex-end;
-    gap: 0 0.875rem;
-
-    button {
-      padding: 0.625rem 1.5rem;
-      background-color: #0284c7;
-      border: 1px solid #0284c7;
-      border-radius: 0.375rem;
-      font-size: 0.875rem;
-      font-weight: 500;
-      color: #fff;
-      cursor: pointer;
-
-      &:hover {
-        background-color: #0277b4;
-      }
-
-      &:focus {
-        outline: 2px solid transparent;
-        outline-offset: 2px;
-        box-shadow: rgb(255, 255, 255) 0px 0px 0px 2px,
-          rgb(59, 130, 246) 0px 0px 0px 4px, rgba(0, 0, 0, 0.05) 0px 1px 2px 0px;
-      }
-    }
-
-    a {
-      padding: 0.625rem 1.5rem;
-      background-color: #fff;
-      border: 1px solid #d1d5db;
-      border-radius: 0.375rem;
-      font-size: 0.875rem;
-      font-weight: 500;
-      color: #0f172a;
-      cursor: pointer;
-      box-shadow: rgba(0, 0, 0, 0) 0px 0px 0px 0px,
-        rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0.05) 0px 1px 2px 0px;
-
-      &:hover {
-        border-color: #9ca3af;
-      }
-
-      &:focus {
-        outline: 2px solid transparent;
-        outline-offset: 2px;
-        box-shadow: rgb(255, 255, 255) 0px 0px 0px 2px,
-          rgb(59, 130, 246) 0px 0px 0px 4px, rgba(0, 0, 0, 0.05) 0px 1px 2px 0px;
-      }
-    }
-  }
-
-  .payment-note {
-    color: #4b5563;
-    line-height: 1.5;
-
-    a {
-      text-decoration: underline;
-
-      &:hover {
-        color: #1f2937;
-      }
-    }
-  }
 `;
 
-type Props = {
-  registration: Registration;
-};
-
-export default function Edit({ registration }: Props) {
+export default function AddRegistration() {
   const router = useRouter();
-  const [valueOverwrites] = React.useState(() => {
-    const sessions = registration.sessions.map(s => s.id);
-    const hsCrewDeal = registration.hsCrewDeal === true ? 'true' : 'false';
-    const paymentAmount = (registration.total / 100).toFixed(2);
-    const phone = formatPhoneNumber(registration.phone);
-    const ecPhone = formatPhoneNumber(registration.emergencyContact.phone);
-    const crewMembers =
-      registration.crewMembers && registration.crewMembers.length > 0
-        ? registration.crewMembers
-        : ['', ''];
+  const queryClient = useQueryClient();
+  const mutation = useMutation(
+    async (registration: RegistrationInput) => {
+      const response = await fetch(`/api/registrations/add`, {
+        method: 'POST',
+        body: JSON.stringify(registration),
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
 
-    return {
-      phone,
-      sessions,
-      hsCrewDeal,
-      crewMembers,
-      paymentAmount,
-      emergencyContact: {
-        name: registration.emergencyContact.name,
-        phone: ecPhone,
+      if (!response.ok) {
+        throw new Error('Failed to add the registration.');
+      }
+
+      const data = await response.json();
+      return data;
+    },
+    {
+      onSuccess: data => {
+        queryClient.invalidateQueries(['registrations']);
+        router.push(`/registrations/${data.registration._id}`);
       },
-    };
-  });
+    }
+  );
 
   return (
     <Layout>
-      <EditStyles>
+      <AddRegistrationStyles>
         <div className="wrapper">
-          <h2>Edit Registration</h2>
+          <h2>Add a Registration</h2>
           <Formik
-            initialValues={{
-              ...registration,
-              ...valueOverwrites,
-            }}
+            initialValues={initialValues}
             onSubmit={async values => {
-              const response = await fetch('/api/update-registration', {
-                method: 'post',
-                body: JSON.stringify(values),
-                headers: { 'Content-Type': 'application/json' },
-              });
-
-              const result = await response.json();
-
-              if (result.success) {
-                router.push(`/registration?id=${result.data._id}`);
-              }
+              const inputValues = {
+                ...values,
+                createdAt: new Date(),
+                updatedAt: new Date(),
+              };
+              await mutation.mutate(inputValues);
             }}
           >
-            {({ isSubmitting, values }) => (
+            {({ values, isSubmitting }) => (
               <Form>
                 <div className="section">
                   <div className="grid-col-2">
@@ -368,66 +321,41 @@ export default function Edit({ registration }: Props) {
                 </div>
                 <div className="section">
                   <h3>Payment Details</h3>
-                  {values.paymentMethod !== 'card' && (
-                    <>
-                      <div className="grid-col-2">
-                        <div className="item">
-                          <label htmlFor="paymentMethod">Payment Method</label>
-                          <Field
-                            id="paymentMethod"
-                            name="paymentMethod"
-                            as="select"
-                          >
-                            <option value="DEFAULT">Select a method</option>
-                            <option value="cash">Cash</option>
-                            <option value="check">Check</option>
-                            <option value="free">Free Entry</option>
-                          </Field>
-                        </div>
-
-                        <div className="item">
-                          <label htmlFor="paymentAmount">Payment Amount</label>
-                          <Field id="paymentAmount" name="paymentAmount" />
-                        </div>
-                      </div>
-                      {values.paymentMethod === 'check' && (
-                        <div className="item">
-                          <label htmlFor="checkNumber">Check #</label>
-                          <Field id="checkNumber" name="checkNumber" />
-                        </div>
-                      )}
-                      <div className="item">
-                        <label htmlFor="paymentStatus">Payment Status</label>
-                        <Field
-                          id="paymentStatus"
-                          name="paymentStatus"
-                          as="select"
-                        >
-                          <option value="DEFAULT">Select a status</option>
-                          <option value="succeeded">Paid</option>
-                          <option value="unpaid">Still needs to pay</option>
-                          <option value="fully_refunded">Fully refunded</option>
-                        </Field>
-                      </div>
-                    </>
-                  )}
-                  {values.paymentMethod === 'card' && (
-                    <div className="payment-note">
-                      This camper paid with a card. The payment details are
-                      available in the{' '}
-                      <a
-                        href="https://dashboard.stripe.com"
-                        target="_blank"
-                        rel="noopener noreferrer"
+                  <div className="grid-col-2">
+                    <div className="item">
+                      <label htmlFor="paymentMethod">Payment Method</label>
+                      <Field
+                        id="paymentMethod"
+                        name="paymentMethod"
+                        as="select"
                       >
-                        Stripe dashboard
-                      </a>
-                      .
+                        <option value="DEFAULT">Select a method</option>
+                        <option value="cash">Cash</option>
+                        <option value="check">Check</option>
+                        <option value="free">Free Entry</option>
+                      </Field>
+                    </div>
+                    <div className="item">
+                      <label htmlFor="paymentAmount">Payment Amount</label>
+                      <Field id="paymentAmount" name="paymentAmount" />
+                    </div>
+                  </div>
+                  {values.paymentMethod === 'check' && (
+                    <div className="item">
+                      <label htmlFor="checkNumber">Check #</label>
+                      <Field id="checkNumber" name="checkNumber" />
                     </div>
                   )}
+                  <div className="item">
+                    <label htmlFor="paymentStatus">Payment Status</label>
+                    <Field id="paymentStatus" name="paymentStatus" as="select">
+                      <option value="DEFAULT">Select a status</option>
+                      <option value="succeeded">Paid</option>
+                      <option value="unpaid">Still needs to pay</option>
+                    </Field>
+                  </div>
                 </div>
-
-                <div>
+                <div className="section">
                   <h3>Notes</h3>
                   <div className="item">
                     <label htmlFor="notes" className="sr-only">
@@ -441,47 +369,14 @@ export default function Edit({ registration }: Props) {
                     />
                   </div>
                 </div>
-
-                <div className="actions">
-                  <Link href={`/registration?id=${registration._id}`}>
-                    <a>Cancel</a>
-                  </Link>
-                  <button type="submit">
-                    {isSubmitting ? 'Loading...' : 'Update'}
-                  </button>
-                </div>
+                <button type="submit">
+                  {isSubmitting ? 'Loading...' : 'Submit Registration'}
+                </button>
               </Form>
             )}
           </Formik>
         </div>
-      </EditStyles>
+      </AddRegistrationStyles>
     </Layout>
   );
 }
-
-export const getServerSideProps: GetServerSideProps = async context => {
-  try {
-    const id = Array.isArray(context.query.id)
-      ? context.query.id[0]
-      : context.query.id;
-
-    if (!id) {
-      throw new Error('No query id provided.');
-    }
-
-    const { db } = await connectToDb();
-    const response = await registration.getRegistration(db, id);
-
-    return {
-      props: {
-        registration: { ...response },
-      },
-    };
-  } catch (error) {
-    return {
-      props: {
-        error: error.message,
-      },
-    };
-  }
-};

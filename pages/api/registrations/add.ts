@@ -1,10 +1,10 @@
 import { NextApiResponse } from 'next';
 import nc from 'next-connect';
-import database from '../../middleware/db';
-import { registration } from '../../db';
-import { Request } from '../../interfaces/api';
-import { removeNonDigits } from '../../utils';
-import { sessionsData } from '../../data';
+import database from '../../../middleware/db';
+import { registrations } from '../../../db';
+import { Request } from '../../../interfaces';
+import { removeNonDigits } from '../../../utils';
+import { sessionsData } from '../../../data';
 
 const handler = nc<Request, NextApiResponse>()
   .use(database)
@@ -35,13 +35,11 @@ const handler = nc<Request, NextApiResponse>()
             : req.body.paymentAmount * 100,
         total: req.body.paymentAmount * 100,
         stripeId: 'OFFLINE_REGISTRATION',
-        createdAt: new Date(),
-        updatedAt: new Date(),
       };
 
-      const data = await registration.addRegistration(req.db, document);
+      const data = await registrations.addRegistration(req.db, document);
 
-      res.json({ success: true, data });
+      res.json({ registration: data });
     } catch (error) {
       console.error(error);
       res.json({ error: error.message });
