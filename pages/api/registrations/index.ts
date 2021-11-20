@@ -2,14 +2,21 @@ import { NextApiResponse } from 'next';
 import nc from 'next-connect';
 import database from '../../../middleware/db';
 import { registrations } from '../../../db';
-import { Request } from '../../../interfaces';
+import { Request, Registration } from '../../../interfaces';
 
 const handler = nc<Request, NextApiResponse>()
   .use(database)
   .get(async (req, res) => {
     try {
-      const result = await registrations.getRegistrations(req.db);
-      res.send({ registrations: result });
+      const result: Registration[] = await registrations.getRegistrations(
+        req.db
+      );
+      const sortedResults = result.sort((a, b) => {
+        if (a.lastName === b.lastName)
+          return a.firstName < b.firstName ? -1 : 1;
+        return a.lastName < b.lastName ? -1 : 1;
+      });
+      res.send({ registrations: sortedResults });
     } catch (error) {
       console.error(error);
       res.send({ error: error.message });

@@ -252,11 +252,8 @@ export default function Index() {
     {
       initialData: () => {
         if (!router.query.id) return;
-        const data =
-          queryClient.getQueryData<{ registrations: Registration[] }>(
-            'registrations'
-          );
-        const reducedData = data?.registrations.reduce(
+        const data = queryClient.getQueryData<Registration[]>('registrations');
+        const reducedData = data?.reduce(
           (
             acc: { attending: Registration[]; notAttending: Registration[] },
             currReg
@@ -377,7 +374,7 @@ export default function Index() {
                               )}
                             </td>
                             <td className="links">
-                              <Link href={`/registration?id=${r._id}`}>
+                              <Link href={`/registrations/${r._id}`}>
                                 <a>
                                   <svg
                                     xmlns="http://www.w3.org/2000/svg"
@@ -394,7 +391,7 @@ export default function Index() {
                                   </svg>
                                 </a>
                               </Link>
-                              <Link href={`/registration/edit?id=${r._id}`}>
+                              <Link href={`/registrations/update?id=${r._id}`}>
                                 <a>
                                   <svg
                                     xmlns="http://www.w3.org/2000/svg"
@@ -506,7 +503,7 @@ export default function Index() {
                               )}
                             </td>
                             <td className="links">
-                              <Link href={`/registration?id=${r._id}`}>
+                              <Link href={`/registrations/${r._id}`}>
                                 <a>
                                   <svg
                                     xmlns="http://www.w3.org/2000/svg"
@@ -523,7 +520,7 @@ export default function Index() {
                                   </svg>
                                 </a>
                               </Link>
-                              <Link href={`/registration/edit?id=${r._id}`}>
+                              <Link href={`/registrations/update?id=${r._id}`}>
                                 <a>
                                   <svg
                                     xmlns="http://www.w3.org/2000/svg"

@@ -6,6 +6,226 @@ import Layout from '../components/Layout';
 import { Registration } from '../interfaces';
 import { formatDate } from '../utils';
 
+type Direction = 'ascending' | 'descending';
+
+type Config = {
+  key: string;
+  direction: Direction;
+} | null;
+
+function useSortedData(items: any[] = [], config: Config = null) {
+  const [sortConfig, setSortConfig] = React.useState(config);
+
+  const sortedItems = React.useMemo(() => {
+    const sortableItems = [...items];
+
+    if (sortConfig !== null) {
+      sortableItems.sort((a, b) => {
+        if (a[sortConfig.key] < b[sortConfig.key]) {
+          return sortConfig.direction === 'ascending' ? -1 : 1;
+        }
+        if (a[sortConfig.key] > b[sortConfig.key]) {
+          return sortConfig.direction === 'ascending' ? 1 : -1;
+        }
+        return 0;
+      });
+    }
+    return sortableItems;
+  }, [items, sortConfig]);
+
+  const requestSort = (key: string) => {
+    let direction: Direction = 'ascending';
+
+    if (
+      sortConfig &&
+      sortConfig.key === key &&
+      sortConfig.direction === 'ascending'
+    ) {
+      direction = 'descending';
+    }
+    setSortConfig({ key, direction });
+  };
+
+  return { items: sortedItems, requestSort, sortConfig };
+}
+
+export default function Home() {
+  const {
+    isLoading,
+    isError,
+    data: registrations,
+    error,
+  } = useQuery<Registration[]>(
+    'registrations',
+    async () => {
+      const response = await fetch('/api/registrations');
+
+      if (!response.ok) {
+        throw new Error('Failed to fetch the registrations.');
+      }
+
+      const data = await response.json();
+
+      return data.registrations;
+    },
+    { staleTime: 600000 }
+  );
+  const [searchTerm, setSearchTerm] = React.useState('');
+  const search = (regs: Registration[]) => {
+    return regs.filter(reg => {
+      return ['firstName', 'lastName', 'stripeId'].some(item => {
+        const result =
+          reg[item].toString().toLowerCase().indexOf(searchTerm.toLowerCase()) >
+          -1;
+        return result;
+      });
+    });
+  };
+  const config: Config = { key: 'lastName', direction: 'ascending' };
+  const { items, requestSort, sortConfig } = useSortedData(
+    registrations,
+    config
+  );
+
+  return (
+    <Layout>
+      <HomeStyles>
+        <div className="wrapper">
+          <h2>2021 WBYOC Registrations</h2>
+          <h3>[All Sessions]</h3>
+          <div>
+            <input
+              type="text"
+              placeholder="Search"
+              name="search"
+              id="search"
+              value={searchTerm}
+              onChange={e => setSearchTerm(e.target.value)}
+            />
+          </div>
+          {isLoading && <div className="loading">Loading...</div>}
+          {isError && error instanceof Error && (
+            <div>Error: {error.message}</div>
+          )}
+          {registrations && (
+            <div className="table-wrapper">
+              <table>
+                <thead>
+                  <tr>
+                    <th>Date</th>
+                    <th>Camper</th>
+                    <th>Sessions</th>
+                    <th className="status">Status</th>
+                    <th className="text-right">[{registrations.length}]</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {search(items).map((r: Registration) => (
+                    <tr key={r._id}>
+                      <td className="date">{formatDate(`${r.createdAt}`)}</td>
+                      <td className="camper">
+                        <div className="camper-name">
+                          {r.firstName} {r.lastName}
+                        </div>
+                        <div className="camper-email">{r.email}</div>
+                      </td>
+                      <td>
+                        <div className="sessions">
+                          {r.sessions.map(s => (
+                            <div key={s.id}>
+                              {s.attending ? (
+                                <span className="attending">
+                                  <svg
+                                    xmlns="http://www.w3.org/2000/svg"
+                                    viewBox="0 0 20 20"
+                                    fill="currentColor"
+                                  >
+                                    <path
+                                      fillRule="evenodd"
+                                      d="M6.267 3.455a3.066 3.066 0 001.745-.723 3.066 3.066 0 013.976 0 3.066 3.066 0 001.745.723 3.066 3.066 0 012.812 2.812c.051.643.304 1.254.723 1.745a3.066 3.066 0 010 3.976 3.066 3.066 0 00-.723 1.745 3.066 3.066 0 01-2.812 2.812 3.066 3.066 0 00-1.745.723 3.066 3.066 0 01-3.976 0 3.066 3.066 0 00-1.745-.723 3.066 3.066 0 01-2.812-2.812 3.066 3.066 0 00-.723-1.745 3.066 3.066 0 010-3.976 3.066 3.066 0 00.723-1.745 3.066 3.066 0 012.812-2.812zm7.44 5.252a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
+                                      clipRule="evenodd"
+                                    />
+                                  </svg>
+                                </span>
+                              ) : (
+                                <span className="not-attending">
+                                  <svg
+                                    xmlns="http://www.w3.org/2000/svg"
+                                    viewBox="0 0 20 20"
+                                    fill="currentColor"
+                                  >
+                                    <path
+                                      fillRule="evenodd"
+                                      d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z"
+                                      clipRule="evenodd"
+                                    />
+                                  </svg>
+                                </span>
+                              )}
+                              {s.name}
+                            </div>
+                          ))}
+                        </div>
+                      </td>
+                      <td className="status">
+                        {r.paymentStatus === 'succeeded' && (
+                          <span className="paid">Paid</span>
+                        )}
+                        {r.paymentStatus === 'fully_refunded' && (
+                          <span className="refunded">Fully refunded</span>
+                        )}
+                        {r.paymentStatus === 'unpaid' && (
+                          <span className="unpaid">Needs to pay</span>
+                        )}
+                      </td>
+                      <td className="links">
+                        <Link href={`/registrations/${r._id}`}>
+                          <a>
+                            <svg
+                              xmlns="http://www.w3.org/2000/svg"
+                              fill="none"
+                              viewBox="0 0 24 24"
+                              stroke="currentColor"
+                            >
+                              <path
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                                strokeWidth={2}
+                                d="M4 6h16M4 12h16M4 18h16"
+                              />
+                            </svg>
+                          </a>
+                        </Link>
+                        <Link href={`/registrations/update?id=${r._id}`}>
+                          <a>
+                            <svg
+                              xmlns="http://www.w3.org/2000/svg"
+                              fill="none"
+                              viewBox="0 0 24 24"
+                              stroke="currentColor"
+                            >
+                              <path
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                                strokeWidth={2}
+                                d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4"
+                              />
+                            </svg>
+                          </a>
+                        </Link>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          )}
+        </div>
+      </HomeStyles>
+    </Layout>
+  );
+}
+
 const HomeStyles = styled.div`
   padding: 5rem 1.5rem;
   background-color: #f3f4f6;
@@ -38,7 +258,7 @@ const HomeStyles = styled.div`
     padding: 0.75rem;
     overflow: hidden;
     background-color: #fff;
-    border-radius: 0.5rem;
+    border-radius: 0.125rem;
     box-shadow: rgba(0, 0, 0, 0) 0px 0px 0px 0px,
       rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0.1) 0px 1px 3px 0px,
       rgba(0, 0, 0, 0.06) 0px 1px 2px 0px;
@@ -211,149 +431,3 @@ const HomeStyles = styled.div`
     text-align: center;
   }
 `;
-
-export default function Home() {
-  const { isLoading, isError, isSuccess, data, error } = useQuery(
-    'registrations',
-    async () => {
-      const response = await fetch('/api/registrations');
-
-      if (!response.ok) {
-        throw new Error('Failed to fetch the registrations.');
-      }
-
-      return await response.json();
-    },
-    { staleTime: 600000 }
-  );
-
-  return (
-    <Layout>
-      <HomeStyles>
-        <div className="wrapper">
-          <h2>2021 WBYOC Registrations</h2>
-          <h3>[All Sessions]</h3>
-          {isLoading && <div className="loading">Loading...</div>}
-          {isError && error instanceof Error && (
-            <div>Error: {error.message}</div>
-          )}
-          {isSuccess && (
-            <div className="table-wrapper">
-              <table>
-                <thead>
-                  <tr>
-                    <th>Date</th>
-                    <th>Camper</th>
-                    <th>Sessions</th>
-                    <th className="status">Status</th>
-                    <th className="text-right">
-                      [{data.registrations.length}]
-                    </th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {data.registrations.map((r: Registration) => (
-                    <tr key={r._id}>
-                      <td className="date">{formatDate(`${r.createdAt}`)}</td>
-                      <td className="camper">
-                        <div className="camper-name">
-                          {r.firstName} {r.lastName}
-                        </div>
-                        <div className="camper-email">{r.email}</div>
-                      </td>
-                      <td>
-                        <div className="sessions">
-                          {r.sessions.map(s => (
-                            <div key={s.id}>
-                              {s.attending ? (
-                                <span className="attending">
-                                  <svg
-                                    xmlns="http://www.w3.org/2000/svg"
-                                    viewBox="0 0 20 20"
-                                    fill="currentColor"
-                                  >
-                                    <path
-                                      fillRule="evenodd"
-                                      d="M6.267 3.455a3.066 3.066 0 001.745-.723 3.066 3.066 0 013.976 0 3.066 3.066 0 001.745.723 3.066 3.066 0 012.812 2.812c.051.643.304 1.254.723 1.745a3.066 3.066 0 010 3.976 3.066 3.066 0 00-.723 1.745 3.066 3.066 0 01-2.812 2.812 3.066 3.066 0 00-1.745.723 3.066 3.066 0 01-3.976 0 3.066 3.066 0 00-1.745-.723 3.066 3.066 0 01-2.812-2.812 3.066 3.066 0 00-.723-1.745 3.066 3.066 0 010-3.976 3.066 3.066 0 00.723-1.745 3.066 3.066 0 012.812-2.812zm7.44 5.252a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
-                                      clipRule="evenodd"
-                                    />
-                                  </svg>
-                                </span>
-                              ) : (
-                                <span className="not-attending">
-                                  <svg
-                                    xmlns="http://www.w3.org/2000/svg"
-                                    viewBox="0 0 20 20"
-                                    fill="currentColor"
-                                  >
-                                    <path
-                                      fillRule="evenodd"
-                                      d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z"
-                                      clipRule="evenodd"
-                                    />
-                                  </svg>
-                                </span>
-                              )}
-                              {s.name}
-                            </div>
-                          ))}
-                        </div>
-                      </td>
-                      <td className="status">
-                        {r.paymentStatus === 'succeeded' && (
-                          <span className="paid">Paid</span>
-                        )}
-                        {r.paymentStatus === 'fully_refunded' && (
-                          <span className="refunded">Fully refunded</span>
-                        )}
-                        {r.paymentStatus === 'unpaid' && (
-                          <span className="unpaid">Needs to pay</span>
-                        )}
-                      </td>
-                      <td className="links">
-                        <Link href={`/registrations/${r._id}`}>
-                          <a>
-                            <svg
-                              xmlns="http://www.w3.org/2000/svg"
-                              fill="none"
-                              viewBox="0 0 24 24"
-                              stroke="currentColor"
-                            >
-                              <path
-                                strokeLinecap="round"
-                                strokeLinejoin="round"
-                                strokeWidth={2}
-                                d="M4 6h16M4 12h16M4 18h16"
-                              />
-                            </svg>
-                          </a>
-                        </Link>
-                        <Link href={`/registrations/update?id=${r._id}`}>
-                          <a>
-                            <svg
-                              xmlns="http://www.w3.org/2000/svg"
-                              fill="none"
-                              viewBox="0 0 24 24"
-                              stroke="currentColor"
-                            >
-                              <path
-                                strokeLinecap="round"
-                                strokeLinejoin="round"
-                                strokeWidth={2}
-                                d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4"
-                              />
-                            </svg>
-                          </a>
-                        </Link>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          )}
-        </div>
-      </HomeStyles>
-    </Layout>
-  );
-}

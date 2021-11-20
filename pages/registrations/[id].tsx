@@ -44,12 +44,9 @@ export default function Registration() {
     },
     {
       initialData: () => {
-        if (!router.query.id) return;
         const data =
-          queryClient.getQueryData<{ registrations: RegistrationInterface[] }>(
-            'registrations'
-          );
-        return data?.registrations.find(r => r._id === router.query.id);
+          queryClient.getQueryData<RegistrationInterface[]>('registrations');
+        return data?.find(r => r._id === router.query.id);
       },
       initialDataUpdatedAt: () => {
         return queryClient.getQueryState('registrations')?.dataUpdatedAt;

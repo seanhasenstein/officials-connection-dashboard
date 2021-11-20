@@ -176,11 +176,8 @@ export default function UpdateRegistration() {
     {
       initialData: () => {
         if (!router.query.id) return;
-        const data =
-          queryClient.getQueryData<{ registrations: Registration[] }>(
-            'registrations'
-          );
-        return data?.registrations.find(r => r._id === router.query.id);
+        const data = queryClient.getQueryData<Registration[]>('registrations');
+        return data?.find(r => r._id === router.query.id);
       },
       initialDataUpdatedAt: () => {
         return queryClient.getQueryState('registrations')?.dataUpdatedAt;
