@@ -18,6 +18,5 @@ export default async function database(
   const { db, dbClient } = await connectToDb();
   req.db = db;
   req.dbClient = dbClient;
-
   next();
 }

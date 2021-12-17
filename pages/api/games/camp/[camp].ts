@@ -1,5 +1,6 @@
 import { NextApiResponse } from 'next';
 import nc from 'next-connect';
+import { withAuth } from '../../../../utils/withAuth';
 import database from '../../../../middleware/db';
 import { games } from '../../../../db';
 import { Request } from '../../../../interfaces';
@@ -12,8 +13,8 @@ const handler = nc<Request, NextApiResponse>()
       res.send({ games: result });
     } catch (error) {
       console.error(error);
-      res.send({ error: error.message });
+      res.send({ error });
     }
   });
 
-export default handler;
+export default withAuth(handler);

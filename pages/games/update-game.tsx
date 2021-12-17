@@ -1,173 +1,68 @@
+import React from 'react';
 import { useRouter } from 'next/router';
+import Link from 'next/link';
 import styled from 'styled-components';
-import { useQuery, useMutation, useQueryClient } from 'react-query';
-import { Formik, Form, Field, ErrorMessage } from 'formik';
+import { format } from 'date-fns';
+import { Formik, Form, Field } from 'formik';
 import { Game } from '../../interfaces';
+import { formatGameName } from '../../utils';
+import useGame from '../../hooks/useGame';
+import useSession from '../../hooks/useSessions';
 import Layout from '../../components/Layout';
-
-const UpdateFilmedGameStyles = styled.div`
-  padding: 0 1.5rem;
-  width: 100%;
-
-  .wrapper {
-    padding: 3rem 0;
-    margin: 0 auto;
-    max-width: 32rem;
-    width: 100%;
-  }
-
-  h2 {
-    margin: 0 0 1rem;
-    color: #111827;
-  }
-
-  h3 {
-    margin: 0 0 1.25rem;
-    font-size: 1.125rem;
-    color: #1f2937;
-  }
-
-  h4 {
-    margin: 2rem 0 1.25rem;
-    font-size: 0.875rem;
-    font-weight: 700;
-    text-transform: uppercase;
-    letter-spacing: 0.0375em;
-    color: #1f2937;
-  }
-
-  p {
-    margin: 0 0 2.5rem;
-    font-size: 1rem;
-    color: #6b7280;
-    line-height: 1.5;
-  }
-
-  .section {
-    margin: 0 0 4rem;
-  }
-
-  .grid-col-2 {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 0 1rem;
-  }
-
-  .item {
-    margin: 0 0 1rem;
-    display: flex;
-    flex-direction: column;
-  }
-
-  .checkbox-item {
-    margin: 0 0 0.75rem;
-
-    input {
-      margin: 0 0.75rem 0 0;
-    }
-  }
-
-  .radio-group {
-    margin: 0 0 3.5rem;
-  }
-
-  .radio-item {
-    margin: 0 0 0.75rem;
-
-    label {
-      display: flex;
-      align-items: center;
-      font-size: 0.875rem;
-      line-height: 1;
-    }
-
-    input {
-      margin: 0 0.75rem 0 0;
-    }
-  }
-
-  label {
-    margin: 0 0 0.375rem;
-  }
-`;
+import LoadingSpinner from '../../components/LoadingSpinner';
 
 export default function UpdateFilmedGame() {
+  const [session, sessionLoading] = useSession();
   const router = useRouter();
-  const queryClient = useQueryClient();
-  const query = useQuery(
-    ['game', router.query.id],
-    async () => {
-      if (!router.query.id) return;
-      const response = await fetch(`/api/games/${router.query.id}`);
+  const { gameQuery, updateGame } = useGame();
+  const [date, setDate] = React.useState<string>(() => {
+    return format(new Date(), 'yyyy-MM-dd');
+  });
+  const [time, setTime] = React.useState<string>('00:00');
 
-      if (!response.ok) {
-        throw new Error('Failed to fetch the game.');
-      }
-
-      const data = await response.json();
-      return data.game;
-    },
-    {
-      staleTime: 600000,
-      initialData: () => {
-        if (!router.query.id) return;
-        return queryClient
-          .getQueryData<Game[]>(['games', router.query.camp])
-          ?.find(g => g._id === router.query.id);
-      },
-      initialDataUpdatedAt: () => {
-        return queryClient.getQueryState(['games', router.query.camp])
-          ?.dataUpdatedAt;
-      },
+  React.useEffect(() => {
+    if (gameQuery.data) {
+      const date = new Date(gameQuery.data.date);
+      const formattedDate = format(date, 'yyyy-MM-dd');
+      const formattedTime = format(date, 'HH:mm');
+      setDate(formattedDate);
+      setTime(formattedTime);
     }
-  );
+  }, [gameQuery.data]);
 
-  const mutation = useMutation(
-    async (game: Game) => {
-      const response = await fetch(`/api/games/update?id=${router.query.id}`, {
-        method: 'POST',
-        body: JSON.stringify(game),
-        headers: {
-          'Content-Type': 'application/json',
-        },
-      });
-
-      if (!response.ok) {
-        throw new Error('Failed to update the game.');
-      }
-
-      const data = await response.json();
-      return data;
-    },
-    {
-      onSuccess: data => {
-        queryClient.invalidateQueries(['games', data.game.camp]);
-        queryClient.invalidateQueries(['game', router.query.id]);
-        router.push(`/games/${data.game._id}`);
-      },
-    }
-  );
+  if (sessionLoading || !session) return <div />;
 
   return (
     <Layout>
       <UpdateFilmedGameStyles>
-        <div className="wrapper">
-          {query.isLoading && <div className="loading">Loading...</div>}
-          {query.isError && query.error instanceof Error && (
-            <div>Error: {query.error.message}</div>
+        <div className="container">
+          {gameQuery.isLoading && (
+            <GameLoadindSpinner isLoading={gameQuery.isLoading} />
           )}
-          {query.isSuccess && query.data && (
+          {gameQuery.isError && gameQuery.error instanceof Error && (
+            <div>Error: {gameQuery.error.message}</div>
+          )}
+          {gameQuery.isSuccess && gameQuery.data && (
             <>
-              <h2>Update {query.data.name}</h2>
+              <h2>Update Game - {formatGameName(gameQuery.data)}</h2>
               <Formik
-                initialValues={query.data}
-                onSubmit={async values => {
-                  // eslint-disable-next-line
-                  const { _id, ...game } = values;
-                  await mutation.mutate(game);
+                initialValues={{
+                  ...gameQuery.data,
+                  filmed: `${gameQuery.data.filmed}`,
+                }}
+                onSubmit={(values: Game) => {
+                  const { _id, ...rest } = values;
+                  const game = { ...rest, date, time };
+
+                  updateGame.mutate(game, {
+                    onSuccess: data =>
+                      router.push(
+                        `/games?gid=${data.game._id}&camp=${data.game.camp}`
+                      ),
+                  });
                 }}
               >
-                {({ isSubmitting }) => (
+                {({ values, isSubmitting }) => (
                   <Form>
                     <div className="radio-group">
                       <h4>Select camp</h4>
@@ -177,7 +72,7 @@ export default function UpdateFilmedGame() {
                             type="radio"
                             name="camp"
                             id="kaukauna"
-                            value="kaukauna"
+                            value="Kaukauna"
                           />
                           Kaukauna
                         </label>
@@ -188,21 +83,21 @@ export default function UpdateFilmedGame() {
                             type="radio"
                             name="camp"
                             id="plymouth"
-                            value="plymouth"
+                            value="Plymouth"
                           />
                           Plymouth
                         </label>
                       </div>
                     </div>
                     <div className="radio-group">
-                      <h4>Select session</h4>
+                      <h4>Select category</h4>
                       <div className="radio-item">
                         <label htmlFor="hs">
                           <Field
                             type="radio"
-                            name="session"
+                            name="category"
                             id="hs"
-                            value="hs"
+                            value="High School"
                           />
                           High School
                         </label>
@@ -211,98 +106,118 @@ export default function UpdateFilmedGame() {
                         <label htmlFor="wc">
                           <Field
                             type="radio"
-                            name="session"
+                            name="category"
                             id="wc"
-                            value="wc"
+                            value="Women's College"
                           />
-                          Women&apos;s College
+                          Women's College
                         </label>
                       </div>
                       <div className="radio-item">
                         <label htmlFor="mc">
                           <Field
                             type="radio"
-                            name="session"
+                            name="category"
                             id="mc"
-                            value="mc"
+                            value="Men's College"
                           />
-                          Men&apos;s College
-                        </label>
-                      </div>
-                    </div>
-                    <div className="radio-group">
-                      <h4>Select day</h4>
-                      <div className="radio-item">
-                        <label htmlFor="friday">
-                          <Field
-                            type="radio"
-                            name="day"
-                            id="friday"
-                            value="friday"
-                          />
-                          Friday
+                          Men's College
                         </label>
                       </div>
                       <div className="radio-item">
-                        <label htmlFor="saturday">
+                        <label htmlFor="mixed">
                           <Field
                             type="radio"
-                            name="day"
-                            id="saturday"
-                            value="saturday"
+                            name="category"
+                            id="mixed"
+                            value="Mixed"
                           />
-                          Saturday
-                        </label>
-                      </div>
-                      <div className="radio-item">
-                        <label htmlFor="sunday">
-                          <Field
-                            type="radio"
-                            name="day"
-                            id="sunday"
-                            value="sunday"
-                          />
-                          Sunday
+                          Mixed
                         </label>
                       </div>
                     </div>
                     <div className="item">
-                      <label htmlFor="name">Game Title</label>
-                      <Field
-                        name="name"
-                        id="name"
-                        placeholder="e.g. Kaukauna Friday Session - Main Court @ 12pm"
-                      />
-                      <ErrorMessage
-                        name="name"
-                        component="div"
-                        className="validation-error"
+                      <h4>Select date</h4>
+                      <label htmlFor="date" className="sr-only">
+                        Date
+                      </label>
+                      <input
+                        type="date"
+                        id="date"
+                        value={date}
+                        onChange={e => setDate(e.target.value)}
                       />
                     </div>
                     <div className="item">
-                      <label htmlFor="abbreviation">Game Abbreviation</label>
-                      <Field
-                        name="abbreviation"
-                        id="abbreviation"
-                        placeholder="e.g. Fri MC @ 12pm"
+                      <h4>Select time</h4>
+                      <label htmlFor="time" className="sr-only">
+                        Date
+                      </label>
+                      <input
+                        type="time"
+                        id="time"
+                        value={time}
+                        onChange={e => setTime(e.target.value)}
                       />
-                      <ErrorMessage
-                        name="abbreviation"
-                        component="div"
-                        className="validation-error"
-                      />
+                    </div>
+                    <div className="item">
+                      <h4>Court</h4>
+                      <label htmlFor="court" className="sr-only">
+                        Court
+                      </label>
+                      <Field id="court" name="court" />
                     </div>
                     <div className="item">
                       <label htmlFor="clinician">Clinician</label>
                       <Field name="clinician" id="clinician" />
                     </div>
-                    <div className="item">
-                      <label htmlFor="url">YouTube URL</label>
-                      <Field name="url" id="url" />
+                    <div className="radio-group">
+                      <h4>Is this a filmed game?</h4>
+                      <div className="radio-item">
+                        <label htmlFor="filmed-true">
+                          <Field
+                            type="radio"
+                            name="filmed"
+                            id="filmed-true"
+                            value="true"
+                          />
+                          Yes
+                        </label>
+                      </div>
+                      <div className="radio-item">
+                        <label htmlFor="filmed-false">
+                          <Field
+                            type="radio"
+                            name="filmed"
+                            id="filmed-false"
+                            value="false"
+                          />
+                          No
+                        </label>
+                      </div>
                     </div>
-                    <button type="submit">
-                      {isSubmitting ? 'Loading...' : 'Update Game'}
-                    </button>
+                    {values.filmed === 'true' && (
+                      <div className="item">
+                        <label htmlFor="url">YouTube URL</label>
+                        <Field name="url" id="url" />
+                      </div>
+                    )}
+                    <div className="actions">
+                      {isSubmitting ? (
+                        <LoadingSpinner isLoading={isSubmitting} />
+                      ) : (
+                        <Link href="/">
+                          <a className="link-button">Cancel</a>
+                        </Link>
+                      )}
+                      <button
+                        type="submit"
+                        disabled={isSubmitting}
+                        className="submit-button"
+                      >
+                        Update this game
+                      </button>
+                    </div>
                   </Form>
                 )}
               </Formik>
@@ -313,3 +228,115 @@ export default function UpdateFilmedGame() {
     </Layout>
   );
 }
+
+const UpdateFilmedGameStyles = styled.div`
+  padding: 0 1.5rem;
+  width: 100%;
+  min-height: 100vh;
+  background-color: #f9fafb;
+
+  .container {
+    padding: 3rem 0;
+    margin: 0 auto;
+    max-width: 32rem;
+    width: 100%;
+  }
+
+  h2 {
+    margin: 0 0 1rem;
+    font-size: 1.25rem;
+    color: #111827;
+    font-weight: 600;
+  }
+
+  h4 {
+    margin: 0 0 0.5rem;
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: #6e788c;
+  }
+
+  .item {
+    margin: 0 0 1rem;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .radio-group {
+    margin: 3.5rem 0;
+
+    h4 {
+      margin-bottom: 1.125rem;
+      color: #1f2937;
+    }
+  }
+
+  .radio-item {
+    margin: 0 0 0.75rem;
+
+    label {
+      display: flex;
+      align-items: center;
+    }
+
+    input {
+      margin: 0 0.75rem 0 0;
+    }
+  }
+
+  .actions {
+    margin: 3rem 0 0;
+    display: flex;
+    justify-content: flex-end;
+    gap: 0 0.875rem;
+
+    button {
+      padding: 0.625rem 1.5rem;
+      background-color: #4f46e5;
+      border: 1px solid #3730a3;
+      box-shadow: inset 0 1px 0 #818cf8;
+      border-radius: 0.375rem;
+      font-size: 0.875rem;
+      font-weight: 500;
+      color: #fff;
+      cursor: pointer;
+
+      &:hover {
+        background-color: #3f35e3;
+      }
+
+      &:focus {
+        outline: 2px solid transparent;
+        outline-offset: 2px;
+        box-shadow: rgb(255, 255, 255) 0px 0px 0px 2px,
+          rgb(59, 130, 246) 0px 0px 0px 4px, rgba(0, 0, 0, 0.05) 0px 1px 2px 0px;
+      }
+    }
+
+    a {
+      padding: 0.625rem 1.5rem;
+      border-radius: 0.375rem;
+      font-size: 0.9375rem;
+      font-weight: 500;
+      color: #4b5563;
+      cursor: pointer;
+
+      &:hover {
+        color: #111827;
+        text-decoration: underline;
+      }
+
+      &:focus {
+        outline: 2px solid transparent;
+        outline-offset: 2px;
+        box-shadow: rgb(255, 255, 255) 0px 0px 0px 2px,
+          rgb(59, 130, 246) 0px 0px 0px 4px, rgba(0, 0, 0, 0.05) 0px 1px 2px 0px;
+      }
+    }
+  }
+`;
+
+const GameLoadindSpinner = styled(LoadingSpinner)`
+  display: flex;
+  justify-content: center;
+`;

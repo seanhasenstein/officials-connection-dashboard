@@ -1,49 +1,77 @@
 import { NextApiResponse } from 'next';
 import nc from 'next-connect';
+import { withAuth } from '../../../utils/withAuth';
 import database from '../../../middleware/db';
-import { registrations } from '../../../db';
 import { Request } from '../../../interfaces';
-import { removeNonDigits } from '../../../utils';
-import { sessionsData } from '../../../data';
+import { registrations } from '../../../db';
+import {
+  calculateTotals,
+  checkForDefault,
+  createIdNumber,
+  formatZipcode,
+  removeNonDigits,
+  verifySelectedSessions,
+} from '../../../utils';
 
 const handler = nc<Request, NextApiResponse>()
   .use(database)
   .post(async (req, res) => {
     try {
-      const verifiedSessions = req.body.sessions.map((s: string) => {
-        const session = sessionsData.find(v => v.id === s);
+      const data = req.body;
+      const verifiedSessions = verifySelectedSessions(data.sessions);
+      const { subtotal, total } = calculateTotals(
+        data.subtotal,
+        data.total,
+        data.paymentAmount,
+        data.paymentMethod,
+        data.discount
+      );
+      const now = `${new Date().toISOString()}`;
 
-        return { ...session, attending: true };
-      });
-
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
-      const { paymentAmount, ...document } = {
-        ...req.body,
-        email: req.body.email.toLowerCase(),
-        phone: removeNonDigits(req.body.phone),
-        sessions: verifiedSessions,
-        hsCrewDeal: req.body.hsCrewDeal === 'true' ? true : false,
-        crewMembers: req.body.crewMembers.filter((m: string) => m !== ''),
-        emergencyContact: {
-          name: req.body.emergencyContact.name,
-          phone: removeNonDigits(req.body.emergencyContact.phone),
+      const { paymentAmount, ...registration } = {
+        ...data,
+        registrationId: createIdNumber(),
+        firstName: data.firstName.trim(),
+        lastName: data.lastName.trim(),
+        email: data.email.toLowerCase().trim(),
+        phone: removeNonDigits(data.phone),
+        address: {
+          street: data.address.street.trim(),
+          street2: data.address.street2.trim(),
+          city: data.address.city.trim(),
+          state: checkForDefault(data.address.state),
+          zipcode: formatZipcode(data.address.zipcode),
         },
-        paymentAmount: req.body.paymentAmount,
-        subtotal:
-          req.body.hsCrewDeal === 'true'
-            ? req.body.paymentAmount * 100 + 1000
-            : req.body.paymentAmount * 100,
-        total: req.body.paymentAmount * 100,
-        stripeId: 'OFFLINE_REGISTRATION',
+        wiaaClass: checkForDefault(data.wiaaClass),
+        wiaaNumber: data.wiaaNumber.trim(),
+        associations: data.associations.trim(),
+        foodAllergies: data.foodAllergies.trim(),
+        emergencyContact: {
+          name: data.emergencyContact.name.trim(),
+          phone: removeNonDigits(data.emergencyContact.phone),
+        },
+        sessions: verifiedSessions,
+        discount: data.discount === 'true' ? true : false,
+        crewMembers: data.crewMembers.filter((m: string) => m !== ''),
+        paymentMethod: checkForDefault(data.paymentMethod),
+        paymentStatus: checkForDefault(data.paymentStatus),
+        paymentAmount: data.paymentAmount,
+        checkNumber: data.checkNumber.trim(),
+        stripeId: '',
+        refundAmount: data.refundAmount * 100,
+        subtotal,
+        total,
+        createdAt: now,
+        updatedAt: now,
       };
 
-      const data = await registrations.addRegistration(req.db, document);
+      const result = await registrations.addRegistration(req.db, registration);
 
-      res.json({ registration: data });
+      res.json({ registration: result });
     } catch (error) {
       console.error(error);
-      res.json({ error: error.message });
+      res.json({ error });
     }
   });
 
-export default handler;
+export default withAuth(handler);

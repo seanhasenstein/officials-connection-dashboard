@@ -1,34 +1,104 @@
 import { NextApiRequest } from 'next';
 import { Db, MongoClient } from 'mongodb';
 
-export interface Game {
-  _id?: string;
-  camp?: string;
-  session?: string;
-  day?: string;
-  abbreviation: string;
+export type ActiveOption = 'filter' | 'sort' | undefined;
+
+export type FilterOptions = { paymentStatus: string[]; sessions: string[] };
+
+type Camp = 'Kaukauna' | 'Plymouth';
+
+type SessionCategory = "Men's College" | "Women's College" | 'High School';
+
+export type GameCategory =
+  | "Men's College"
+  | "Women's College"
+  | 'High School'
+  | 'Mixed';
+
+type WiaaClass =
+  | 'default'
+  | 'Master'
+  | 'L5'
+  | 'L4'
+  | 'L3'
+  | 'L2'
+  | 'L1'
+  | 'LR'
+  | 'New';
+
+type PaymentStatus =
+  | 'default'
+  | 'paid'
+  | 'unpaid'
+  | 'fullyRefunded'
+  | 'partiallyRefunded';
+
+export type PaymentMethod =
+  | 'default'
+  | 'unpaid'
+  | 'card'
+  | 'check'
+  | 'cash'
+  | 'free';
+
+export type SortOrder = 'ascending' | 'descending';
+
+export type SortVariable = 'lastName' | 'date';
+
+export interface GameOfficial {
+  key: string;
   name: string;
-  clinician?: string;
+  rid: string;
+  sid: string;
+  sessionName: string;
+}
+
+export interface Note {
+  id: string;
+  text: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface Game {
+  _id: string;
+  camp: Camp;
+  category: GameCategory;
+  date: string;
+  court: string;
+  clinician: string;
   url: string;
+  filmed: 'true' | 'false';
+  officials?: GameOfficial[];
+  createdAt?: string;
+  updatedAt?: string;
+}
+
+export interface GameInput extends Omit<Game, '_id'> {
+  time: string;
 }
 
 export interface Session {
   id: string;
-  name: string;
-  location: string;
-  dates: string[];
-  approxTimes: string;
-  category: string;
-  levels: string[];
-  mechanics: number;
+  camp: Camp;
+  dates: string;
+  times: string;
+  category: SessionCategory;
+  levels?: string;
+  mechanics?: number;
   price: number;
-  isChecked: boolean;
   attending?: boolean;
-  filmedGames?: Game[];
+  isChecked?: boolean;
+}
+
+export interface SessionsQuery {
+  attending: Registration[];
+  notAttending: Registration[];
 }
 
 export interface Registration {
   _id: string;
+  registrationId: string;
   firstName: string;
   lastName: string;
   email: string;
@@ -40,28 +110,27 @@ export interface Registration {
     state: string;
     zipcode: string;
   };
-  wiaaInformation: {
-    wiaaClass: string;
-    wiaaNumber: string;
-    associations: string;
-  };
+  wiaaClass: WiaaClass;
+  wiaaNumber: string;
+  associations: string;
   foodAllergies: string;
   emergencyContact: {
     name: string;
     phone: string;
   };
-  sessions: Session[];
-  hsCrewDeal: boolean;
+  discount: boolean;
   crewMembers: string[];
+  sessions: Session[];
   subtotal: number;
   total: number;
-  paymentStatus: 'succeeded' | 'fully_refunded' | 'unpaid';
-  paymentMethod: string;
+  paymentStatus: PaymentStatus;
+  paymentMethod: PaymentMethod;
   checkNumber?: string;
-  notes?: string[];
-  stripeId?: string;
-  createdAt: Date;
-  updatedAt: Date;
+  refundAmount: number;
+  notes: Note[];
+  stripeId: string;
+  createdAt: string;
+  updatedAt: string;
 }
 
 export interface RegistrationInput {
@@ -76,26 +145,25 @@ export interface RegistrationInput {
     state: string;
     zipcode: string;
   };
-  wiaaInformation: {
-    wiaaClass: string;
-    wiaaNumber: string;
-    associations: string;
-  };
+  wiaaClass: WiaaClass;
+  wiaaNumber: string;
+  associations: string;
   foodAllergies: string;
   emergencyContact: {
     name: string;
     phone: string;
   };
-  sessions: string[];
-  hsCrewDeal: string;
+  discount: string;
   crewMembers: string[];
-  paymentStatus: string;
-  paymentMethod: string;
-  checkNumber?: string;
-  notes?: string | string[];
-  createdAt: Date;
-  updatedAt: Date;
+  paymentAmount: number | string;
+  paymentStatus: PaymentStatus;
+  paymentMethod: PaymentMethod;
+  checkNumber: string;
+  refundAmount: number | string;
+  notes: Note[];
 }
+
+export type RegistrationUpdate = Partial<Registration>;
 
 export interface Request extends NextApiRequest {
   db: Db;

@@ -1,264 +1,406 @@
 import React from 'react';
+import { useRouter } from 'next/router';
 import Link from 'next/link';
 import styled from 'styled-components';
-import { useQuery } from 'react-query';
-import Layout from '../components/Layout';
+import { format } from 'date-fns';
 import { Registration } from '../interfaces';
-import { formatDate } from '../utils';
-
-type Direction = 'ascending' | 'descending';
-
-type Config = {
-  key: string;
-  direction: Direction;
-} | null;
-
-function useSortedData(items: any[] = [], config: Config = null) {
-  const [sortConfig, setSortConfig] = React.useState(config);
-
-  const sortedItems = React.useMemo(() => {
-    const sortableItems = [...items];
-
-    if (sortConfig !== null) {
-      sortableItems.sort((a, b) => {
-        if (a[sortConfig.key] < b[sortConfig.key]) {
-          return sortConfig.direction === 'ascending' ? -1 : 1;
-        }
-        if (a[sortConfig.key] > b[sortConfig.key]) {
-          return sortConfig.direction === 'ascending' ? 1 : -1;
-        }
-        return 0;
-      });
-    }
-    return sortableItems;
-  }, [items, sortConfig]);
-
-  const requestSort = (key: string) => {
-    let direction: Direction = 'ascending';
-
-    if (
-      sortConfig &&
-      sortConfig.key === key &&
-      sortConfig.direction === 'ascending'
-    ) {
-      direction = 'descending';
-    }
-    setSortConfig({ key, direction });
-  };
-
-  return { items: sortedItems, requestSort, sortConfig };
-}
+import useMenu from '../hooks/useMenu';
+import useNotification from '../hooks/useNotification';
+import useRegistration from '../hooks/useRegistration';
+import useRegistrationSearch from '../hooks/useRegistrationSearch';
+import useSession from '../hooks/useSessions';
+import { formatSessionName, formatToMoney, formatPhoneNumber } from '../utils';
+import Layout from '../components/Layout';
+import Menu from '../components/Menu';
+import Notification from '../components/Notification';
+import LoadingSpinner from '../components/LoadingSpinner';
+import SortAndFilter from '../components/SortAndFilter';
 
 export default function Home() {
+  const [session, sessionLoading] = useSession();
+  const router = useRouter();
   const {
-    isLoading,
-    isError,
-    data: registrations,
-    error,
-  } = useQuery<Registration[]>(
-    'registrations',
-    async () => {
-      const response = await fetch('/api/registrations');
+    registrationsQuery,
+    sortOrder,
+    setSortOrder,
+    sortVariable,
+    setSortVariable,
+    filterOptions,
+    setFilterOptions,
+  } = useRegistration();
+  const [sortFilterResults, setSortFilterResults] = React.useState<
+    Registration[]
+  >([]);
+  const { search, setSearch, searchResults, handleSearchChange } =
+    useRegistrationSearch(sortFilterResults);
+  const { isOpen, setIsOpen, activeMenuId, handleMenuButtonClick } = useMenu();
+  const { showNotification, setShowNotification } = useNotification();
 
-      if (!response.ok) {
-        throw new Error('Failed to fetch the registrations.');
-      }
-
-      const data = await response.json();
-
-      return data.registrations;
-    },
-    { staleTime: 600000 }
-  );
-  const [searchTerm, setSearchTerm] = React.useState('');
-  const search = (regs: Registration[]) => {
-    return regs.filter(reg => {
-      return ['firstName', 'lastName', 'stripeId'].some(item => {
-        const result =
-          reg[item].toString().toLowerCase().indexOf(searchTerm.toLowerCase()) >
-          -1;
-        return result;
-      });
-    });
-  };
-  const config: Config = { key: 'lastName', direction: 'ascending' };
-  const { items, requestSort, sortConfig } = useSortedData(
-    registrations,
-    config
-  );
+  if (sessionLoading || !session) return <div />;
 
   return (
     <Layout>
-      <HomeStyles>
-        <div className="wrapper">
+      <HomeStyles showDeleteButton={search.length > 0}>
+        <div className="container">
           <h2>2021 WBYOC Registrations</h2>
-          <h3>[All Sessions]</h3>
-          <div>
-            <input
-              type="text"
-              placeholder="Search"
-              name="search"
-              id="search"
-              value={searchTerm}
-              onChange={e => setSearchTerm(e.target.value)}
+          <h3>
+            [<span>All Registrations</span>]
+          </h3>
+          {registrationsQuery.isLoading && (
+            <RegistrationLoadingSpinner
+              isLoading={registrationsQuery.isLoading}
             />
-          </div>
-          {isLoading && <div className="loading">Loading...</div>}
-          {isError && error instanceof Error && (
-            <div>Error: {error.message}</div>
           )}
-          {registrations && (
-            <div className="table-wrapper">
-              <table>
-                <thead>
-                  <tr>
-                    <th>Date</th>
-                    <th>Camper</th>
-                    <th>Sessions</th>
-                    <th className="status">Status</th>
-                    <th className="text-right">[{registrations.length}]</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {search(items).map((r: Registration) => (
-                    <tr key={r._id}>
-                      <td className="date">{formatDate(`${r.createdAt}`)}</td>
-                      <td className="camper">
-                        <div className="camper-name">
-                          {r.firstName} {r.lastName}
-                        </div>
-                        <div className="camper-email">{r.email}</div>
-                      </td>
-                      <td>
-                        <div className="sessions">
-                          {r.sessions.map(s => (
-                            <div key={s.id}>
-                              {s.attending ? (
-                                <span className="attending">
-                                  <svg
-                                    xmlns="http://www.w3.org/2000/svg"
-                                    viewBox="0 0 20 20"
-                                    fill="currentColor"
-                                  >
-                                    <path
-                                      fillRule="evenodd"
-                                      d="M6.267 3.455a3.066 3.066 0 001.745-.723 3.066 3.066 0 013.976 0 3.066 3.066 0 001.745.723 3.066 3.066 0 012.812 2.812c.051.643.304 1.254.723 1.745a3.066 3.066 0 010 3.976 3.066 3.066 0 00-.723 1.745 3.066 3.066 0 01-2.812 2.812 3.066 3.066 0 00-1.745.723 3.066 3.066 0 01-3.976 0 3.066 3.066 0 00-1.745-.723 3.066 3.066 0 01-2.812-2.812 3.066 3.066 0 00-.723-1.745 3.066 3.066 0 010-3.976 3.066 3.066 0 00.723-1.745 3.066 3.066 0 012.812-2.812zm7.44 5.252a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
-                                      clipRule="evenodd"
-                                    />
-                                  </svg>
-                                </span>
-                              ) : (
-                                <span className="not-attending">
-                                  <svg
-                                    xmlns="http://www.w3.org/2000/svg"
-                                    viewBox="0 0 20 20"
-                                    fill="currentColor"
-                                  >
-                                    <path
-                                      fillRule="evenodd"
-                                      d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z"
-                                      clipRule="evenodd"
-                                    />
-                                  </svg>
-                                </span>
-                              )}
-                              {s.name}
-                            </div>
-                          ))}
-                        </div>
-                      </td>
-                      <td className="status">
-                        {r.paymentStatus === 'succeeded' && (
-                          <span className="paid">Paid</span>
-                        )}
-                        {r.paymentStatus === 'fully_refunded' && (
-                          <span className="refunded">Fully refunded</span>
-                        )}
-                        {r.paymentStatus === 'unpaid' && (
-                          <span className="unpaid">Needs to pay</span>
-                        )}
-                      </td>
-                      <td className="links">
-                        <Link href={`/registrations/${r._id}`}>
-                          <a>
-                            <svg
-                              xmlns="http://www.w3.org/2000/svg"
-                              fill="none"
-                              viewBox="0 0 24 24"
-                              stroke="currentColor"
-                            >
-                              <path
-                                strokeLinecap="round"
-                                strokeLinejoin="round"
-                                strokeWidth={2}
-                                d="M4 6h16M4 12h16M4 18h16"
-                              />
-                            </svg>
-                          </a>
-                        </Link>
-                        <Link href={`/registrations/update?id=${r._id}`}>
-                          <a>
-                            <svg
-                              xmlns="http://www.w3.org/2000/svg"
-                              fill="none"
-                              viewBox="0 0 24 24"
-                              stroke="currentColor"
-                            >
-                              <path
-                                strokeLinecap="round"
-                                strokeLinejoin="round"
-                                strokeWidth={2}
-                                d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4"
-                              />
-                            </svg>
-                          </a>
-                        </Link>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
+          {registrationsQuery.error && (
+            <div>Error: {registrationsQuery.error.message}</div>
+          )}
+          <>
+            <div className="table-actions-row">
+              <SortAndFilter
+                regQueryData={registrationsQuery.data}
+                sortOrder={sortOrder}
+                setSortOrder={setSortOrder}
+                sortVariable={sortVariable}
+                setSortVariable={setSortVariable}
+                filterOptions={filterOptions}
+                setFilterOptions={setFilterOptions}
+                setRegistrations={setSortFilterResults}
+              />
+              <div className="search">
+                <div className="icon">
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    viewBox="0 0 20 20"
+                    fill="currentColor"
+                  >
+                    <path
+                      fillRule="evenodd"
+                      d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z"
+                      clipRule="evenodd"
+                    />
+                  </svg>
+                </div>
+                <label htmlFor="search" className="sr-only">
+                  Search Registrations
+                </label>
+                <input
+                  type="text"
+                  placeholder="Search"
+                  name="search"
+                  id="search"
+                  value={search}
+                  onChange={handleSearchChange}
+                />
+                <button
+                  type="button"
+                  onClick={() => setSearch('')}
+                  className="delete-search-button"
+                  tabIndex={search.length > 0 ? 0 : -1}
+                >
+                  <span className="sr-only">Delete search text</span>
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    viewBox="0 0 20 20"
+                    fill="currentColor"
+                  >
+                    <path
+                      fillRule="evenodd"
+                      d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z"
+                      clipRule="evenodd"
+                    />
+                  </svg>
+                </button>
+              </div>
             </div>
-          )}
+            {searchResults && (
+              <div className="table-container">
+                <table>
+                  <thead>
+                    <tr>
+                      <th className="text-left">Date</th>
+                      <th className="text-left">Camper</th>
+                      <th className="text-left">Sessions</th>
+                      <th className="text-left">Contact</th>
+                      <th className="text-left">Total</th>
+                      <th className="text-center">Status</th>
+                      <th className="text-center">Menu</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {searchResults.length === 0 && (
+                      <tr className="empty">
+                        <td>No registrations match your filter.</td>
+                      </tr>
+                    )}
+                    {searchResults.map((r: Registration) => (
+                      <tr key={r._id}>
+                        <td className="date">
+                          {format(new Date(r.createdAt), 'P')}
+                        </td>
+                        <td>
+                          <div className="camper">
+                            <div className="camper-name">
+                              <Link href={`/registrations/${r._id}`}>
+                                <a>
+                                  {r.firstName} {r.lastName}
+                                </a>
+                              </Link>
+                            </div>
+                            <div className="camper-location">
+                              {r.address.city}
+                              {r.address.city && r.address.state ? (
+                                <>{', '}</>
+                              ) : null}
+                              {r.address.state}
+                            </div>
+                          </div>
+                        </td>
+                        <td>
+                          <div className="sessions">
+                            {r.sessions.map(s => (
+                              <div
+                                key={s.id}
+                                className={
+                                  s.attending ? 'attending' : 'not-attending'
+                                }
+                              >
+                                <Link
+                                  href={`/registrations/session?sid=${s.id}`}
+                                >
+                                  {formatSessionName(s)}
+                                </Link>
+                              </div>
+                            ))}
+                          </div>
+                        </td>
+                        <td>
+                          <div className="contact">
+                            <div className="email">
+                              <a
+                                href={`mailto:${r.email}`}
+                                target="_blank"
+                                rel="noreferrer"
+                              >
+                                {r.email}
+                              </a>
+                            </div>
+                            <div>{formatPhoneNumber(r.phone)}</div>
+                          </div>
+                        </td>
+                        <td>{formatToMoney(r.total - r.refundAmount, true)}</td>
+                        <td className="status text-center">
+                          {r.paymentStatus === 'paid' && (
+                            <span className="paid">Paid</span>
+                          )}
+                          {r.paymentStatus === 'fullyRefunded' && (
+                            <span className="refunded">Full refund</span>
+                          )}
+                          {r.paymentStatus === 'partiallyRefunded' && (
+                            <span className="refunded">Partial refund</span>
+                          )}
+                          {r.paymentStatus === 'unpaid' && (
+                            <span className="unpaid">Needs to pay</span>
+                          )}
+                        </td>
+                        <td>
+                          <div className="menu">
+                            <button
+                              type="button"
+                              onClick={() => handleMenuButtonClick(r._id)}
+                              className="menu-button"
+                            >
+                              <span className="sr-only">Menu</span>
+                              <svg
+                                xmlns="http://www.w3.org/2000/svg"
+                                fill="none"
+                                viewBox="0 0 24 24"
+                                stroke="currentColor"
+                              >
+                                <path
+                                  strokeLinecap="round"
+                                  strokeLinejoin="round"
+                                  strokeWidth={2}
+                                  d="M12 5v.01M12 12v.01M12 19v.01M12 6a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2z"
+                                />
+                              </svg>
+                            </button>
+                            <Menu
+                              open={r._id === activeMenuId && isOpen}
+                              setOpen={setIsOpen}
+                            >
+                              <>
+                                <Link href={`/registrations/${r._id}`}>
+                                  <a>
+                                    <svg
+                                      xmlns="http://www.w3.org/2000/svg"
+                                      fill="none"
+                                      viewBox="0 0 24 24"
+                                      stroke="currentColor"
+                                    >
+                                      <path
+                                        strokeLinecap="round"
+                                        strokeLinejoin="round"
+                                        strokeWidth={2}
+                                        d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
+                                      />
+                                    </svg>
+                                    View Registration
+                                  </a>
+                                </Link>
+                                <Link
+                                  href={`/registrations/update?rid=${r._id}`}
+                                >
+                                  <a>
+                                    <svg
+                                      xmlns="http://www.w3.org/2000/svg"
+                                      fill="none"
+                                      viewBox="0 0 24 24"
+                                      stroke="currentColor"
+                                    >
+                                      <path
+                                        strokeLinecap="round"
+                                        strokeLinejoin="round"
+                                        strokeWidth={2}
+                                        d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"
+                                      />
+                                      <path
+                                        strokeLinecap="round"
+                                        strokeLinejoin="round"
+                                        strokeWidth={2}
+                                        d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
+                                      />
+                                    </svg>
+                                    Update Registration
+                                  </a>
+                                </Link>
+                              </>
+                            </Menu>
+                          </div>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            )}
+          </>
         </div>
       </HomeStyles>
+      {router.query.deleteRegistrationModal && (
+        <Notification
+          show={showNotification}
+          setShow={setShowNotification}
+          heading="Successfully deleted!"
+          description="The registration was successfully deleted."
+        />
+      )}
+      {router.query.deleteGameModal && (
+        <Notification
+          show={showNotification}
+          setShow={setShowNotification}
+          heading="Successfully deleted!"
+          description="The game was successfully deleted."
+        />
+      )}
     </Layout>
   );
 }
 
-const HomeStyles = styled.div`
-  padding: 5rem 1.5rem;
+const HomeStyles = styled.div<{ showDeleteButton: boolean }>`
+  padding: 5rem 2.5rem;
   background-color: #f3f4f6;
   min-height: 100vh;
 
-  .wrapper {
+  .container {
     margin: 0 auto;
-    max-width: 70rem;
+    max-width: 77.5rem;
     width: 100%;
   }
 
   h2 {
-    margin: 0 0 1.25rem;
+    margin: 0 0 1.125rem;
     font-size: 1.5rem;
     font-weight: 600;
-    color: #1f2937;
+    color: #111827;
     text-align: center;
   }
 
   h3 {
-    margin: 0 0 3.5rem;
-    font-weight: 500;
+    margin: 0 0 2.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.75rem;
+    font-weight: 400;
     text-transform: uppercase;
     letter-spacing: 0.15em;
     text-align: center;
-    color: #9ca3af;
+    color: #d1d5db;
+
+    span {
+      font-size: 1.125rem;
+      font-weight: 600;
+      color: #9ca3af;
+    }
   }
 
-  .table-wrapper {
+  .table-actions-row {
+    display: flex;
+    justify-content: space-between;
+  }
+
+  .search {
+    position: relative;
+    width: 16rem;
+
+    .icon {
+      position: absolute;
+      top: 0.625rem;
+      left: 0.75rem;
+      height: 1.125rem;
+      width: 1.125rem;
+      color: #9ca3af;
+      pointer-events: none;
+    }
+
+    .delete-search-button {
+      position: absolute;
+      top: 0.6875rem;
+      right: 0.75rem;
+      height: 1rem;
+      width: 1rem;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background-color: transparent;
+      border: none;
+      color: ${props => (props.showDeleteButton ? '#374151' : 'transparent')};
+      cursor: pointer;
+      pointer-events: ${props => (props.showDeleteButton ? 'auto' : 'none')};
+
+      svg {
+        flex-shrink: 0;
+        height: 0.875rem;
+        width: 0.875rem;
+      }
+
+      &:hover {
+        color: #000;
+      }
+    }
+
+    input {
+      padding-left: 2.375rem;
+      width: 100%;
+      border-radius: 0.3125rem;
+    }
+  }
+
+  .table-container {
     padding: 0.75rem;
-    overflow: hidden;
+    overflow: visible;
     background-color: #fff;
-    border-radius: 0.125rem;
+    border-radius: 0.375rem;
     box-shadow: rgba(0, 0, 0, 0) 0px 0px 0px 0px,
       rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0.1) 0px 1px 3px 0px,
       rgba(0, 0, 0, 0.06) 0px 1px 2px 0px;
@@ -276,17 +418,12 @@ const HomeStyles = styled.div`
   }
 
   th {
-    padding: 0.75rem 1.5rem;
-    text-align: left;
+    padding: 0.75rem 1rem;
     font-size: 0.75rem;
     font-weight: 600;
     color: #6b7280;
     text-transform: uppercase;
     letter-spacing: 0.05em;
-
-    &.text-right {
-      text-align: right;
-    }
   }
 
   tbody {
@@ -299,76 +436,50 @@ const HomeStyles = styled.div`
   }
 
   td {
-    padding: 0.875rem 1.5rem;
+    padding: 0.875rem 1rem;
     white-space: nowrap;
-    font-size: 0.875rem;
+    font-size: 0.8125rem;
     font-weight: 500;
     color: #6b7280;
     border-bottom: 1px solid #edf0f3;
+
+    a:hover {
+      text-decoration: underline;
+    }
   }
 
-  .sessions {
-    font-size: 0.75rem;
-    font-weight: 600;
-    text-transform: uppercase;
-    letter-spacing: 0.025em;
+  .camper {
+    display: flex;
+    flex-direction: column;
+    gap: 0.125rem;
   }
 
   .camper-name {
-    margin: 0 0 0.125rem;
     font-size: 0.9375rem;
     font-weight: 600;
-    color: #4b5563;
+    color: #111827;
   }
 
-  .camper-email {
-    font-size: 0.875rem;
+  .camper-location {
+    font-size: 0.75rem;
     font-weight: 500;
     color: #9ca3af;
   }
 
-  .sessions {
-    display: flex;
-    flex-direction: column;
-    gap: 0.375rem;
-  }
-
-  .sessions > div {
-    display: flex;
-    align-items: center;
-    line-height: 1;
-
-    .attending,
-    .not-attending {
-      margin: 0 0.375rem 0 0;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      height: 1rem;
-      width: 1rem;
-      border-radius: 9999px;
-
-      svg {
-        height: 1rem;
-        width: 1rem;
-      }
-    }
-
-    .attending {
-      color: #0ea5e9;
-    }
-
-    .not-attending {
-      color: #dc2626;
-    }
-  }
-
-  .email a:hover {
+  .sessions a:hover {
     text-decoration: underline;
   }
 
-  .status {
-    text-align: center;
+  .sessions,
+  .contact {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+  }
+
+  .not-attending {
+    color: #b91c1c;
+    text-decoration: line-through;
   }
 
   .paid,
@@ -387,47 +498,64 @@ const HomeStyles = styled.div`
   .paid {
     background-color: #dcfce7;
     color: #16a34a;
+    border: 1px solid #bbf7d0;
+    box-shadow: rgba(0, 0, 0, 0) 0px 0px 0px 0px,
+      rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0.05) 0px 1px 2px 0px,
+      inset 0 1px 1px #fff;
   }
 
   .refunded {
-    background-color: #fef3c7;
-    color: #d97706;
+    background-color: #e0e7ff;
+    color: #3730a3;
+    border: 1px solid #c7d2fe;
+    box-shadow: rgba(0, 0, 0, 0) 0px 0px 0px 0px,
+      rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0.05) 0px 1px 2px 0px,
+      inset 0 1px 1px #fff;
   }
 
   .unpaid {
     background-color: #ffe4e6;
     color: #9f1239;
+    border: 1px solid #fecdd3;
+    box-shadow: rgba(0, 0, 0, 0) 0px 0px 0px 0px,
+      rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0.05) 0px 1px 2px 0px,
+      inset 0 1px 1px #fff;
   }
 
-  .links {
+  .menu {
+    position: relative;
+    overflow: visible;
     color: #9ca3af;
-    text-align: right;
+    display: flex;
+    justify-content: center;
+  }
 
-    a {
-      padding: 0.25rem;
-      display: inline-flex;
-      justify-content: center;
-      align-items: center;
-      background-color: transparent;
-      border-radius: 9999px;
-
-      &:first-of-type {
-        margin: 0 0.5rem 0 0;
-      }
-
-      &:hover {
-        background-color: #edf0f3;
-        color: #4b5563;
-      }
-    }
+  .menu-button {
+    margin: 0;
+    padding: 0;
+    height: 1.625rem;
+    width: 1.625rem;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: transparent;
+    border: none;
+    cursor: pointer;
+    color: #9ca3af;
+    border-radius: 9999px;
 
     svg {
-      height: 1.25rem;
-      width: 1.25rem;
+      height: 1.125rem;
+      width: 1.125rem;
+    }
+
+    &:hover {
+      color: #111827;
     }
   }
+`;
 
-  .loading {
-    text-align: center;
-  }
+const RegistrationLoadingSpinner = styled(LoadingSpinner)`
+  display: flex;
+  justify-content: center;
 `;

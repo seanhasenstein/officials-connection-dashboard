@@ -1,5 +1,85 @@
+import * as crypto from 'crypto';
+import { format, formatISO } from 'date-fns';
+import { utcToZonedTime } from 'date-fns-tz';
+import {
+  Game,
+  PaymentMethod,
+  Registration,
+  Session,
+  SessionsQuery,
+} from '../interfaces';
+import { sessionsData } from '../data';
+
+export function getCampAbbreviation(camp: string) {
+  return camp === 'Kaukauna' ? 'Kau' : camp === 'Plymouth' ? 'Ply' : '';
+}
+
+export function getUrlParam(param: string | string[] | undefined) {
+  if (!param) return;
+  return Array.isArray(param) ? param[0] : param;
+}
+
+export function checkForDefault<T>(value: 'default' | T) {
+  return value === 'default' ? '' : value;
+}
+
 export function removeNonDigits(input: string) {
   return input.replace(/\D/g, '');
+}
+
+export function formatToMoney(input: number, includeDecimal = false) {
+  const price = input / 100;
+
+  if (includeDecimal) {
+    return `$${price.toFixed(2)}`;
+  } else {
+    return `$${price}`;
+  }
+}
+
+export function getCategoryAbbreviation(category: string) {
+  return category === "Men's College"
+    ? 'MC'
+    : category === "Women's College"
+    ? 'WC'
+    : category === 'High School'
+    ? 'HS'
+    : '';
+}
+
+function getSessionDays(dates: string) {
+  const array = dates.split(' ');
+  const filteredArray = array.filter(
+    t => t === 'Fri' || t === 'Sat' || t === 'Sun'
+  );
+  return filteredArray.length === 1
+    ? filteredArray[0]
+    : `${filteredArray[0]}/${filteredArray[1]}`;
+}
+
+export function formatSessionName(session: Session) {
+  const camp = getCampAbbreviation(session.camp);
+  const category = getCategoryAbbreviation(session.category);
+  const days = getSessionDays(session.dates);
+  const levels = session.levels ? ` (${session.levels})` : '';
+
+  return `${camp} ${category} ${days}${levels}`;
+}
+
+export function formatSessionNameFromId(id: string) {
+  const session = sessionsData.find(s => s.id === id);
+  if (session) {
+    return formatSessionName(session);
+  }
+}
+
+export function formatGameName(game: Game) {
+  const camp = getCampAbbreviation(game.camp);
+  const category = getCategoryAbbreviation(game.category);
+  const timestamp = format(new Date(game.date), 'EEE @ h:mmaaa');
+  const court = game.court;
+
+  return `${camp} ${category} ${timestamp} - ${court}`;
 }
 
 export function formatPhoneNumber(input: string) {
@@ -15,26 +95,204 @@ export function formatPhoneNumber(input: string) {
     .join('');
 }
 
-export function formatDate(input: string) {
-  const date = new Date(input);
-  const month = months[date.getMonth()];
-  const day = date.getDate();
-  const year = date.getFullYear();
-
-  return `${month} ${day}, ${year}`;
+export function formatZipcode(input: string) {
+  const digits = removeNonDigits(input);
+  const digitsArray = digits.split('');
+  return digitsArray.filter((_d, i) => i < 5).join('');
 }
 
-const months = [
-  'Jan',
-  'Feb',
-  'Mar',
-  'Apr',
-  'May',
-  'June',
-  'July',
-  'Aug',
-  'Sept',
-  'Oct',
-  'Nov',
-  'Dec',
+export function formatGameDate(date: string, time: string) {
+  const hour = Number(time.slice(0, 2));
+  const minute = Number(time.slice(3));
+  const timezone = 'America/Chicago';
+  const zonedTime = utcToZonedTime(date, timezone);
+  zonedTime.setHours(hour, minute);
+  return formatISO(zonedTime);
+}
+
+export function verifySelectedSessions(sessions: Session[]) {
+  const result = sessions.reduce((acc: Session[], currSession: Session) => {
+    const session = sessionsData.find(
+      s => s.id === currSession.id && currSession.isChecked
+    );
+
+    if (!session) return acc;
+
+    const { isChecked, ...rest } = session;
+    return [...acc, { ...rest, attending: currSession.attending }];
+  }, []);
+
+  return result.sort((a: Session, b: Session) => Number(a.id) - Number(b.id));
+}
+
+export function sessionReducer(
+  registrations: Registration[],
+  sessionId: string | undefined
+) {
+  return registrations.reduce(
+    (acc: SessionsQuery, currReg) => {
+      const session = currReg.sessions.find(s => s.id === sessionId);
+
+      if (session) {
+        session.attending
+          ? acc.attending.push(currReg)
+          : acc.notAttending.push(currReg);
+      }
+
+      return acc;
+    },
+    { attending: [], notAttending: [] }
+  );
+}
+
+export function sortString(
+  array: any[],
+  primary: string,
+  secondary = '',
+  direction: 'ascending' | 'descending'
+) {
+  if (direction === 'ascending') {
+    return array.sort((a, b) => {
+      if (a[primary] === b[primary]) {
+        return a[secondary] < b[secondary] ? -1 : 1;
+      }
+      return a[primary] < b[primary] ? -1 : 1;
+    });
+  } else {
+    return array.sort((a, b) => {
+      if (a[primary] === b[primary]) {
+        return a[secondary] < b[secondary] ? 1 : -1;
+      }
+      return a[primary] < b[primary] ? 1 : -1;
+    });
+  }
+}
+
+function calculateSubtotal(
+  subtotal: number,
+  paymentAmount: number,
+  paymentMethod: PaymentMethod,
+  discount: 'true' | 'false'
+) {
+  if (paymentMethod === 'free') {
+    return 0;
+  }
+
+  if (paymentMethod === 'card') {
+    return subtotal;
+  }
+
+  if (discount === 'true') {
+    return paymentAmount * 100 + 1000;
+  }
+
+  return paymentAmount * 100;
+}
+
+function calculateTotal(
+  paymentMethod: PaymentMethod,
+  paymentAmount: number,
+  total: number
+) {
+  if (paymentMethod === 'free') {
+    return 0;
+  }
+
+  if (paymentMethod === 'card') {
+    return total;
+  }
+
+  return paymentAmount * 100;
+}
+
+export function calculateTotals(
+  subtotal: number,
+  total: number,
+  paymentAmount: number,
+  paymentMethod: PaymentMethod,
+  discount: 'true' | 'false'
+) {
+  const s = calculateSubtotal(subtotal, paymentAmount, paymentMethod, discount);
+  const t = calculateTotal(paymentMethod, paymentAmount, total);
+  return { subtotal: s, total: t };
+}
+
+const NUM = '0123456789';
+
+export function createIdNumber() {
+  const rnd = crypto.randomBytes(11);
+  const value = new Array(11);
+  const charsLength = NUM.length;
+
+  for (let i = 0; i < value.length; i++) {
+    if (i === 5) {
+      value[5] = '-';
+    } else {
+      value[i] = NUM[rnd[i] % charsLength];
+    }
+  }
+
+  return value.join('');
+}
+
+export function splitCamelCase(term: string) {
+  return term.split(/(?=[A-Z])/).join(' ');
+}
+
+export const stateList = [
+  { value: 'AK', text: 'Alaska' },
+  { value: 'AL', text: 'Alabama' },
+  { value: 'AR', text: 'Arkansas' },
+  { value: 'AS', text: 'American Samoa' },
+  { value: 'AZ', text: 'Arizona' },
+  { value: 'CA', text: 'California' },
+  { value: 'CO', text: 'Colorado' },
+  { value: 'CT', text: 'Connecticut' },
+  { value: 'DC', text: 'District of Columbia' },
+  { value: 'DE', text: 'Delaware' },
+  { value: 'FL', text: 'Florida' },
+  { value: 'GA', text: 'Georgia' },
+  { value: 'GU', text: 'Guam' },
+  { value: 'HI', text: 'Hawaii' },
+  { value: 'IA', text: 'Iowa' },
+  { value: 'ID', text: 'Idaho' },
+  { value: 'IL', text: 'Illinois' },
+  { value: 'IN', text: 'Indiana' },
+  { value: 'KS', text: 'Kansas' },
+  { value: 'KY', text: 'Kentucky' },
+  { value: 'LA', text: 'Louisiana' },
+  { value: 'MA', text: 'Massachusetts' },
+  { value: 'MD', text: 'Maryland' },
+  { value: 'ME', text: 'Maine' },
+  { value: 'MI', text: 'Michigan' },
+  { value: 'MN', text: 'Minnesota' },
+  { value: 'MO', text: 'Missouri' },
+  { value: 'MS', text: 'Mississippi' },
+  { value: 'MT', text: 'Montana' },
+  { value: 'NC', text: 'North Carolina' },
+  { value: 'ND', text: 'North Dakota' },
+  { value: 'NE', text: 'Nebraska' },
+  { value: 'NH', text: 'New Hampshire' },
+  { value: 'NJ', text: 'New Jersey' },
+  { value: 'NM', text: 'New Mexico' },
+  { value: 'NV', text: 'Nevada' },
+  { value: 'NY', text: 'New York' },
+  { value: 'OH', text: 'Ohio' },
+  { value: 'OK', text: 'Oklahoma' },
+  { value: 'OR', text: 'Oregon' },
+  { value: 'PA', text: 'Pennsylvania' },
+  { value: 'PR', text: 'Puerto Rico' },
+  { value: 'RI', text: 'Rhode Island' },
+  { value: 'SC', text: 'South Carolina' },
+  { value: 'SD', text: 'South Dakota' },
+  { value: 'TN', text: 'Tennessee' },
+  { value: 'TX', text: 'Texas' },
+  { value: 'UT', text: 'Utah' },
+  { value: 'VA', text: 'Virginia' },
+  { value: 'VI', text: 'Virgin Islands' },
+  { value: 'VT', text: 'Vermont' },
+  { value: 'WA', text: 'Washington' },
+  { value: 'WI', text: 'Wisconsin' },
+  { value: 'WV', text: 'West Virginia' },
+  { value: 'WY', text: 'Wyoming' },
 ];
