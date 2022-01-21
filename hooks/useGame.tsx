@@ -1,7 +1,7 @@
 import React from 'react';
 import { useRouter } from 'next/router';
 import { useMutation, useQuery, useQueryClient } from 'react-query';
-import { getUrlParam } from '../utils';
+import { getUrlParam } from '../utils/misc';
 import { Game, GameInput, GameOfficial } from '../interfaces';
 import { gameKeys } from './queries';
 

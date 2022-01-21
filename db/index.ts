@@ -1,5 +1,7 @@
-import * as registrations from './registrations';
-import * as games from './games';
+import * as game from './game';
+import * as registration from './registration';
+import * as year from './year';
 
 export { connectToDb } from './connect';
-export { registrations, games };
+
+export { game, registration, year };

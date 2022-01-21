@@ -1,4 +1,5 @@
 import React from 'react';
+import Head from 'next/head';
 import { useRouter } from 'next/router';
 import { signOut } from 'next-auth/react';
 import Link from 'next/link';
@@ -8,9 +9,10 @@ import Sidebar from './Sidebar';
 
 type Props = {
   children: React.ReactNode;
+  title?: string;
 };
 
-export default function Layout({ children }: Props) {
+export default function Layout({ children, title = 'WBYOC Dashboard' }: Props) {
   const router = useRouter();
   const [isOpen, setIsOpen] = React.useState(false);
 
@@ -21,6 +23,9 @@ export default function Layout({ children }: Props) {
   return (
     <LayoutStyles>
       <GlobalStyles />
+      <Head>
+        <title>{title}</title>
+      </Head>
       <Sidebar isOpen={isOpen} setIsOpen={setIsOpen} />
       <div className="secondary-nav">
         <div className="container">
@@ -49,10 +54,10 @@ export default function Layout({ children }: Props) {
                 <a>All Registrations</a>
               </Link>
               <Link href="/games/camp/Kaukauna">
-                <a>Kaukauna Schedule</a>
+                <a>Kaukauna Games</a>
               </Link>
               <Link href="/games/camp/Plymouth">
-                <a>Plymouth Schedule</a>
+                <a>Plymouth Games</a>
               </Link>
             </nav>
             <button

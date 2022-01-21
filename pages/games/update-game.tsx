@@ -5,14 +5,14 @@ import styled from 'styled-components';
 import { format } from 'date-fns';
 import { Formik, Form, Field } from 'formik';
 import { Game } from '../../interfaces';
-import { formatGameName } from '../../utils';
+import { formatGameName } from '../../utils/misc';
 import useGame from '../../hooks/useGame';
-import useSession from '../../hooks/useSessions';
+import useAuthSession from '../../hooks/useAuthSession';
 import Layout from '../../components/Layout';
 import LoadingSpinner from '../../components/LoadingSpinner';
 
 export default function UpdateFilmedGame() {
-  const [session, sessionLoading] = useSession();
+  const [session, sessionLoading] = useAuthSession();
   const router = useRouter();
   const { gameQuery, updateGame } = useGame();
   const [date, setDate] = React.useState<string>(() => {

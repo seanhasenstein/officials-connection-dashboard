@@ -8,14 +8,13 @@ import {
   Session,
   SessionsQuery,
 } from '../interfaces';
-import { sessionsData } from '../data';
 
 export function getCampAbbreviation(camp: string) {
   return camp === 'Kaukauna' ? 'Kau' : camp === 'Plymouth' ? 'Ply' : '';
 }
 
 export function getUrlParam(param: string | string[] | undefined) {
-  if (!param) return;
+  if (!param) return '';
   return Array.isArray(param) ? param[0] : param;
 }
 
@@ -58,7 +57,7 @@ function getSessionDays(dates: string) {
 }
 
 export function formatSessionName(session: Session) {
-  const camp = getCampAbbreviation(session.camp);
+  const camp = getCampAbbreviation(session.camp.name);
   const category = getCategoryAbbreviation(session.category);
   const days = getSessionDays(session.dates);
   const levels = session.levels ? ` (${session.levels})` : '';
@@ -66,8 +65,8 @@ export function formatSessionName(session: Session) {
   return `${camp} ${category} ${days}${levels}`;
 }
 
-export function formatSessionNameFromId(id: string) {
-  const session = sessionsData.find(s => s.id === id);
+export function formatSessionNameFromId(sessions: Session[], id: string) {
+  const session = sessions.find(s => s.sessionId === id);
   if (session) {
     return formatSessionName(session);
   }
@@ -110,19 +109,30 @@ export function formatGameDate(date: string, time: string) {
   return formatISO(zonedTime);
 }
 
-export function verifySelectedSessions(sessions: Session[]) {
-  const result = sessions.reduce((acc: Session[], currSession: Session) => {
-    const session = sessionsData.find(
-      s => s.id === currSession.id && currSession.isChecked
-    );
+export function verifySelectedSessions(
+  unverifiedSessions: Session[],
+  serverSessions: Session[]
+) {
+  const verifiedSessions = unverifiedSessions.reduce(
+    (acc: Session[], currSession: Session) => {
+      if (currSession.isChecked) {
+        const session = serverSessions.find(
+          s => s.sessionId === currSession.sessionId
+        );
 
-    if (!session) return acc;
+        if (!session) return acc;
 
-    const { isChecked, ...rest } = session;
-    return [...acc, { ...rest, attending: currSession.attending }];
-  }, []);
+        const { isChecked, active, createdAt, updatedAt, ...formattedSession } =
+          currSession;
+        return [...acc, { ...formattedSession }];
+      }
 
-  return result.sort((a: Session, b: Session) => Number(a.id) - Number(b.id));
+      return acc;
+    },
+    []
+  );
+
+  return verifiedSessions;
 }
 
 export function sessionReducer(
@@ -131,7 +141,7 @@ export function sessionReducer(
 ) {
   return registrations.reduce(
     (acc: SessionsQuery, currReg) => {
-      const session = currReg.sessions.find(s => s.id === sessionId);
+      const session = currReg.sessions.find(s => s.sessionId === sessionId);
 
       if (session) {
         session.attending
@@ -168,52 +178,40 @@ export function sortString(
   }
 }
 
-function calculateSubtotal(
-  subtotal: number,
-  paymentAmount: number,
-  paymentMethod: PaymentMethod,
-  discount: 'true' | 'false'
-) {
+function calculateSubtotal(paymentMethod: PaymentMethod, subtotal: number) {
   if (paymentMethod === 'free') {
     return 0;
   }
 
-  if (paymentMethod === 'card') {
-    return subtotal;
-  }
-
-  if (discount === 'true') {
-    return paymentAmount * 100 + 1000;
-  }
-
-  return paymentAmount * 100;
+  return subtotal * 100;
 }
 
 function calculateTotal(
   paymentMethod: PaymentMethod,
-  paymentAmount: number,
-  total: number
+  subtotal: number,
+  refundAmount: number,
+  discountAmount: number
 ) {
   if (paymentMethod === 'free') {
     return 0;
   }
 
-  if (paymentMethod === 'card') {
-    return total;
-  }
-
-  return paymentAmount * 100;
+  return (subtotal - refundAmount - discountAmount) * 100;
 }
 
 export function calculateTotals(
-  subtotal: number,
-  total: number,
-  paymentAmount: number,
   paymentMethod: PaymentMethod,
-  discount: 'true' | 'false'
+  subtotal: number,
+  refundAmount: number,
+  discountAmount: number
 ) {
-  const s = calculateSubtotal(subtotal, paymentAmount, paymentMethod, discount);
-  const t = calculateTotal(paymentMethod, paymentAmount, total);
+  const s = calculateSubtotal(paymentMethod, subtotal);
+  const t = calculateTotal(
+    paymentMethod,
+    subtotal,
+    refundAmount,
+    discountAmount
+  );
   return { subtotal: s, total: t };
 }
 

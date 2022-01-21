@@ -7,9 +7,14 @@ import {
   SortOrder,
   SortVariable,
 } from '../interfaces';
-import { formatSessionNameFromId, sortString, splitCamelCase } from '../utils';
+import {
+  formatSessionNameFromId,
+  sortString,
+  splitCamelCase,
+} from '../utils/misc';
 import RegistrationFilter from './RegistrationFilter';
 import RegistrationSort from './RegistrationSort';
+import { useYearQuery } from '../hooks/useYearQuery';
 
 type Props = {
   regQueryData: Registration[] | undefined;
@@ -32,6 +37,7 @@ export default function SortAndFilter({
   setFilterOptions,
   setRegistrations,
 }: Props) {
+  const { isLoading, sessions } = useYearQuery();
   const { isOpen, setIsOpen, handleMenuButtonClick, activeMenuId } = useMenu();
 
   React.useEffect(() => {
@@ -45,7 +51,7 @@ export default function SortAndFilter({
         const includesASession =
           filterOptions.sessions.length > 0
             ? filterOptions.sessions.some(s =>
-                r.sessions.some(rs => rs.id === s)
+                r.sessions.some(rs => rs.sessionId === s)
               )
             : true;
 
@@ -114,6 +120,14 @@ export default function SortAndFilter({
     setFilterOptions(prevState => ({ ...prevState, sessions: update }));
   };
 
+  if (isLoading) {
+    return <div />;
+  }
+
+  if (!sessions) {
+    throw new Error("Failed to load the year's sessions");
+  }
+
   return (
     <SortAndFilterStyles>
       <RegistrationSort
@@ -158,7 +172,7 @@ export default function SortAndFilter({
         ))}
         {filterOptions.sessions.map(s => (
           <div key={s} className="filter-item">
-            {formatSessionNameFromId(s)}
+            {formatSessionNameFromId(sessions, s)}
             <button
               type="button"
               onClick={() => handleSessionRemoval(s)}
@@ -194,7 +208,6 @@ const SortAndFilterStyles = styled.div`
   }
 
   .filter-items {
-    margin: 0 0 1.125rem;
     display: flex;
     align-items: center;
     flex-wrap: wrap;

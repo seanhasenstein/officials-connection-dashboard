@@ -37,9 +37,12 @@ export default function Unauthorized() {
 }
 
 const UnauthorizedStyles = styled.div`
-  padding: 5rem 1.5rem;
+  padding: 6rem 1.5rem;
   min-height: 100vh;
   background-color: #f9fafb;
+  background-image: url('/hero-background.svg');
+  background-size: 1280px auto;
+  background-position: top -40px center;
 
   h1 {
     margin: 0 0 4px;
@@ -124,7 +127,8 @@ const UnauthorizedStyles = styled.div`
     }
 
     &:focus-visible {
-      text-decoration: underline;
+      box-shadow: rgb(255, 255, 255) 0px 0px 0px 2px, #2563eb 0px 0px 0px 4px,
+        rgba(0, 0, 0, 0.05) 0px 1px 2px 0px;
     }
   }
 `;

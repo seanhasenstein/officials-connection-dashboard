@@ -1,10 +1,10 @@
 import React from 'react';
 import styled from 'styled-components';
 import { FilterOptions } from '../interfaces';
-import { sessionsData } from '../data';
-import { formatSessionName } from '../utils';
-import useOutsideClick from '../hooks/useOutsideClick';
+import { formatSessionName } from '../utils/misc';
 import useEscapeKeydownClose from '../hooks/useEscapeKeydownClose';
+import useOutsideClick from '../hooks/useOutsideClick';
+import { useYearQuery } from '../hooks/useYearQuery';
 
 type Props = {
   filter: { paymentStatus: string[]; sessions: string[] };
@@ -30,6 +30,7 @@ export default function RegistrationFilter({
   setIsOpen,
   handleMenuButtonClick,
 }: Props) {
+  const { sessions } = useYearQuery();
   const [active, setActive] = React.useState<Nav>('paymentStatus');
   const containerRef = React.useRef<HTMLDivElement>(null);
   useOutsideClick(isOpen, setIsOpen, containerRef);
@@ -122,17 +123,17 @@ export default function RegistrationFilter({
           )}
           {active === 'session' && (
             <>
-              {sessionsData.map(s => (
-                <div key={s.id} className="checkbox-item">
+              {sessions?.map(s => (
+                <div key={s.sessionId} className="checkbox-item">
                   <input
                     type="checkbox"
                     name="sessions"
-                    id={s.id}
-                    value={s.id}
-                    checked={filter.sessions.includes(s.id)}
+                    id={s.sessionId}
+                    value={s.sessionId}
+                    checked={filter.sessions.includes(s.sessionId)}
                     onChange={handleCheckboxChange}
                   />
-                  <label htmlFor={s.id}>{formatSessionName(s)}</label>
+                  <label htmlFor={s.sessionId}>{formatSessionName(s)}</label>
                 </div>
               ))}
             </>
@@ -150,7 +151,6 @@ const RegistrationFilterStyles = styled.div<{ isOpen: boolean }>`
   .action-button {
     position: relative;
     flex-shrink: 0;
-    margin: 0 0 1.125rem;
     padding: 0.375rem 0.875rem;
     display: flex;
     align-items: center;

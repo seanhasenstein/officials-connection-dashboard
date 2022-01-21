@@ -4,14 +4,14 @@ import Link from 'next/link';
 import styled from 'styled-components';
 import { format } from 'date-fns';
 import useGame from '../../hooks/useGame';
-import useSession from '../../hooks/useSessions';
+import useAuthSession from '../../hooks/useAuthSession';
 import Layout from '../../components/Layout';
 import Menu from '../../components/Menu';
 import LoadingSpinner from '../../components/LoadingSpinner';
 import DeleteModal from '../../components/DeleteModal';
 
 export default function Game() {
-  const [session, sessionLoading] = useSession();
+  const [session, sessionLoading] = useAuthSession();
   const router = useRouter();
   const { gameQuery, deleteGame } = useGame();
   const [isMenuOpen, setIsMenuOpen] = React.useState(false);
@@ -70,47 +70,9 @@ export default function Game() {
                   <Link
                     href={`/games/update-game?gid=${gameQuery.data._id}&camp=${gameQuery.data.camp}`}
                   >
-                    <a>
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        fill="none"
-                        viewBox="0 0 24 24"
-                        stroke="currentColor"
-                      >
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          strokeWidth={2}
-                          d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"
-                        />
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          strokeWidth={2}
-                          d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
-                        />
-                      </svg>
-                      Update Game
-                    </a>
+                    <a>Update Game</a>
                   </Link>
-                  <button
-                    type="button"
-                    onClick={handleDeleteMenuClick}
-                    className="delete-button"
-                  >
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      fill="none"
-                      viewBox="0 0 24 24"
-                      stroke="currentColor"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth={2}
-                        d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
-                      />
-                    </svg>
+                  <button type="button" onClick={handleDeleteMenuClick}>
                     Delete Game
                   </button>
                 </GameMenu>
@@ -156,7 +118,9 @@ export default function Game() {
             </div>
             <div>
               <h3>Officials</h3>
-              {gameQuery?.data?.officials ? (
+              {gameQuery.data.officials.length < 1 ? (
+                <div className="empty">No officials selected</div>
+              ) : gameQuery.data.officials ? (
                 <div className="campers">
                   {gameQuery.data.officials.map(o => (
                     <Link key={o.key} href={`/registrations/${o.rid}`}>
@@ -333,13 +297,7 @@ const GameStyles = styled.div`
 
 const GameMenu = styled(Menu)`
   top: 5.25rem;
-  right: 3.5rem;
-
-  .delete-button:hover,
-  .delete-button:hover svg {
-    color: #b91c1c;
-    text-decoration: underline;
-  }
+  right: -3rem;
 `;
 
 const GameSpinner = styled(LoadingSpinner)`

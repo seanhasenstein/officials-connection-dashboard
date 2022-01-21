@@ -7,19 +7,30 @@ import {
   formatPhoneNumber,
   formatSessionName,
   formatToMoney,
-} from '../../utils';
-import useRegistration from '../../hooks/useRegistration';
-import useSession from '../../hooks/useSessions';
+  getUrlParam,
+} from '../../utils/misc';
+import { useRegistrationQuery } from '../../hooks/useRegistrationQuery';
+import { useDeleteRegistration } from '../../hooks/useDeleteRegistration';
+import { useRegistrationNoteMutations } from '../../hooks/useRegistrationNoteMutations';
+import useAuthSession from '../../hooks/useAuthSession';
 import Layout from '../../components/Layout';
 import Menu from '../../components/Menu';
-import NotesSection from '../../components/NoteSection';
+import Notes from '../../components/Notes';
 import LoadingSpinner from '../../components/LoadingSpinner';
 import DeleteModal from '../../components/DeleteModal';
 
 export default function Registration() {
-  const [session, sessionLoading] = useSession();
+  const [session, sessionLoading] = useAuthSession();
   const router = useRouter();
-  const { registrationQuery: rq, deleteRegistration } = useRegistration();
+  const {
+    isLoading,
+    error,
+    data: registration,
+  } = useRegistrationQuery(getUrlParam(router.query.rid));
+  const deleteRegistration = useDeleteRegistration();
+  const { addNote, deleteNote } = useRegistrationNoteMutations(
+    getUrlParam(router.query.rid)
+  );
   const [isMenuOpen, setIsMenuOpen] = React.useState(false);
   const [showDeleteModal, setShowDeleteModal] = React.useState(false);
 
@@ -29,7 +40,7 @@ export default function Registration() {
   };
 
   const deleteCallback = () =>
-    deleteRegistration.mutate(`${rq.data?._id}`, {
+    deleteRegistration.mutate(`${registration?._id}`, {
       onSuccess: () => router.push('/?deleteRegistrationModal=true', '/'),
     });
 
@@ -39,11 +50,9 @@ export default function Registration() {
     <Layout>
       <RegistrationStyles>
         <div className="container">
-          {rq.isLoading && <RegistrationSpinner isLoading={rq.isLoading} />}
-          {rq.isError && rq.error instanceof Error && (
-            <div>Error: {rq.error.message}</div>
-          )}
-          {rq.data && (
+          {isLoading && <RegistrationSpinner isLoading={isLoading} />}
+          {error instanceof Error && <div>Error: {error.message}</div>}
+          {registration && (
             <div className="box">
               <div className="header">
                 <div className="row">
@@ -62,15 +71,15 @@ export default function Registration() {
                   </div>
                   <div>
                     <p className="name">
-                      {rq.data.firstName} {rq.data.lastName}
+                      {registration.firstName} {registration.lastName}
                     </p>
                     <div className="column">
                       <p className="details">
-                        Registration <span>#{rq.data.registrationId}</span>
+                        Registration <span>#{registration.registrationId}</span>
                       </p>
                       <p className="details">
                         {format(
-                          new Date(rq.data.createdAt),
+                          new Date(registration.createdAt),
                           "LLLL dd, yyyy 'at' h:mmaaa"
                         )}
                       </p>
@@ -99,48 +108,12 @@ export default function Registration() {
                     </svg>
                   </button>
                   <RegistrationMenu open={isMenuOpen} setOpen={setIsMenuOpen}>
-                    <Link href={`/registrations/update?rid=${rq.data._id}`}>
-                      <a>
-                        <svg
-                          xmlns="http://www.w3.org/2000/svg"
-                          fill="none"
-                          viewBox="0 0 24 24"
-                          stroke="currentColor"
-                        >
-                          <path
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            strokeWidth={2}
-                            d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"
-                          />
-                          <path
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            strokeWidth={2}
-                            d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
-                          />
-                        </svg>
-                        Update Registration
-                      </a>
-                    </Link>
-                    <button
-                      type="button"
-                      className="delete-button"
-                      onClick={handleDeleteMenuClick}
+                    <Link
+                      href={`/registrations/update?rid=${registration._id}`}
                     >
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        fill="none"
-                        viewBox="0 0 24 24"
-                        stroke="currentColor"
-                      >
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          strokeWidth={2}
-                          d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
-                        />
-                      </svg>
+                      <a>Update Registration</a>
+                    </Link>
+                    <button type="button" onClick={handleDeleteMenuClick}>
                       Delete Registration
                     </button>
                   </RegistrationMenu>
@@ -151,44 +124,49 @@ export default function Registration() {
                   <div className="vertical-item">
                     <h3>Email</h3>
                     <p>
-                      <a href={`mailto:${rq.data.email}`}>{rq.data.email}</a>
+                      <a href={`mailto:${registration.email}`}>
+                        {registration.email}
+                      </a>
                     </p>
                   </div>
                   <div className="vertical-item">
                     <h3>Phone</h3>
-                    <p>{formatPhoneNumber(rq.data.phone)}</p>
+                    <p>{formatPhoneNumber(registration.phone)}</p>
                   </div>
                   <div className="vertical-item">
                     <h3>Address</h3>
                     <p>
-                      {rq.data.address.street} <br />
-                      {rq.data.address.street2 && (
+                      {registration.address.street} <br />
+                      {registration.address.street2 && (
                         <>
-                          Apt. {rq.data.address.street2} <br />
+                          Apt. {registration.address.street2} <br />
                         </>
                       )}
-                      {rq.data.address.city}
-                      {rq.data.address.city &&
-                        rq.data.address.state &&
+                      {registration.address.city}
+                      {registration.address.city &&
+                        registration.address.state &&
                         ','}{' '}
-                      {rq.data.address.state} {rq.data.address.zipcode}
+                      {registration.address.state}{' '}
+                      {registration.address.zipcode}
                     </p>
                   </div>
                   <div className="vertical-item">
                     <h3>Food Allergies</h3>
                     <p>
-                      {rq.data.foodAllergies
-                        ? rq.data.foodAllergies
+                      {registration.foodAllergies
+                        ? registration.foodAllergies
                         : 'None provided'}{' '}
                     </p>
                   </div>
                   <div className="vertical-item">
                     <h3>Emergency Contact</h3>
                     <p>
-                      {rq.data.emergencyContact.name ? (
+                      {registration.emergencyContact.name ? (
                         <>
-                          {rq.data.emergencyContact.name} <br />
-                          {formatPhoneNumber(rq.data.emergencyContact.phone)}
+                          {registration.emergencyContact.name} <br />
+                          {formatPhoneNumber(
+                            registration.emergencyContact.phone
+                          )}
                         </>
                       ) : (
                         'None provided'
@@ -198,16 +176,18 @@ export default function Registration() {
                 </div>
                 <div>
                   <div className="vertical-item">
-                    <h3>Session{rq.data.sessions.length > 1 && 's'}</h3>
+                    <h3>Session{registration.sessions.length > 1 && 's'}</h3>
                     <div className="list">
-                      {rq.data.sessions.map(s => (
+                      {registration.sessions.map(s => (
                         <p
-                          key={s.id}
+                          key={s.sessionId}
                           className={
                             s.attending ? 'attending' : 'not-attending'
                           }
                         >
-                          <Link href={`/registrations/session?sid=${s.id}`}>
+                          <Link
+                            href={`/registrations/session?sid=${s.sessionId}`}
+                          >
                             {formatSessionName(s)}
                           </Link>
                         </p>
@@ -217,29 +197,30 @@ export default function Registration() {
                   <div className="vertical-item">
                     <h3>Crew Members</h3>
                     <div className="list">
-                      {rq.data.crewMembers.length > 0 ? (
-                        rq.data.crewMembers?.map(m => <p key={m}>{m}</p>)
+                      {registration.crewMembers &&
+                      registration.crewMembers.length > 0 ? (
+                        registration.crewMembers?.map(m => <p key={m}>{m}</p>)
                       ) : (
                         <p>None</p>
                       )}
                     </div>
                   </div>
-                  {rq.data.wiaaClass && (
+                  {registration.wiaaClass && (
                     <div className="vertical-item">
                       <h3>WIAA Class</h3>
-                      <p>{rq.data.wiaaClass}</p>
+                      <p>{registration.wiaaClass}</p>
                     </div>
                   )}
-                  {rq.data.wiaaNumber && (
+                  {registration.wiaaNumber && (
                     <div className="vertical-item">
                       <h3>WIAA Number</h3>
-                      <p>{rq.data.wiaaNumber}</p>
+                      <p>{registration.wiaaNumber}</p>
                     </div>
                   )}
-                  {rq.data.associations && (
+                  {registration.associations && (
                     <div className="vertical-item">
                       <h3>Associations</h3>
-                      <p>{rq.data.associations}</p>
+                      <p>{registration.associations}</p>
                     </div>
                   )}
                 </div>
@@ -248,77 +229,76 @@ export default function Registration() {
                     <div className="horizontal-item">
                       <h3>Status</h3>
                       <p>
-                        {rq.data.paymentStatus === 'paid' && (
+                        {registration.paymentStatus === 'paid' && (
                           <span className="paid">Paid</span>
                         )}
-                        {rq.data.paymentStatus === 'fullyRefunded' && (
+                        {registration.paymentStatus === 'fullyRefunded' && (
                           <span className="refunded">Full refund</span>
                         )}
-                        {rq.data.paymentStatus === 'partiallyRefunded' && (
+                        {registration.paymentStatus === 'partiallyRefunded' && (
                           <span className="refunded">Partial refund</span>
                         )}
-                        {rq.data.paymentStatus === 'unpaid' && (
+                        {registration.paymentStatus === 'unpaid' && (
                           <span className="unpaid">Needs to pay</span>
                         )}
                       </p>
                     </div>
                     <div className="horizontal-item">
                       <h3>Method:</h3>
-                      <p className="capitalize">{rq.data.paymentMethod}</p>
+                      <p className="capitalize">{registration.paymentMethod}</p>
                     </div>
-                    {rq.data.paymentMethod === 'check' && (
+                    {registration.paymentMethod === 'check' && (
                       <div className="horizontal-item">
                         <h3>Check #</h3>
-                        <p>{rq.data.checkNumber}</p>
+                        <p>{registration.checkNumber}</p>
                       </div>
                     )}
-                    {rq.data.refundAmount > 0 && (
-                      <div className="horizontal-item">
-                        <h3>Refund Amount</h3>
-                        <p>{formatToMoney(rq.data.refundAmount, true)}</p>
-                      </div>
-                    )}
-                    {rq.data.paymentMethod === 'card' && (
+                    {registration.paymentMethod === 'card' && (
                       <div className="horizontal-item">
                         <h3>Stripe Id</h3>
                         <p>
                           <a
-                            href={`https://dashboard.stripe.com/payments/${rq.data.stripeId}`}
+                            href={`https://dashboard.stripe.com/payments/${registration.stripeId}`}
                             target="_blank"
                             rel="noreferrer"
                           >
-                            {rq.data.stripeId}
+                            {registration.stripeId}
                           </a>
                         </p>
                       </div>
                     )}
                     <div className="horizontal-item">
                       <h3>Subtotal:</h3>
-                      <p>{formatToMoney(rq.data.subtotal, true)}</p>
+                      <p>{formatToMoney(registration.subtotal, true)}</p>
                     </div>
+                    {registration.refundAmount > 0 && (
+                      <div className="horizontal-item">
+                        <h3>Refund Amount</h3>
+                        <p>{formatToMoney(registration.refundAmount, true)}</p>
+                      </div>
+                    )}
                     <div className="horizontal-item">
                       <h3>Discount:</h3>
-                      <p>{rq.data.discount ? '$10.00' : '$0.00'}</p>
+                      <p>{formatToMoney(registration.discount.amount, true)}</p>
                     </div>
                     <div className="horizontal-item total">
                       <h3>Total:</h3>
-                      <p>
-                        {formatToMoney(
-                          rq.data.total - rq.data.refundAmount,
-                          true
-                        )}
-                      </p>
+                      <p>{formatToMoney(registration.total, true)}</p>
                     </div>
                   </div>
                   <div className="notes-section">
-                    <NotesSection id={rq.data._id} notes={rq.data.notes} />
+                    <Notes
+                      notes={registration.notes}
+                      addNote={addNote}
+                      deleteNote={deleteNote}
+                    />
                   </div>
                 </div>
               </div>
             </div>
           )}
         </div>
-        {rq.data?._id && (
+        {registration?._id && (
           <DeleteModal
             showModal={showDeleteModal}
             setShowModal={setShowDeleteModal}
@@ -448,42 +428,29 @@ const RegistrationStyles = styled.div`
   .paid,
   .refunded,
   .unpaid {
-    margin: 0.375rem 0 0;
-    padding: 0 0.5rem;
+    padding: 0.25rem 0.4375rem;
     display: inline-flex;
     font-size: 0.6875rem;
     font-weight: 600;
     text-transform: uppercase;
     letter-spacing: 0.1em;
-    line-height: 1.25rem;
-    border-radius: 9999px;
+    line-height: 1;
+    border-radius: 0.1875rem;
   }
 
   .paid {
-    background-color: #dcfce7;
-    color: #16a34a;
-    border: 1px solid #bbf7d0;
-    box-shadow: rgba(0, 0, 0, 0) 0px 0px 0px 0px,
-      rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0.05) 0px 1px 2px 0px,
-      inset 0 1px 1px #fff;
+    background-color: #cdf9dc;
+    color: #166534;
   }
 
   .refunded {
-    background-color: #e0e7ff;
-    color: #3730a3;
-    border: 1px solid #c7d2fe;
-    box-shadow: rgba(0, 0, 0, 0) 0px 0px 0px 0px,
-      rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0.05) 0px 1px 2px 0px,
-      inset 0 1px 1px #fff;
+    background-color: #b8f6fd;
+    color: #0e7490;
   }
 
   .unpaid {
-    background-color: #ffe4e6;
-    color: #9f1239;
-    border: 1px solid #fecdd3;
-    box-shadow: rgba(0, 0, 0, 0) 0px 0px 0px 0px,
-      rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0.05) 0px 1px 2px 0px,
-      inset 0 1px 1px #fff;
+    background-color: #fedddd;
+    color: #991b1b;
   }
 
   .capitalize {
@@ -514,7 +481,7 @@ const RegistrationStyles = styled.div`
 
       p {
         font-weight: 600;
-        color: #10b981;
+        color: #059669;
       }
     }
 
@@ -576,12 +543,6 @@ const RegistrationStyles = styled.div`
 const RegistrationMenu = styled(Menu)`
   top: 4.25rem;
   right: 3.5rem;
-
-  .delete-button:hover,
-  .delete-button:hover svg {
-    color: #b91c1c;
-    text-decoration: underline;
-  }
 `;
 
 const RegistrationSpinner = styled(LoadingSpinner)`

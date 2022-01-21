@@ -23,11 +23,11 @@ export default function Menu({ open, setOpen, children, className }: Props) {
 }
 
 const TableMenuStyles = styled.div<{ open: boolean }>`
-  padding: 0.125rem 1.5rem;
+  padding: 0;
   overflow: auto;
   position: absolute;
-  top: 0rem;
-  right: 1rem;
+  top: 1.875rem;
+  right: 0rem;
   display: ${props => (props.open ? 'flex' : 'none')};
   flex-direction: column;
   align-items: flex-start;
@@ -40,11 +40,11 @@ const TableMenuStyles = styled.div<{ open: boolean }>`
 
   a,
   button {
-    padding: 0.75rem 0;
+    padding: 0.75rem 1.5rem;
     width: 100%;
     display: flex;
     align-items: center;
-    font-size: 0.8125rem;
+    font-size: 0.875rem;
     font-weight: 500;
     text-align: left;
     color: #6b7280;
@@ -53,21 +53,13 @@ const TableMenuStyles = styled.div<{ open: boolean }>`
     border-bottom: 1px solid #e5e7eb;
     cursor: pointer;
 
-    svg {
-      margin: 0 0.5rem 0 0;
-      height: 1rem;
-      width: 1rem;
-      color: #9ca3af;
-    }
-
     &:last-child {
       border-bottom: none;
     }
 
-    &:hover,
-    &:hover svg {
-      color: #4338ca;
-      text-decoration: underline;
+    &:hover {
+      background-color: #f9fafb;
+      color: #4b5563;
     }
 
     &:focus {
@@ -77,6 +69,7 @@ const TableMenuStyles = styled.div<{ open: boolean }>`
 
     &:focus-visible {
       text-decoration: underline;
+      color: #2563eb;
     }
   }
 `;

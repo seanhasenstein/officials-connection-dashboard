@@ -1,18 +1,18 @@
 import React from 'react';
 import styled from 'styled-components';
 import { format } from 'date-fns';
-import { Note } from '../interfaces';
-import useNotes from '../hooks/useNotes';
-import { createIdNumber } from '../utils';
+import { UseMutationResult } from 'react-query';
+import { Note, Registration } from '../interfaces';
+import { createIdNumber } from '../utils/misc';
 import LoadingSpinner from './LoadingSpinner';
 
 type Props = {
-  id: string;
   notes: Note[];
+  addNote: UseMutationResult<Registration, unknown, Note[], unknown>;
+  deleteNote: UseMutationResult<Registration, unknown, Note[], unknown>;
 };
 
-export default function NotesSection({ id, notes }: Props) {
-  const { addNote, deleteNote } = useNotes(id);
+export default function Notes({ notes, addNote, deleteNote }: Props) {
   const [text, setText] = React.useState('');
 
   const handleAddClick = () => {
@@ -25,7 +25,6 @@ export default function NotesSection({ id, notes }: Props) {
       updatedAt: `${new Date().toISOString()}`,
     };
     addNote.mutate([...notes, newNote], { onSuccess: () => setText('') });
-    setText('');
   };
 
   const handleDeleteClick = (id: string) => {
@@ -37,7 +36,7 @@ export default function NotesSection({ id, notes }: Props) {
     <NoteSectionStyles>
       <h3>Notes</h3>
       <div className="notes">
-        {notes.map(n => (
+        {notes?.map(n => (
           <div key={n.id} className="note">
             <div className="flex-row">
               <div className="icon">

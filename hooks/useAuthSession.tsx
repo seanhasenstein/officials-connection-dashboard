@@ -18,7 +18,7 @@ type Props = {
   queryConfig?: UseQueryOptions;
 };
 
-export default function useSession({
+export default function useAuthSession({
   required = true,
   redirectTo = '/login',
   queryConfig = {},

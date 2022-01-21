@@ -3,7 +3,7 @@ import { Registration } from '../interfaces';
 
 export default function useRegistrationSearch(registrations: Registration[]) {
   const [search, setSearch] = React.useState('');
-  const [searchResults, setSearchResults] = React.useState<Registration[]>([]);
+  const [searchResults, setSearchResults] = React.useState<Registration[]>();
 
   React.useEffect(() => {
     if (search.length > 2) {

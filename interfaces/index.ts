@@ -5,8 +5,6 @@ export type ActiveOption = 'filter' | 'sort' | undefined;
 
 export type FilterOptions = { paymentStatus: string[]; sessions: string[] };
 
-type Camp = 'Kaukauna' | 'Plymouth';
-
 type SessionCategory = "Men's College" | "Women's College" | 'High School';
 
 export type GameCategory =
@@ -15,7 +13,7 @@ export type GameCategory =
   | 'High School'
   | 'Mixed';
 
-type WiaaClass =
+export type WiaaClass =
   | 'default'
   | 'Master'
   | 'L5'
@@ -26,7 +24,7 @@ type WiaaClass =
   | 'LR'
   | 'New';
 
-type PaymentStatus =
+export type PaymentStatus =
   | 'default'
   | 'paid'
   | 'unpaid'
@@ -60,16 +58,40 @@ export interface Note {
   updatedAt: string;
 }
 
+export interface Year {
+  _id: string;
+  year: string;
+  camps: Camp[];
+}
+
+export interface Camp {
+  campId: string;
+  name: string;
+  dates: string;
+  location: {
+    name: string;
+    street: string;
+    city: string;
+    state: string;
+    zipcode: string;
+    mapUrl: string;
+  };
+  sessions: Session[];
+  active: boolean;
+  createdAt: string;
+  updatedAt: string;
+}
+
 export interface Game {
   _id: string;
-  camp: Camp;
+  camp: 'Kaukauna' | 'Plymouth';
   category: GameCategory;
   date: string;
   court: string;
   clinician: string;
   url: string;
   filmed: 'true' | 'false';
-  officials?: GameOfficial[];
+  officials: GameOfficial[];
   createdAt?: string;
   updatedAt?: string;
 }
@@ -79,16 +101,22 @@ export interface GameInput extends Omit<Game, '_id'> {
 }
 
 export interface Session {
-  id: string;
-  camp: Camp;
+  sessionId: string;
+  camp: {
+    campId: string;
+    name: string;
+  };
   dates: string;
   times: string;
   category: SessionCategory;
-  levels?: string;
-  mechanics?: number;
+  levels: string | null;
+  mechanics: number;
   price: number;
-  attending?: boolean;
+  attending: boolean;
+  active?: boolean;
   isChecked?: boolean;
+  createdAt?: string;
+  updatedAt?: string;
 }
 
 export interface SessionsQuery {
@@ -118,9 +146,13 @@ export interface Registration {
     name: string;
     phone: string;
   };
-  discount: boolean;
-  crewMembers: string[];
   sessions: Session[];
+  discount: {
+    active: boolean;
+    name: string;
+    amount: number;
+  };
+  crewMembers: string[];
   subtotal: number;
   total: number;
   paymentStatus: PaymentStatus;
@@ -128,12 +160,13 @@ export interface Registration {
   checkNumber?: string;
   refundAmount: number;
   notes: Note[];
-  stripeId: string;
+  stripeId: string | null;
   createdAt: string;
   updatedAt: string;
 }
 
 export interface RegistrationInput {
+  registrationId?: string;
   firstName: string;
   lastName: string;
   email: string;
@@ -145,6 +178,7 @@ export interface RegistrationInput {
     state: string;
     zipcode: string;
   };
+  sessions: Session[];
   wiaaClass: WiaaClass;
   wiaaNumber: string;
   associations: string;
@@ -153,17 +187,36 @@ export interface RegistrationInput {
     name: string;
     phone: string;
   };
-  discount: string;
+  discount: {
+    active: boolean;
+    name: string;
+    amount: number;
+  };
   crewMembers: string[];
-  paymentAmount: number | string;
+  subtotal: number;
   paymentStatus: PaymentStatus;
   paymentMethod: PaymentMethod;
   checkNumber: string;
-  refundAmount: number | string;
+  refundAmount: number;
   notes: Note[];
 }
 
-export type RegistrationUpdate = Partial<Registration>;
+export interface RegistrationDbFormat
+  extends Omit<
+    RegistrationInput,
+    'wiaaClass' | 'paymentStatus' | 'paymentMethod'
+  > {
+  registrationId: string;
+  wiaaClass: string;
+  paymentStatus: string;
+  paymentMethod: string;
+  total: number;
+  stripeId: string | null;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export type RegistrationUpdate = Partial<RegistrationDbFormat>;
 
 export interface Request extends NextApiRequest {
   db: Db;

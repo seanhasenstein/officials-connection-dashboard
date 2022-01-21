@@ -50,7 +50,7 @@ export default function Login() {
               strokeLinecap="round"
               strokeLinejoin="round"
               strokeWidth={2}
-              d="M8 11V7a4 4 0 118 0m-4 8v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2z"
+              d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"
             />
           </svg>
           <h3>Sign in to your account</h3>
@@ -80,9 +80,12 @@ export default function Login() {
 }
 
 const LoginStyles = styled.div`
-  padding: 5rem 1.5rem;
+  padding: 6rem 1.5rem;
   min-height: 100vh;
   background-color: #f9fafb;
+  background-image: url('/hero-background.svg');
+  background-size: 1280px auto;
+  background-position: top -40px center;
 
   h1 {
     margin: 0 0 4px;
@@ -108,7 +111,7 @@ const LoginStyles = styled.div`
     font-size: 1.25rem;
     font-weight: 600;
     text-align: center;
-    color: #374151;
+    color: #4b5563;
   }
 
   .logo {
@@ -124,7 +127,7 @@ const LoginStyles = styled.div`
 
   .container {
     margin: 0 auto;
-    padding: 2.5rem;
+    padding: 3rem;
     width: 30rem;
     display: flex;
     flex-direction: column;
@@ -137,28 +140,28 @@ const LoginStyles = styled.div`
   }
 
   .icon {
-    margin: 0 0 0.625rem;
-    height: 1.5rem;
-    width: 1.5rem;
+    margin: 0 0 1rem;
+    height: 1.75rem;
+    width: 1.75rem;
     color: #9ca3af;
   }
 
   .item {
-    margin: 2.25rem 0 0.875rem;
+    margin: 2.75rem 0 0.875rem;
     display: flex;
     flex-direction: column;
   }
 
   .login-button {
-    height: 2.2125rem;
+    height: 2.625rem;
     width: 100%;
     display: flex;
     justify-content: center;
     align-items: center;
     font-size: 0.875rem;
     font-weight: 500;
-    color: #f8fafc;
-    background-color: #1e293b;
+    color: #fff;
+    background-color: #1f2937;
     border: none;
     border-radius: 0.25rem;
     cursor: pointer;
@@ -169,7 +172,8 @@ const LoginStyles = styled.div`
     }
 
     &:focus-visible {
-      text-decoration: underline;
+      box-shadow: rgb(255, 255, 255) 0px 0px 0px 2px, #2563eb 0px 0px 0px 4px,
+        rgba(0, 0, 0, 0.05) 0px 1px 2px 0px;
     }
   }
 `;

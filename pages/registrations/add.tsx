@@ -2,17 +2,24 @@ import React from 'react';
 import { useRouter } from 'next/router';
 import Link from 'next/link';
 import styled from 'styled-components';
-import { Formik, Field, Form } from 'formik';
-import { formatSessionName, stateList } from '../../utils';
-import { RegistrationInput } from '../../interfaces';
-import useRegistration from '../../hooks/useRegistration';
-import useSession from '../../hooks/useSessions';
+import { Formik, Form, Field, ErrorMessage } from 'formik';
+import * as Yup from 'yup';
+import {
+  formatSessionName,
+  formatToMoney,
+  removeNonDigits,
+  stateList,
+} from '../../utils/misc';
+import { RegistrationInput, Session } from '../../interfaces';
+import useAuthSession from '../../hooks/useAuthSession';
+import { useAddRegistration } from '../../hooks/useAddRegistration';
+import { useYearQuery } from '../../hooks/useYearQuery';
 import Layout from '../../components/Layout';
 import PaymentStatusField from '../../components/PaymentStatusField';
 import RefundAmountField from '../../components/RefundAmountField';
 import LoadingSpinner from '../../components/LoadingSpinner';
 
-const initialValues: RegistrationInput = {
+const emptyInitialValues: RegistrationInput = {
   firstName: '',
   lastName: '',
   email: '',
@@ -24,6 +31,7 @@ const initialValues: RegistrationInput = {
     state: 'default',
     zipcode: '',
   },
+  sessions: [],
   wiaaClass: 'default',
   wiaaNumber: '',
   associations: '',
@@ -32,26 +40,52 @@ const initialValues: RegistrationInput = {
     name: '',
     phone: '',
   },
-  discount: 'false',
   crewMembers: ['', ''],
-  paymentAmount: 0,
+  subtotal: 0,
+  refundAmount: 0,
+  discount: {
+    active: false,
+    name: 'default',
+    amount: 0,
+  },
   paymentStatus: 'default',
   paymentMethod: 'default',
   checkNumber: '',
-  refundAmount: 0,
   notes: [],
 };
 
+const validationSchema = Yup.object().shape({
+  email: Yup.string().email('Invalid email address'),
+  phone: Yup.string()
+    .transform(value => removeNonDigits(value))
+    .matches(
+      new RegExp(/^\d{10}$/),
+      'A valid 10 digit phone number is required'
+    ),
+  emergencyContact: Yup.object().shape({
+    phone: Yup.string()
+      .transform(value => removeNonDigits(value))
+      .matches(
+        new RegExp(/^\d{10}$/),
+        'A valid 10 digit phone number is required'
+      ),
+  }),
+});
+
 export default function AddRegistration() {
-  const [session, sessionLoading] = useSession();
+  const [session, sessionLoading] = useAuthSession();
   const router = useRouter();
-  const {
-    sessions,
-    handleSessionUpdate,
-    handleAttendingToggle,
-    showHSFields,
-    addRegistration,
-  } = useRegistration();
+  const addRegistration = useAddRegistration();
+  const { sessions } = useYearQuery();
+  const [initialValues, setInitialValues] = React.useState(emptyInitialValues);
+  const [showHSFields, setShowHSFields] = React.useState(false);
+
+  React.useEffect(() => {
+    if (sessions) {
+      const formattedSessions = sessions.map(s => ({ ...s, isChecked: false }));
+      setInitialValues({ ...emptyInitialValues, sessions: formattedSessions });
+    }
+  }, [sessions]);
 
   if (sessionLoading || !session) return <div />;
 
@@ -67,14 +101,17 @@ export default function AddRegistration() {
           </p>
           <Formik
             initialValues={initialValues}
+            enableReinitialize={true}
+            validationSchema={validationSchema}
             onSubmit={values => {
               addRegistration.mutate(values, {
-                onSuccess: data =>
-                  router.push(`/registrations/${data.registration._id}`),
+                onSuccess: data => {
+                  router.push(`/registrations/${data}`);
+                },
               });
             }}
           >
-            {({ values, isSubmitting }) => (
+            {({ values, setFieldValue, isSubmitting }) => (
               <Form>
                 <div className="section">
                   <div className="grid-col-2">
@@ -88,12 +125,22 @@ export default function AddRegistration() {
                     </div>
                   </div>
                   <div className="item">
-                    <label htmlFor="email">Email Address</label>
+                    <label htmlFor="email">Email address</label>
                     <Field id="email" name="email" />
+                    <ErrorMessage
+                      name="email"
+                      component="div"
+                      className="error"
+                    />
                   </div>
                   <div className="item">
-                    <label htmlFor="phone">Phone Number</label>
+                    <label htmlFor="phone">Phone number</label>
                     <Field id="phone" name="phone" />
+                    <ErrorMessage
+                      name="phone"
+                      component="div"
+                      className="error"
+                    />
                   </div>
                   <h4>Address</h4>
                   <div className="item">
@@ -104,11 +151,11 @@ export default function AddRegistration() {
                     <label htmlFor="street2">Apartment</label>
                     <Field id="street2" name="address.street2" />
                   </div>
-                  <div className="item">
-                    <label htmlFor="city">City</label>
-                    <Field id="city" name="address.city" />
-                  </div>
                   <div className="grid-col-2">
+                    <div className="item">
+                      <label htmlFor="city">City</label>
+                      <Field id="city" name="address.city" />
+                    </div>
                     <div className="item">
                       <label htmlFor="state">State</label>
                       <Field name="address.state" as="select">
@@ -120,131 +167,42 @@ export default function AddRegistration() {
                         ))}
                       </Field>
                     </div>
-                    <div className="item">
-                      <label htmlFor="zipcode">Zipcode</label>
-                      <Field id="zipcode" name="address.zipcode" />
-                    </div>
+                  </div>
+                  <div className="item">
+                    <label htmlFor="zipcode">Zipcode</label>
+                    <Field id="zipcode" name="address.zipcode" />
                   </div>
                 </div>
                 <div className="section">
                   <h3>Select Sessions</h3>
-                  {sessions.map(s => (
-                    <div key={s.id} className="checkbox-item">
-                      <label htmlFor={`session-${s.id}`}>
-                        <input
-                          type="checkbox"
-                          id={`session-${s.id}`}
-                          value={s.id}
-                          checked={s.isChecked}
-                          onChange={e => handleSessionUpdate(e)}
-                        />
-                        {formatSessionName(s)}
-                      </label>
-                    </div>
-                  ))}
+                  <SelectSessions
+                    sessions={values.sessions}
+                    setFieldValue={setFieldValue}
+                  />
                 </div>
 
-                <div className="section">
-                  <h3>Session Status</h3>
-                  <p>
-                    This section allows you to toggle the selected sessions from
-                    attending to not-attending status.
-                  </p>
-                  <div className="session-status-items">
-                    {sessions.map(s => {
-                      if (s.isChecked) {
-                        return (
-                          <div key={s.id} className="session-status-item">
-                            <p>{formatSessionName(s)}</p>
-                            <button
-                              type="button"
-                              onClick={() => handleAttendingToggle(s.id)}
-                              role="switch"
-                              aria-checked={s.attending}
-                              className={`session-toggle ${
-                                s.attending ? 'on' : 'off'
-                              }`}
-                            >
-                              <span className="sr-only">Toggle attending</span>
-                              <span aria-hidden="true" className="switch" />
-                            </button>
-                          </div>
-                        );
-                      }
-                    })}
+                {values.sessions.some(s => s.isChecked) && (
+                  <div className="section">
+                    <h3>Session Status</h3>
+                    <p>
+                      This section allows you to toggle the selected sessions
+                      from attending to not-attending status.
+                    </p>
+                    <div className="session-status-items">
+                      <SessionsStatus
+                        sessions={values.sessions}
+                        setFieldValue={setFieldValue}
+                      />
+                    </div>
                   </div>
-                </div>
-
-                {showHSFields && (
-                  <>
-                    <div className="section">
-                      <h3>High School Crew Deal</h3>
-                      <div className="radio-item">
-                        <label htmlFor="true">
-                          <Field
-                            type="radio"
-                            id="true"
-                            name="discount"
-                            value="true"
-                          />
-                          Yes
-                        </label>
-                        {/* eslint-disable-next-line jsx-a11y/label-has-associated-control */}
-                        <label htmlFor="false">
-                          <Field
-                            type="radio"
-                            id="false"
-                            name="discount"
-                            value="false"
-                          />
-                          No
-                        </label>
-                      </div>
-                      {values.discount === 'true' && (
-                        <>
-                          <h3>Crew Members</h3>
-                          <div className="item">
-                            <label htmlFor="crewMember1">Crew Member #1</label>
-                            <Field id="crewMember1" name="crewMembers.0" />
-                          </div>
-                          <div className="item">
-                            <label htmlFor="crewMember2">Crew Member #2</label>
-                            <Field id="crewMember2" name="crewMembers.1" />
-                          </div>
-                        </>
-                      )}
-                    </div>
-                    <div className="section">
-                      <h3>WIAA Information</h3>
-                      <div className="grid-col-2">
-                        <div className="item">
-                          <label htmlFor="wiaaClass">WIAA Classification</label>
-                          <Field name="wiaaClass" as="select">
-                            <option value="default">Select a class</option>
-                            <option value="Master">Master</option>
-                            <option value="L5">L5</option>
-                            <option value="L4">L4</option>
-                            <option value="L3">L3</option>
-                            <option value="L2">L2</option>
-                            <option value="L1">L1</option>
-                            <option value="LR">LR</option>
-                            <option value="New">New Official</option>
-                          </Field>
-                        </div>
-                        <div className="item">
-                          <label htmlFor="wiaaNumber">WIAA Number</label>
-                          <Field id="wiaaNumber" name="wiaaNumber" />
-                        </div>
-                      </div>
-                      <div className="item">
-                        <label htmlFor="associations">
-                          Officials Associations
-                        </label>
-                        <Field id="associations" name="associations" />
-                      </div>
-                    </div>
-                  </>
                 )}
+
+                <HighSchoolFields
+                  values={values}
+                  showHSFields={showHSFields}
+                  setShowHSFields={setShowHSFields}
+                />
+
                 <div className="section">
                   <h3>Food Allergies</h3>
                   <div className="item">
@@ -262,36 +220,45 @@ export default function AddRegistration() {
                       <Field id="ecName" name="emergencyContact.name" />
                     </div>
                     <div className="item">
-                      <label htmlFor="ecPhone">Phone Number</label>
+                      <label htmlFor="ecPhone">Phone number</label>
                       <Field id="ecPhone" name="emergencyContact.phone" />
+                      <ErrorMessage
+                        name="emergencyContact.phone"
+                        component="div"
+                        className="error"
+                      />
                     </div>
                   </div>
                 </div>
                 <div className="section">
                   <h3>Payment Details</h3>
+                  <div className="item">
+                    <label htmlFor="subtotal">Subtotal</label>
+                    <Field
+                      type="number"
+                      step="1"
+                      id="subtotal"
+                      name="subtotal"
+                    />
+                  </div>
                   <div className="grid-col-2">
                     <div className="item">
-                      <label htmlFor="paymentMethod">Payment Method</label>
+                      <label htmlFor="paymentMethod">Payment method</label>
                       <Field
                         id="paymentMethod"
                         name="paymentMethod"
                         as="select"
                       >
                         <option value="default">Select a method</option>
-                        <option value="unpaid">Still needs to pay</option>
                         <option value="cash">Cash</option>
                         <option value="check">Check</option>
+                        <option value="unpaid">Still needs to pay</option>
                         <option value="free">Free Entry</option>
                       </Field>
                     </div>
                     <div className="item">
-                      <label htmlFor="paymentAmount">Payment Amount</label>
-                      <Field
-                        type="number"
-                        step="0.01"
-                        id="paymentAmount"
-                        name="paymentAmount"
-                      />
+                      <label htmlFor="paymentStatus">Payment status</label>
+                      <PaymentStatusField name="paymentStatus" />
                     </div>
                   </div>
                   {values.paymentMethod === 'check' && (
@@ -300,26 +267,119 @@ export default function AddRegistration() {
                       <Field id="checkNumber" name="checkNumber" />
                     </div>
                   )}
-                  <div className="item">
-                    <label htmlFor="paymentStatus">Payment Status</label>
-                    <PaymentStatusField name="paymentStatus" />
+
+                  <RefundAmountField />
+
+                  <div className="checkbox-item discount">
+                    <Field
+                      type="checkbox"
+                      name="discount.active"
+                      id="discount.active"
+                      checked={values.discount.active}
+                    />
+                    <label htmlFor="discount.active">Add a discount</label>
                   </div>
-                  {(values.paymentStatus === 'partiallyRefunded' ||
-                    values.paymentStatus === 'fullyRefunded') && (
-                    <div className="item">
-                      <RefundAmountField />
-                    </div>
-                  )}
+                  <DiscountFields
+                    values={values}
+                    setFieldValue={setFieldValue}
+                  />
                 </div>
-                <div className="form-actions">
-                  {isSubmitting ? (
-                    <LoadingSpinner isLoading={isSubmitting} />
-                  ) : (
-                    <Link href="/">
-                      <a>Cancel</a>
-                    </Link>
-                  )}
-                  <button type="submit">Add registration</button>
+                <div className="section">
+                  <div className="registration-summary">
+                    <div className="sessions">
+                      <h4>Sessions</h4>
+                      {values.sessions.map(s => {
+                        if (s.isChecked) {
+                          return (
+                            <div key={s.sessionId} className="session">
+                              <div>
+                                {s.attending ? (
+                                  <div className="attending">
+                                    <svg
+                                      xmlns="http://www.w3.org/2000/svg"
+                                      viewBox="0 0 20 20"
+                                      fill="currentColor"
+                                    >
+                                      <path
+                                        fillRule="evenodd"
+                                        d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
+                                        clipRule="evenodd"
+                                      />
+                                    </svg>
+                                  </div>
+                                ) : (
+                                  <div className="not-attending">
+                                    <svg
+                                      xmlns="http://www.w3.org/2000/svg"
+                                      viewBox="0 0 20 20"
+                                      fill="currentColor"
+                                    >
+                                      <path
+                                        fillRule="evenodd"
+                                        d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z"
+                                        clipRule="evenodd"
+                                      />
+                                    </svg>
+                                  </div>
+                                )}
+                                {s.camp.name} {s.category} {s.dates}{' '}
+                                {s.levels && s.levels}
+                              </div>
+                              <div>{formatToMoney(s.price)}</div>
+                            </div>
+                          );
+                        }
+                      })}
+                    </div>
+                    <div className="summary-numbers-container">
+                      <div className="summary-numbers-row">
+                        <div className="summary-item">
+                          <div className="label">Subtotal</div>
+                          <div className="value">
+                            {formatToMoney(values.subtotal * 100, true)}
+                          </div>
+                        </div>
+                        <div className="summary-item">
+                          <div className="label">Discount</div>
+                          <div className="value">
+                            {formatToMoney(values.discount.amount * 100, true)}
+                          </div>
+                        </div>
+                        {values.refundAmount > 0 && (
+                          <div className="summary-item">
+                            <div className="label">Refund Amount</div>
+                            <div className="value">
+                              {formatToMoney(values.refundAmount * 100, true)}
+                            </div>
+                          </div>
+                        )}
+                        <div className="summary-item total">
+                          <div className="label">Total</div>
+                          <div className="value">
+                            {formatToMoney(
+                              (values.subtotal -
+                                values.discount.amount -
+                                values.refundAmount) *
+                                100,
+                              true
+                            )}
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div className="form-actions">
+                    {isSubmitting ? (
+                      <LoadingSpinner isLoading={isSubmitting} />
+                    ) : (
+                      <Link href="/">
+                        <a>Cancel</a>
+                      </Link>
+                    )}
+                    <button type="submit" disabled={isSubmitting}>
+                      Add registration
+                    </button>
+                  </div>
                 </div>
               </Form>
             )}
@@ -330,13 +390,212 @@ export default function AddRegistration() {
   );
 }
 
+type SessionFnProps = {
+  sessions: Session[];
+  setFieldValue: (
+    field: string,
+    value: any,
+    shouldValidate?: boolean | undefined
+  ) => void;
+};
+
+function SelectSessions({ sessions, setFieldValue }: SessionFnProps) {
+  const handleCheckboxChange = (updateId: string) => {
+    const updatedSessions = sessions.map(s => {
+      if (s.sessionId === updateId) {
+        return {
+          ...s,
+          isChecked: !s.isChecked,
+          attending: s.isChecked ? false : true,
+        };
+      }
+      return s;
+    });
+
+    setFieldValue('sessions', updatedSessions);
+  };
+
+  return (
+    <>
+      {sessions?.map(s => (
+        <div key={s.sessionId} className="checkbox-item">
+          <label htmlFor={`session-${s.sessionId}`}>
+            <Field
+              type="checkbox"
+              id={`session-${s.sessionId}`}
+              name={`session-${s.sessionId}`}
+              checked={s.isChecked || false}
+              onChange={() => handleCheckboxChange(s.sessionId)}
+            />
+            {formatSessionName(s)}
+          </label>
+        </div>
+      ))}
+    </>
+  );
+}
+
+function SessionsStatus({ sessions, setFieldValue }: SessionFnProps) {
+  const handleStatusChange = (updateId: string) => {
+    const updatedSessions = sessions.map(s => {
+      if (s.sessionId === updateId) {
+        return { ...s, attending: !s.attending };
+      }
+      return s;
+    });
+
+    setFieldValue('sessions', updatedSessions);
+  };
+
+  return (
+    <>
+      {sessions?.map(s => {
+        if (s.isChecked) {
+          return (
+            <div key={s.sessionId} className="session-status-item">
+              <p>{formatSessionName(s)}</p>
+              <button
+                type="button"
+                onClick={() => handleStatusChange(s.sessionId)}
+                role="switch"
+                aria-checked={s.attending}
+                className={`session-toggle ${s.attending ? 'on' : 'off'}`}
+              >
+                <span className="sr-only">Toggle attending</span>
+                <span aria-hidden="true" className="switch" />
+              </button>
+            </div>
+          );
+        }
+      })}
+    </>
+  );
+}
+
+type HSFieldsProps = {
+  values: RegistrationInput;
+  showHSFields: boolean;
+  setShowHSFields: React.Dispatch<React.SetStateAction<boolean>>;
+};
+
+function HighSchoolFields({
+  values,
+  showHSFields,
+  setShowHSFields,
+}: HSFieldsProps) {
+  React.useEffect(() => {
+    const hsSessionSelected = values.sessions.some(
+      s => s.isChecked && s.category === 'High School'
+    );
+    setShowHSFields(hsSessionSelected);
+  }, [setShowHSFields, values.sessions]);
+
+  if (showHSFields) {
+    return (
+      <>
+        <div className="section">
+          <h3>Crew Members</h3>
+          <div className="item">
+            <label htmlFor="crewMember1">Crew member 1</label>
+            <Field id="crewMember1" name="crewMembers.0" />
+          </div>
+          <div className="item">
+            <label htmlFor="crewMember2">Crew member 2</label>
+            <Field id="crewMember2" name="crewMembers.1" />
+          </div>
+        </div>
+        <div className="section">
+          <h3>WIAA Information</h3>
+          <div className="grid-col-2">
+            <div className="item">
+              <label htmlFor="wiaaClass">WIAA classification</label>
+              <Field name="wiaaClass" as="select">
+                <option value="default">Select a class</option>
+                <option value="Master">Master</option>
+                <option value="L5">L5</option>
+                <option value="L4">L4</option>
+                <option value="L3">L3</option>
+                <option value="L2">L2</option>
+                <option value="L1">L1</option>
+                <option value="LR">LR</option>
+                <option value="New">New Official</option>
+              </Field>
+            </div>
+            <div className="item">
+              <label htmlFor="wiaaNumber">WIAA number</label>
+              <Field id="wiaaNumber" name="wiaaNumber" />
+            </div>
+          </div>
+          <div className="item">
+            <label htmlFor="associations">Associations</label>
+            <Field id="associations" name="associations" />
+          </div>
+        </div>
+      </>
+    );
+  }
+  return null;
+}
+
+type DiscountProps = {
+  values: RegistrationInput;
+  setFieldValue: (
+    field: string,
+    value: any,
+    shouldValidate?: boolean | undefined
+  ) => void;
+};
+
+function DiscountFields({ values, setFieldValue }: DiscountProps) {
+  React.useEffect(() => {
+    if (!values.discount.active) {
+      setFieldValue('discount.amount', 0);
+      setFieldValue('discount.name', 'default');
+    }
+    if (values.discount.name === 'default') {
+      setFieldValue('discount.amount', 0);
+    }
+    if (values.discount.active) {
+      if (values.discount.name === 'hsCrew') {
+        setFieldValue('discount.amount', 10);
+      }
+    }
+  }, [setFieldValue, values.discount.name, values.discount.active]);
+
+  return (
+    <>
+      {values.discount.active && (
+        <div className="grid-col-2">
+          <div className="item">
+            <label htmlFor="discount.name">Select a discount</label>
+            <Field as="select" name="discount.name" id="discount.name">
+              <option value="default">Select a discount</option>
+              <option value="hsCrew">HS Crew Discount</option>
+              <option value="other">Other</option>
+            </Field>
+          </div>
+          <div className="item">
+            <label htmlFor="discount.amount">Discount amount</label>
+            <Field
+              type="number"
+              step="1"
+              id="discount.amount"
+              name="discount.amount"
+            />
+          </div>
+        </div>
+      )}
+    </>
+  );
+}
+
 const AddRegistrationStyles = styled.div`
-  padding: 5rem 1.5rem;
+  padding: 5rem 1.5rem 3rem;
   background-color: #f9fafb;
 
   .container {
     margin: 0 auto;
-    max-width: 36rem;
+    max-width: 31rem;
     width: 100%;
   }
 
@@ -377,6 +636,10 @@ const AddRegistrationStyles = styled.div`
 
   .section {
     margin: 0 0 5rem;
+
+    &:last-of-type {
+      margin: 0;
+    }
   }
 
   .grid-col-2 {
@@ -393,6 +656,10 @@ const AddRegistrationStyles = styled.div`
 
   .checkbox-item {
     margin: 0 0 0.75rem;
+
+    &.discount {
+      margin: 2rem 0;
+    }
 
     input {
       margin: 0 0.75rem 0 0;
@@ -503,31 +770,36 @@ const AddRegistrationStyles = styled.div`
   }
 
   .form-actions {
-    margin: 2rem 0 0;
+    margin: 1.5rem 0 0;
     display: flex;
     justify-content: flex-end;
-    gap: 0 0.875rem;
+    gap: 0 0.5rem;
 
     button {
-      padding: 0.625rem 1.5rem;
-      background-color: #4f46e5;
-      border: 1px solid #3730a3;
-      box-shadow: inset 0 1px 0 #818cf8;
+      padding: 0.6875rem 1.25rem;
+      display: inline-flex;
+      justify-content: center;
+      align-items: center;
+      background-color: #272e3a;
+      border: none;
       border-radius: 0.375rem;
-      font-size: 0.875rem;
+      color: #f4f4f5;
+      font-size: 0.9375rem;
       font-weight: 500;
-      color: #fff;
       cursor: pointer;
 
       &:hover {
-        background-color: #3f35e3;
+        background-color: #2f3845;
       }
 
       &:focus {
         outline: 2px solid transparent;
         outline-offset: 2px;
-        box-shadow: rgb(255, 255, 255) 0px 0px 0px 2px,
-          rgb(59, 130, 246) 0px 0px 0px 4px, rgba(0, 0, 0, 0.05) 0px 1px 2px 0px;
+      }
+
+      &:focus-visible {
+        box-shadow: rgb(255 255 255) 0px 0px 0px 2px,
+          rgb(99 102 241) 0px 0px 0px 4px, rgb(0 0 0 / 5%) 0px 1px 2px 0px;
       }
     }
 
@@ -549,6 +821,79 @@ const AddRegistrationStyles = styled.div`
         outline-offset: 2px;
         box-shadow: rgb(255, 255, 255) 0px 0px 0px 2px,
           rgb(59, 130, 246) 0px 0px 0px 4px, rgba(0, 0, 0, 0.05) 0px 1px 2px 0px;
+      }
+    }
+  }
+
+  .error {
+    margin: 0.25rem 0 0;
+    font-size: 0.75rem;
+    font-weight: 500;
+    color: #9f1239;
+  }
+
+  .registration-summary {
+    .session {
+      padding: 0.625rem 0;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 0.9375rem;
+      line-height: 1;
+      color: #111827;
+      border-bottom: 1px solid #e5e7eb;
+
+      &:first-of-type {
+        border-top: 1px solid #e5e7eb;
+      }
+    }
+
+    .attending,
+    .not-attending {
+      margin: 0.125rem 0.625rem 0 0;
+      display: inline-flex;
+      height: 0.75rem;
+      width: 0.75rem;
+    }
+
+    .attending {
+      color: #059669;
+    }
+
+    .not-attending {
+      color: #9f1239;
+    }
+  }
+
+  .summary-numbers-container {
+    padding: 1.25rem 0;
+    display: flex;
+    justify-content: flex-end;
+    border-bottom: 1px solid #e5e7eb;
+  }
+
+  .summary-numbers-row {
+    max-width: 13rem;
+    width: 100%;
+  }
+
+  .summary-item {
+    margin: 0.5rem 0;
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.9375rem;
+    font-weight: 500;
+    color: #374151;
+
+    &.total {
+      font-weight: 600;
+
+      .label {
+        color: #111827;
+      }
+
+      .value {
+        color: #047857;
       }
     }
   }

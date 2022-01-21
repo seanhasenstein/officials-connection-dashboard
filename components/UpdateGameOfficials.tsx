@@ -1,8 +1,8 @@
 import React from 'react';
 import styled from 'styled-components';
 import { Game, GameOfficial } from '../interfaces';
-import { formatGameName, formatSessionName } from '../utils';
-import useRegistration from '../hooks/useRegistration';
+import { formatGameName, formatSessionName } from '../utils/misc';
+import { useRegistrationsQuery } from '../hooks/useRegistrationsQuery';
 import useGame from '../hooks/useGame';
 import useOutsideClick from '../hooks/useOutsideClick';
 import useEscapeKeydownClose from '../hooks/useEscapeKeydownClose';
@@ -24,7 +24,7 @@ export default function UpdateGameOfficials({
   game,
   setShowNotification,
 }: Props) {
-  const { registrationsQuery } = useRegistration();
+  const { isLoading, error, data: registrations } = useRegistrationsQuery();
   const { updateGameOfficials } = useGame();
   const containerRef = React.useRef<HTMLDivElement>(null);
   useOutsideClick(show, setShow, containerRef);
@@ -42,8 +42,8 @@ export default function UpdateGameOfficials({
   }, [game?.officials]);
 
   React.useEffect(() => {
-    if (registrationsQuery.data && search.length >= 3) {
-      const filterResults = registrationsQuery.data.filter(r => {
+    if (registrations && search.length >= 3) {
+      const filterResults = registrations.filter(r => {
         const name = `${r.firstName} ${r.lastName}`;
         return name.toLowerCase().includes(search.toLowerCase());
       });
@@ -53,14 +53,16 @@ export default function UpdateGameOfficials({
           .filter(
             s =>
               s.attending &&
-              !officials.find(o => o.rid === currRes._id && o.sid === s.id)
+              !officials.find(
+                o => o.rid === currRes._id && o.sid === s.sessionId
+              )
           )
           .map(s => {
             return {
-              key: `${currRes._id}${s.id}`,
+              key: `${currRes._id}${s.sessionId}`,
               name: `${currRes.firstName} ${currRes.lastName}`,
               rid: currRes._id,
-              sid: s.id,
+              sid: s.sessionId,
               sessionName: formatSessionName(s),
             };
           });
@@ -74,7 +76,7 @@ export default function UpdateGameOfficials({
     if (search.length < 3 || results.length === 0) {
       setShowResults(false);
     }
-  }, [officials, registrationsQuery.data, results.length, search]);
+  }, [officials, registrations, results.length, search]);
 
   const handleAddOfficialClick = (
     e: React.MouseEvent<HTMLButtonElement>,
@@ -116,16 +118,11 @@ export default function UpdateGameOfficials({
   return (
     <UpdateGameOfficialsStyles show={show} showResults={showResults}>
       <div ref={containerRef} className="container">
-        {registrationsQuery.isLoading && (
-          <QueryLoader isLoading={registrationsQuery.isLoading} />
-        )}
+        {isLoading && <QueryLoader isLoading={isLoading} />}
         <h3>Add officials to this game</h3>
         <p>{game && formatGameName(game)}</p>
-        {registrationsQuery.isError &&
-          registrationsQuery.error instanceof Error && (
-            <div>Error: {registrationsQuery.error.message}</div>
-          )}
-        {registrationsQuery.data && (
+        {error instanceof Error && <div>Error: {error.message}</div>}
+        {registrations && (
           <>
             <label htmlFor="search">Search for officials</label>
             <div className="search-container">

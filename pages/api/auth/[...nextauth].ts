@@ -1,11 +1,10 @@
 import NextAuth from 'next-auth';
 import EmailProvider from 'next-auth/providers/email';
 import { MongoDBAdapter } from '@next-auth/mongodb-adapter';
-import { connectToDb } from '../../../db';
+import clientPromise from '../../../db/auth';
 
-async function clientPromise() {
-  const { dbClient } = await connectToDb();
-  return dbClient;
+if (!process.env.NEXTAUTH_SECRET) {
+  throw new Error('Must provide NEXTAUTH_SECRET in .env.local');
 }
 
 export default NextAuth({
@@ -15,7 +14,8 @@ export default NextAuth({
       from: process.env.NEXTAUTH_EMAIL_FROM,
     }),
   ],
-  adapter: MongoDBAdapter(clientPromise()),
+  adapter: MongoDBAdapter(clientPromise),
+  secret: process.env.NEXTAUTH_SECRET,
   callbacks: {
     async signIn(context) {
       const allowedEmailAccounts = [

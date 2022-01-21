@@ -1,19 +1,19 @@
-import { Db, ObjectID } from 'mongodb';
+import { Db, ObjectId } from 'mongodb';
 import { formatISO } from 'date-fns';
-import { GameInput, GameOfficial } from '../interfaces';
-import { formatGameDate } from '../utils';
+import { Game, GameInput, GameOfficial } from '../interfaces';
+import { formatGameDate } from '../utils/misc';
 
 export async function getGame(db: Db, id: string) {
   const result = await db
-    .collection('filmed-games')
-    .findOne({ _id: new ObjectID(id) });
+    .collection('games')
+    .findOne({ _id: new ObjectId(id) });
 
   return result;
 }
 
 export async function getGames(db: Db, filter: Record<string, unknown>) {
   const result = await db
-    .collection('filmed-games')
+    .collection<Game>('games')
     .aggregate([
       {
         $match: { ...filter },
@@ -24,23 +24,26 @@ export async function getGames(db: Db, filter: Record<string, unknown>) {
   return await result;
 }
 
-export async function addGame(db: Db, gameInput: GameInput) {
-  const { time, ...game } = gameInput;
-  const date = formatGameDate(gameInput.date, gameInput.time);
-  const filmed = gameInput.filmed === 'true' ? true : false;
-  const url = filmed ? gameInput.url : '';
+export async function addGame(db: Db, input: GameInput) {
+  const { time, ...gameInput } = input;
+  const date = formatGameDate(input.date, input.time);
+  const filmed = input.filmed === 'true' ? true : false;
+  const url = filmed ? input.url : '';
   const now = formatISO(new Date());
 
-  const result = await db.collection('filmed-games').insertOne({
-    ...game,
+  const game = {
+    ...gameInput,
     date,
     url,
     filmed,
+    officials: [],
     createdAt: now,
     updatedAt: now,
-  });
+  };
 
-  return result.ops[0];
+  const result = await db.collection('games').insertOne(game);
+
+  return { ...game, _id: result.insertedId };
 }
 
 export async function updateGame(db: Db, id: string, game: GameInput) {
@@ -49,8 +52,8 @@ export async function updateGame(db: Db, id: string, game: GameInput) {
   const url = filmed ? game.url : '';
   const updatedAt = formatISO(new Date());
 
-  const result = await db.collection('filmed-games').findOneAndUpdate(
-    { _id: new ObjectID(id) },
+  const result = await db.collection('games').findOneAndUpdate(
+    { _id: new ObjectId(id) },
     {
       $set: {
         ...game,
@@ -72,9 +75,9 @@ export async function updateGameOfficials(
   officials: GameOfficial[]
 ) {
   const result = await db
-    .collection('filmed-games')
+    .collection('games')
     .findOneAndUpdate(
-      { _id: new ObjectID(id) },
+      { _id: new ObjectId(id) },
       { $set: { officials } },
       { returnDocument: 'after' }
     );
@@ -84,8 +87,8 @@ export async function updateGameOfficials(
 
 export async function deleteGame(db: Db, id: string) {
   const result = await db
-    .collection('filmed-games')
-    .deleteOne({ _id: new ObjectID(id) });
+    .collection('games')
+    .deleteOne({ _id: new ObjectId(id) });
 
   return result;
 }

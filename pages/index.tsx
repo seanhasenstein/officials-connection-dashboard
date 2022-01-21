@@ -3,13 +3,23 @@ import { useRouter } from 'next/router';
 import Link from 'next/link';
 import styled from 'styled-components';
 import { format } from 'date-fns';
-import { Registration } from '../interfaces';
+import {
+  FilterOptions,
+  Registration,
+  SortOrder,
+  SortVariable,
+} from '../interfaces';
+import useAuthSession from '../hooks/useAuthSession';
 import useMenu from '../hooks/useMenu';
 import useNotification from '../hooks/useNotification';
-import useRegistration from '../hooks/useRegistration';
 import useRegistrationSearch from '../hooks/useRegistrationSearch';
-import useSession from '../hooks/useSessions';
-import { formatSessionName, formatToMoney, formatPhoneNumber } from '../utils';
+import { useRegistrationsQuery } from '../hooks/useRegistrationsQuery';
+import { useYearQuery } from '../hooks/useYearQuery';
+import {
+  formatSessionName,
+  formatToMoney,
+  formatPhoneNumber,
+} from '../utils/misc';
 import Layout from '../components/Layout';
 import Menu from '../components/Menu';
 import Notification from '../components/Notification';
@@ -17,17 +27,16 @@ import LoadingSpinner from '../components/LoadingSpinner';
 import SortAndFilter from '../components/SortAndFilter';
 
 export default function Home() {
-  const [session, sessionLoading] = useSession();
+  const [session, sessionLoading] = useAuthSession();
   const router = useRouter();
-  const {
-    registrationsQuery,
-    sortOrder,
-    setSortOrder,
-    sortVariable,
-    setSortVariable,
-    filterOptions,
-    setFilterOptions,
-  } = useRegistration();
+  const { year } = useYearQuery();
+  const { isLoading, error, data: registrations } = useRegistrationsQuery();
+  const [sortOrder, setSortOrder] = React.useState<SortOrder>('descending');
+  const [sortVariable, setSortVariable] = React.useState<SortVariable>('date');
+  const [filterOptions, setFilterOptions] = React.useState<FilterOptions>({
+    paymentStatus: [],
+    sessions: [],
+  });
   const [sortFilterResults, setSortFilterResults] = React.useState<
     Registration[]
   >([]);
@@ -42,246 +51,210 @@ export default function Home() {
     <Layout>
       <HomeStyles showDeleteButton={search.length > 0}>
         <div className="container">
-          <h2>2021 WBYOC Registrations</h2>
+          <h2>{year?.year} WBYOC Registrations</h2>
           <h3>
             [<span>All Registrations</span>]
           </h3>
-          {registrationsQuery.isLoading && (
-            <RegistrationLoadingSpinner
-              isLoading={registrationsQuery.isLoading}
-            />
-          )}
-          {registrationsQuery.error && (
-            <div>Error: {registrationsQuery.error.message}</div>
-          )}
+          {isLoading && <RegistrationLoadingSpinner isLoading={isLoading} />}
+          {error && <div>Error: {error.message}</div>}
           <>
-            <div className="table-actions-row">
-              <SortAndFilter
-                regQueryData={registrationsQuery.data}
-                sortOrder={sortOrder}
-                setSortOrder={setSortOrder}
-                sortVariable={sortVariable}
-                setSortVariable={setSortVariable}
-                filterOptions={filterOptions}
-                setFilterOptions={setFilterOptions}
-                setRegistrations={setSortFilterResults}
-              />
-              <div className="search">
-                <div className="icon">
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    viewBox="0 0 20 20"
-                    fill="currentColor"
-                  >
-                    <path
-                      fillRule="evenodd"
-                      d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z"
-                      clipRule="evenodd"
+            {registrations && (
+              <>
+                <div className="table-actions-row">
+                  <SortAndFilter
+                    regQueryData={registrations}
+                    sortOrder={sortOrder}
+                    setSortOrder={setSortOrder}
+                    sortVariable={sortVariable}
+                    setSortVariable={setSortVariable}
+                    filterOptions={filterOptions}
+                    setFilterOptions={setFilterOptions}
+                    setRegistrations={setSortFilterResults}
+                  />
+                  <div className="search">
+                    <div className="icon">
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        viewBox="0 0 20 20"
+                        fill="currentColor"
+                      >
+                        <path
+                          fillRule="evenodd"
+                          d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z"
+                          clipRule="evenodd"
+                        />
+                      </svg>
+                    </div>
+                    <label htmlFor="search" className="sr-only">
+                      Search Registrations
+                    </label>
+                    <input
+                      type="text"
+                      placeholder="Search"
+                      name="search"
+                      id="search"
+                      value={search}
+                      onChange={handleSearchChange}
                     />
-                  </svg>
+                    <button
+                      type="button"
+                      onClick={() => setSearch('')}
+                      className="delete-search-button"
+                      tabIndex={search.length > 0 ? 0 : -1}
+                    >
+                      <span className="sr-only">Delete search text</span>
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        viewBox="0 0 20 20"
+                        fill="currentColor"
+                      >
+                        <path
+                          fillRule="evenodd"
+                          d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z"
+                          clipRule="evenodd"
+                        />
+                      </svg>
+                    </button>
+                  </div>
                 </div>
-                <label htmlFor="search" className="sr-only">
-                  Search Registrations
-                </label>
-                <input
-                  type="text"
-                  placeholder="Search"
-                  name="search"
-                  id="search"
-                  value={search}
-                  onChange={handleSearchChange}
-                />
-                <button
-                  type="button"
-                  onClick={() => setSearch('')}
-                  className="delete-search-button"
-                  tabIndex={search.length > 0 ? 0 : -1}
-                >
-                  <span className="sr-only">Delete search text</span>
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    viewBox="0 0 20 20"
-                    fill="currentColor"
-                  >
-                    <path
-                      fillRule="evenodd"
-                      d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z"
-                      clipRule="evenodd"
-                    />
-                  </svg>
-                </button>
-              </div>
-            </div>
-            {searchResults && (
-              <div className="table-container">
-                <table>
-                  <thead>
-                    <tr>
-                      <th className="text-left">Date</th>
-                      <th className="text-left">Camper</th>
-                      <th className="text-left">Sessions</th>
-                      <th className="text-left">Contact</th>
-                      <th className="text-left">Total</th>
-                      <th className="text-center">Status</th>
-                      <th className="text-center">Menu</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {searchResults.length === 0 && (
-                      <tr className="empty">
-                        <td>No registrations match your filter.</td>
-                      </tr>
-                    )}
-                    {searchResults.map((r: Registration) => (
-                      <tr key={r._id}>
-                        <td className="date">
-                          {format(new Date(r.createdAt), 'P')}
-                        </td>
-                        <td>
-                          <div className="camper">
-                            <div className="camper-name">
-                              <Link href={`/registrations/${r._id}`}>
-                                <a>
-                                  {r.firstName} {r.lastName}
-                                </a>
-                              </Link>
-                            </div>
-                            <div className="camper-location">
-                              {r.address.city}
-                              {r.address.city && r.address.state ? (
-                                <>{', '}</>
-                              ) : null}
-                              {r.address.state}
-                            </div>
-                          </div>
-                        </td>
-                        <td>
-                          <div className="sessions">
-                            {r.sessions.map(s => (
-                              <div
-                                key={s.id}
-                                className={
-                                  s.attending ? 'attending' : 'not-attending'
-                                }
-                              >
-                                <Link
-                                  href={`/registrations/session?sid=${s.id}`}
-                                >
-                                  {formatSessionName(s)}
-                                </Link>
+                {searchResults && (
+                  <div className="table-container">
+                    <table>
+                      <thead>
+                        <tr>
+                          <th className="text-left">Date</th>
+                          <th className="text-left">Camper</th>
+                          <th className="text-left">Sessions</th>
+                          <th className="text-left">Contact</th>
+                          <th className="text-left">Total</th>
+                          <th className="text-left">Status</th>
+                          <th className="text-center">Menu</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {searchResults.length === 0 && (
+                          <tr className="empty">
+                            <td>No registrations match your filter.</td>
+                          </tr>
+                        )}
+                        {searchResults.map((r: Registration) => (
+                          <tr key={r._id}>
+                            <td>
+                              {format(new Date(r.createdAt), 'P hh:mmaa')}
+                            </td>
+                            <td>
+                              <div className="camper">
+                                <div className="camper-name">
+                                  <Link href={`/registrations/${r._id}`}>
+                                    <a>
+                                      {r.firstName} {r.lastName}
+                                    </a>
+                                  </Link>
+                                </div>
+                                <div className="camper-location">
+                                  {r.address.city}
+                                  {r.address.city && r.address.state ? (
+                                    <>{', '}</>
+                                  ) : null}
+                                  {r.address.state}
+                                </div>
                               </div>
-                            ))}
-                          </div>
-                        </td>
-                        <td>
-                          <div className="contact">
-                            <div className="email">
-                              <a
-                                href={`mailto:${r.email}`}
-                                target="_blank"
-                                rel="noreferrer"
-                              >
-                                {r.email}
-                              </a>
-                            </div>
-                            <div>{formatPhoneNumber(r.phone)}</div>
-                          </div>
-                        </td>
-                        <td>{formatToMoney(r.total - r.refundAmount, true)}</td>
-                        <td className="status text-center">
-                          {r.paymentStatus === 'paid' && (
-                            <span className="paid">Paid</span>
-                          )}
-                          {r.paymentStatus === 'fullyRefunded' && (
-                            <span className="refunded">Full refund</span>
-                          )}
-                          {r.paymentStatus === 'partiallyRefunded' && (
-                            <span className="refunded">Partial refund</span>
-                          )}
-                          {r.paymentStatus === 'unpaid' && (
-                            <span className="unpaid">Needs to pay</span>
-                          )}
-                        </td>
-                        <td>
-                          <div className="menu">
-                            <button
-                              type="button"
-                              onClick={() => handleMenuButtonClick(r._id)}
-                              className="menu-button"
-                            >
-                              <span className="sr-only">Menu</span>
-                              <svg
-                                xmlns="http://www.w3.org/2000/svg"
-                                fill="none"
-                                viewBox="0 0 24 24"
-                                stroke="currentColor"
-                              >
-                                <path
-                                  strokeLinecap="round"
-                                  strokeLinejoin="round"
-                                  strokeWidth={2}
-                                  d="M12 5v.01M12 12v.01M12 19v.01M12 6a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2z"
-                                />
-                              </svg>
-                            </button>
-                            <Menu
-                              open={r._id === activeMenuId && isOpen}
-                              setOpen={setIsOpen}
-                            >
-                              <>
-                                <Link href={`/registrations/${r._id}`}>
-                                  <a>
-                                    <svg
-                                      xmlns="http://www.w3.org/2000/svg"
-                                      fill="none"
-                                      viewBox="0 0 24 24"
-                                      stroke="currentColor"
+                            </td>
+                            <td>
+                              <div className="sessions">
+                                {r.sessions.map(s => (
+                                  <div
+                                    key={s.sessionId}
+                                    className={
+                                      s.attending
+                                        ? 'attending'
+                                        : 'not-attending'
+                                    }
+                                  >
+                                    <Link
+                                      href={`/registrations/session?sid=${s.sessionId}`}
                                     >
-                                      <path
-                                        strokeLinecap="round"
-                                        strokeLinejoin="round"
-                                        strokeWidth={2}
-                                        d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
-                                      />
-                                    </svg>
-                                    View Registration
+                                      {formatSessionName(s)}
+                                    </Link>
+                                  </div>
+                                ))}
+                              </div>
+                            </td>
+                            <td>
+                              <div className="contact">
+                                <div className="email">
+                                  <a
+                                    href={`mailto:${r.email}`}
+                                    target="_blank"
+                                    rel="noreferrer"
+                                  >
+                                    {r.email}
                                   </a>
-                                </Link>
-                                <Link
-                                  href={`/registrations/update?rid=${r._id}`}
+                                </div>
+                                <div>{formatPhoneNumber(r.phone)}</div>
+                              </div>
+                            </td>
+                            <td>{formatToMoney(r.total, true)}</td>
+                            <td className="status">
+                              {r.paymentStatus === 'paid' && (
+                                <span className="paid">Paid</span>
+                              )}
+                              {r.paymentStatus === 'fullyRefunded' && (
+                                <span className="refunded">Refunded</span>
+                              )}
+                              {r.paymentStatus === 'partiallyRefunded' && (
+                                <span className="refunded">Refunded</span>
+                              )}
+                              {r.paymentStatus === 'unpaid' && (
+                                <span className="unpaid">Unpaid</span>
+                              )}
+                            </td>
+                            <td>
+                              <div className="menu-container">
+                                <button
+                                  type="button"
+                                  onClick={() => handleMenuButtonClick(r._id)}
+                                  className="menu-button"
                                 >
-                                  <a>
-                                    <svg
-                                      xmlns="http://www.w3.org/2000/svg"
-                                      fill="none"
-                                      viewBox="0 0 24 24"
-                                      stroke="currentColor"
+                                  <span className="sr-only">Menu</span>
+                                  <svg
+                                    xmlns="http://www.w3.org/2000/svg"
+                                    fill="none"
+                                    viewBox="0 0 24 24"
+                                    stroke="currentColor"
+                                  >
+                                    <path
+                                      strokeLinecap="round"
+                                      strokeLinejoin="round"
+                                      strokeWidth={2}
+                                      d="M12 5v.01M12 12v.01M12 19v.01M12 6a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2z"
+                                    />
+                                  </svg>
+                                </button>
+                                <Menu
+                                  open={r._id === activeMenuId && isOpen}
+                                  setOpen={setIsOpen}
+                                >
+                                  <>
+                                    <Link href={`/registrations/${r._id}`}>
+                                      <a>View Registration</a>
+                                    </Link>
+                                    <Link
+                                      href={`/registrations/update?rid=${r._id}`}
                                     >
-                                      <path
-                                        strokeLinecap="round"
-                                        strokeLinejoin="round"
-                                        strokeWidth={2}
-                                        d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"
-                                      />
-                                      <path
-                                        strokeLinecap="round"
-                                        strokeLinejoin="round"
-                                        strokeWidth={2}
-                                        d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
-                                      />
-                                    </svg>
-                                    Update Registration
-                                  </a>
-                                </Link>
-                              </>
-                            </Menu>
-                          </div>
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
+                                      <a>Update Registration</a>
+                                    </Link>
+                                  </>
+                                </Menu>
+                              </div>
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                )}
+              </>
             )}
           </>
         </div>
@@ -345,13 +318,14 @@ const HomeStyles = styled.div<{ showDeleteButton: boolean }>`
   }
 
   .table-actions-row {
+    margin: 0 0 1rem;
     display: flex;
     justify-content: space-between;
   }
 
   .search {
     position: relative;
-    width: 16rem;
+    width: 20rem;
 
     .icon {
       position: absolute;
@@ -477,57 +451,49 @@ const HomeStyles = styled.div<{ showDeleteButton: boolean }>`
     gap: 0.25rem;
   }
 
-  .not-attending {
-    color: #b91c1c;
+  .not-attending a {
+    text-decoration-color: #b91c1c;
     text-decoration: line-through;
   }
 
   .paid,
   .refunded,
   .unpaid {
-    padding: 0 0.5rem;
+    padding: 0.25rem 0.4375rem;
     display: inline-flex;
     font-size: 0.6875rem;
     font-weight: 600;
     text-transform: uppercase;
     letter-spacing: 0.1em;
-    line-height: 1.25rem;
-    border-radius: 9999px;
+    line-height: 1;
+    border-radius: 0.1875rem;
   }
 
   .paid {
-    background-color: #dcfce7;
-    color: #16a34a;
-    border: 1px solid #bbf7d0;
-    box-shadow: rgba(0, 0, 0, 0) 0px 0px 0px 0px,
-      rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0.05) 0px 1px 2px 0px,
-      inset 0 1px 1px #fff;
+    background-color: #cdf9dc;
+    color: #166534;
   }
 
   .refunded {
-    background-color: #e0e7ff;
-    color: #3730a3;
-    border: 1px solid #c7d2fe;
-    box-shadow: rgba(0, 0, 0, 0) 0px 0px 0px 0px,
-      rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0.05) 0px 1px 2px 0px,
-      inset 0 1px 1px #fff;
+    background-color: #b8f6fd;
+    color: #0e7490;
   }
 
   .unpaid {
-    background-color: #ffe4e6;
-    color: #9f1239;
-    border: 1px solid #fecdd3;
-    box-shadow: rgba(0, 0, 0, 0) 0px 0px 0px 0px,
-      rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0.05) 0px 1px 2px 0px,
-      inset 0 1px 1px #fff;
+    background-color: #fedddd;
+    color: #991b1b;
   }
 
-  .menu {
+  .menu-container {
     position: relative;
     overflow: visible;
     color: #9ca3af;
     display: flex;
     justify-content: center;
+
+    a:hover {
+      text-decoration: none;
+    }
   }
 
   .menu-button {

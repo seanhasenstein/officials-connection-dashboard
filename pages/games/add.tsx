@@ -6,12 +6,12 @@ import { format } from 'date-fns';
 import { Formik, Form, Field } from 'formik';
 import { GameCategory } from '../../interfaces';
 import useGame from '../../hooks/useGame';
-import useSession from '../../hooks/useSessions';
+import useAuthSession from '../../hooks/useAuthSession';
 import Layout from '../../components/Layout';
 import LoadingSpinner from '../../components/LoadingSpinner';
 
 export default function AddGame() {
-  const [session, sessionLoading] = useSession();
+  const [session, sessionLoading] = useAuthSession();
   const router = useRouter();
   const { addGame } = useGame();
   const [date, setDate] = React.useState<string>(() => {
@@ -37,6 +37,7 @@ export default function AddGame() {
               court: '',
               clinician: '',
               url: '',
+              officials: [],
               filmed: 'false' as 'true' | 'false',
             }}
             onSubmit={values => {

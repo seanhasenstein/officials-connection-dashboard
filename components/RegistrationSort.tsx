@@ -43,7 +43,7 @@ export default function RegistrationSort({
         <div className="options">
           <select
             id="variable"
-            defaultValue="lastName"
+            defaultValue="date"
             onBlur={e => setVariable(e.target.value as SortVariable)}
             onChange={e => setVariable(e.target.value as SortVariable)}
           >
@@ -52,7 +52,7 @@ export default function RegistrationSort({
           </select>
           <select
             id="order"
-            defaultValue="ascending"
+            defaultValue="descending"
             onBlur={e => setOrder(e.target.value as SortOrder)}
             onChange={e => setOrder(e.target.value as SortOrder)}
           >
@@ -70,7 +70,6 @@ const RegistrationSortStyles = styled.div<{ isOpen: boolean }>`
   flex-shrink: 0;
 
   .action-button {
-    margin: 0 0 1.125rem;
     padding: 0.375rem 0.875rem;
     display: flex;
     align-items: center;
