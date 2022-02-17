@@ -83,6 +83,7 @@ export default function Sidebar({ isOpen, setIsOpen }: Props) {
           </div>
         ) : (
           <>
+            <h4>2022 WBYOC Sessions</h4>
             <button
               type="button"
               className="close-btn"
@@ -100,7 +101,6 @@ export default function Sidebar({ isOpen, setIsOpen }: Props) {
                 />
               </svg>
             </button>
-            <h4>2022 WBYOC Sessions</h4>
             {sidebarSessions?.map(s => (
               <div key={s.sessionId} className="sidebar-item">
                 <Link href={`/registrations/session?sid=${s.sessionId}`}>
@@ -125,12 +125,11 @@ const SidebarStyles = styled.div`
   right: 0;
 
   h4 {
-    margin: 0 0 1.5rem;
+    margin: 0 0 2rem;
     font-size: 1rem;
     font-weight: 700;
     text-transform: uppercase;
     letter-spacing: 0.075em;
-    text-align: center;
   }
 
   .container {
@@ -200,10 +199,9 @@ const SidebarStyles = styled.div`
   .close-btn {
     padding: 0.375rem;
     position: absolute;
-    top: 1.125rem;
+    top: 2rem;
     right: 1.125rem;
     display: inline-flex;
-    display: none;
     justify-content: center;
     align-items: center;
     border: none;
@@ -211,6 +209,11 @@ const SidebarStyles = styled.div`
     color: #9ca3af;
     border-radius: 9999px;
     cursor: pointer;
+
+    svg {
+      height: 1rem;
+      width: 1rem;
+    }
 
     &:hover {
       color: #374151;
