@@ -39,6 +39,8 @@ export type PaymentMethod =
   | 'cash'
   | 'free';
 
+type Discount = 'HSCREW' | 'TOURNAMENT';
+
 export type SortOrder = 'ascending' | 'descending';
 
 export type SortVariable = 'lastName' | 'date';
@@ -149,7 +151,7 @@ export interface Registration {
   sessions: Session[];
   discount: {
     active: boolean;
-    name: string;
+    name: Discount;
     amount: number;
   };
   crewMembers: string[];

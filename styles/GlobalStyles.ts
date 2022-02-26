@@ -2,6 +2,14 @@ import { createGlobalStyle } from 'styled-components';
 
 export default createGlobalStyle`
 @font-face {
+  font-family: 'Teko';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url('/fonts/Teko-Regular.ttf') format('truetype');
+}
+
+@font-face {
   font-family: 'Inter';
   font-style:  normal;
   font-weight: 400;

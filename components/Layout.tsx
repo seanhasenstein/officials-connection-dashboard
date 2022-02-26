@@ -112,25 +112,28 @@ const LayoutStyles = styled.div`
   }
 
   .logo {
-    padding: 0.25rem;
-    display: inline-flex;
+    padding: 0.75rem;
+    display: flex;
     flex-direction: column;
 
     h1 {
-      margin: 0 0 4px;
-      font-size: 2rem;
-      font-weight: 600;
-      letter-spacing: -0.05em;
-      color: #1f2937;
-      line-height: 1;
+      margin: 0;
+      font-family: 'Teko', sans-serif;
+      font-size: 2.375rem;
+      font-weight: 400;
+      letter-spacing: 0em;
+      color: #000;
+      line-height: 0.8125;
     }
 
     h2 {
-      margin: 0 0 0 3px;
-      font-size: 0.75rem;
-      font-weight: 600;
+      margin: 0 0 0 0.0625rem;
+      font-family: 'Teko';
+      font-size: 1rem;
+      font-weight: 400;
       text-align: center;
-      color: #be123c;
+      letter-spacing: 0;
+      color: #ac1036;
       line-height: 1;
     }
   }

@@ -296,6 +296,7 @@ const HomeStyles = styled.div<{ showDeleteButton: boolean }>`
     font-weight: 600;
     color: #111827;
     text-align: center;
+    letter-spacing: -0.0125em;
   }
 
   h3 {
