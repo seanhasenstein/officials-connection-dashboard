@@ -5,7 +5,7 @@ export default createGlobalStyle`
   font-family: 'Teko';
   font-style: normal;
   font-weight: 400;
-  font-display: swap;
+  font-display: block;
   src: url('/fonts/Teko-Regular.ttf') format('truetype');
 }
 
