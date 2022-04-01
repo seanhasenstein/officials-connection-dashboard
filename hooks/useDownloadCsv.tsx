@@ -1,11 +1,10 @@
-import { format } from 'date-fns';
 import React from 'react';
-import Layout from '../components/Layout';
+import { format } from 'date-fns';
 
-export default function DownloadToCsv() {
+export default function useDownloadToCsv() {
   const linkRef = React.useRef<HTMLAnchorElement>(null);
 
-  const handleClick = async () => {
+  const handleDownloadClick = async () => {
     const response = await fetch('/api/registrations-to-csv');
     if (!response.ok) {
       throw new Error('Failed to fetch the csv file.');
@@ -24,14 +23,8 @@ export default function DownloadToCsv() {
     linkRef.current?.click();
   };
 
-  return (
-    <Layout>
-      <button type="button" onClick={handleClick}>
-        Download to CSV
-      </button>
-      <a ref={linkRef} className="sr-only">
-        Download registrations
-      </a>
-    </Layout>
-  );
+  return {
+    handleDownloadClick,
+    linkRef,
+  };
 }

@@ -5,6 +5,7 @@ import { signOut } from 'next-auth/react';
 import Link from 'next/link';
 import styled from 'styled-components';
 import GlobalStyles from '../styles/GlobalStyles';
+import useDownloadToCsv from '../hooks/useDownloadCsv';
 import Sidebar from './Sidebar';
 
 type Props = {
@@ -14,6 +15,7 @@ type Props = {
 
 export default function Layout({ children, title = 'WBYOC Dashboard' }: Props) {
   const router = useRouter();
+  const { handleDownloadClick, linkRef } = useDownloadToCsv();
   const [isOpen, setIsOpen] = React.useState(false);
 
   React.useEffect(() => {
@@ -29,12 +31,20 @@ export default function Layout({ children, title = 'WBYOC Dashboard' }: Props) {
       <Sidebar isOpen={isOpen} setIsOpen={setIsOpen} />
       <div className="secondary-nav">
         <div className="container">
-          <Link href="/games/add">
+          {/* <Link href="/games/add">
             <a>Add a Game</a>
-          </Link>
-          <Link href="/registrations/add">
+          </Link> */}
+          {/* <Link href="/registrations/add">
             <a>Add a Registration</a>
-          </Link>
+          </Link> */}
+          <div>
+            <button type="button" onClick={handleDownloadClick}>
+              Download Registrations to CSV
+            </button>
+            <a ref={linkRef} className="sr-only">
+              Download registrations
+            </a>
+          </div>
           <button type="button" onClick={() => signOut()}>
             Sign Out
           </button>
