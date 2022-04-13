@@ -14,7 +14,7 @@ import { useDeleteRegistration } from '../../hooks/useDeleteRegistration';
 import { useRegistrationNoteMutations } from '../../hooks/useRegistrationNoteMutations';
 import useAuthSession from '../../hooks/useAuthSession';
 import Layout from '../../components/Layout';
-import Menu from '../../components/Menu';
+// import Menu from '../../components/Menu';
 import Notes from '../../components/Notes';
 import LoadingSpinner from '../../components/LoadingSpinner';
 import DeleteModal from '../../components/DeleteModal';
@@ -31,13 +31,13 @@ export default function Registration() {
   const { addNote, deleteNote } = useRegistrationNoteMutations(
     getUrlParam(router.query.rid)
   );
-  const [isMenuOpen, setIsMenuOpen] = React.useState(false);
+  // const [isMenuOpen, setIsMenuOpen] = React.useState(false);
   const [showDeleteModal, setShowDeleteModal] = React.useState(false);
 
-  const handleDeleteMenuClick = () => {
-    setIsMenuOpen(false);
-    setShowDeleteModal(true);
-  };
+  // const handleDeleteMenuClick = () => {
+  //   setIsMenuOpen(false);
+  //   setShowDeleteModal(true);
+  // };
 
   const deleteCallback = () =>
     deleteRegistration.mutate(`${registration?._id}`, {
@@ -86,7 +86,7 @@ export default function Registration() {
                     </div>
                   </div>
                 </div>
-                <div className="menu">
+                {/* <div className="menu">
                   <button
                     type="button"
                     onClick={() => setIsMenuOpen(prevState => !prevState)}
@@ -117,10 +117,58 @@ export default function Registration() {
                       Delete Registration
                     </button>
                   </RegistrationMenu>
-                </div>
+                </div> */}
               </div>
               <div className="body">
-                <div>
+                <div className="first-column">
+                  <div className="vertical-item">
+                    <h3>Session{registration.sessions.length > 1 && 's'}</h3>
+                    <div className="list">
+                      {registration.sessions.map(s => (
+                        <p
+                          key={s.sessionId}
+                          className={
+                            s.attending ? 'attending' : 'not-attending'
+                          }
+                        >
+                          <Link
+                            href={`/registrations/session?sid=${s.sessionId}`}
+                          >
+                            {formatSessionName(s)}
+                          </Link>
+                        </p>
+                      ))}
+                    </div>
+                  </div>
+                  <div className="vertical-item">
+                    <h3>Crew Members</h3>
+                    <div className="list">
+                      {registration.crewMembers &&
+                      registration.crewMembers.length > 0 ? (
+                        registration.crewMembers?.map(m => <p key={m}>{m}</p>)
+                      ) : (
+                        <p>None</p>
+                      )}
+                    </div>
+                  </div>
+                  {registration.wiaaClass && (
+                    <div className="vertical-item">
+                      <h3>WIAA Class</h3>
+                      <p>{registration.wiaaClass}</p>
+                    </div>
+                  )}
+                  {registration.wiaaNumber && (
+                    <div className="vertical-item">
+                      <h3>WIAA Number</h3>
+                      <p>{registration.wiaaNumber}</p>
+                    </div>
+                  )}
+                  {registration.associations && (
+                    <div className="vertical-item">
+                      <h3>Associations</h3>
+                      <p>{registration.associations}</p>
+                    </div>
+                  )}
                   <div className="vertical-item">
                     <h3>Email</h3>
                     <p>
@@ -174,7 +222,7 @@ export default function Registration() {
                     </p>
                   </div>
                 </div>
-                <div>
+                {/* <div>
                   <div className="vertical-item">
                     <h3>Session{registration.sessions.length > 1 && 's'}</h3>
                     <div className="list">
@@ -223,7 +271,7 @@ export default function Registration() {
                       <p>{registration.associations}</p>
                     </div>
                   )}
-                </div>
+                </div> */}
                 <div className="third-column">
                   <div className="payment-section">
                     <div className="horizontal-item">
@@ -336,8 +384,14 @@ const RegistrationStyles = styled.div`
   .body {
     margin: 1.5rem 0 0;
     display: grid;
-    grid-template-columns: 1fr 1fr 31rem;
+    /* grid-template-columns: 1fr 1fr 31rem; */
+    grid-template-columns: 1fr 31rem;
     justify-content: space-between;
+  }
+
+  .first-column {
+    display: grid;
+    grid-template-columns: 1fr 0.875fr;
   }
 
   .third-column {
@@ -535,15 +589,51 @@ const RegistrationStyles = styled.div`
     }
   }
 
+  @media (max-width: 1200px) {
+    .first-column {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  @media (max-width: 1024px) {
+    .body {
+      grid-template-columns: 1fr;
+    }
+
+    .first-column {
+      grid-template-columns: 1fr 0.5fr;
+    }
+
+    .third-column {
+      padding-left: 0;
+      border-left: none;
+    }
+
+    .payment-section,
+    .notes-section {
+      padding-left: 0;
+      padding-right: 0;
+    }
+
+    .payment-section {
+      margin-top: 1.5rem;
+      padding-bottom: 3.5rem;
+    }
+
+    .notes-section {
+      margin-top: 0.5rem;
+    }
+  }
+
   @media (min-width: 1520px) {
     padding: 5rem 2.5rem;
   }
 `;
 
-const RegistrationMenu = styled(Menu)`
-  top: 4.25rem;
-  right: 3.5rem;
-`;
+// const RegistrationMenu = styled(Menu)`
+//   top: 4.25rem;
+//   right: 3.5rem;
+// `;
 
 const RegistrationSpinner = styled(LoadingSpinner)`
   display: flex;

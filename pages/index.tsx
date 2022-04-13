@@ -122,10 +122,10 @@ export default function Home() {
                     <table>
                       <thead>
                         <tr>
-                          <th className="text-left">Date</th>
-                          <th className="text-left">Camper</th>
+                          <th className="text-left lg-tb-cell">Date</th>
+                          <th className="text-left name-cell">Camper</th>
                           <th className="text-left">Sessions</th>
-                          <th className="text-left">Contact</th>
+                          <th className="text-left lg-tb-cell">Contact</th>
                           <th className="text-left">Total</th>
                           <th className="text-left">Status</th>
                           <th className="text-center">Menu</th>
@@ -139,10 +139,10 @@ export default function Home() {
                         )}
                         {searchResults.map((r: Registration) => (
                           <tr key={r._id}>
-                            <td>
+                            <td className="lg-tb-cell">
                               {format(new Date(r.createdAt), 'P hh:mmaa')}
                             </td>
-                            <td>
+                            <td className="name-cell">
                               <div className="camper">
                                 <div className="camper-name">
                                   <Link href={`/registrations/${r._id}`}>
@@ -180,7 +180,7 @@ export default function Home() {
                                 ))}
                               </div>
                             </td>
-                            <td>
+                            <td className="lg-tb-cell">
                               <div className="contact">
                                 <div className="email">
                                   <a
@@ -239,11 +239,11 @@ export default function Home() {
                                     <Link href={`/registrations/${r._id}`}>
                                       <a>View Registration</a>
                                     </Link>
-                                    <Link
+                                    {/* <Link
                                       href={`/registrations/update?rid=${r._id}`}
                                     >
                                       <a>Update Registration</a>
-                                    </Link>
+                                    </Link> */}
                                   </>
                                 </Menu>
                               </div>
@@ -392,6 +392,10 @@ const HomeStyles = styled.div<{ showDeleteButton: boolean }>`
     border-bottom: 1px solid #edf0f3;
   }
 
+  .lg-tb-cell {
+    display: table-cell;
+  }
+
   th {
     padding: 0.75rem 1rem;
     font-size: 0.75rem;
@@ -518,6 +522,27 @@ const HomeStyles = styled.div<{ showDeleteButton: boolean }>`
 
     &:hover {
       color: #111827;
+    }
+  }
+
+  @media (max-width: 1170px) {
+    th,
+    td {
+      padding-left: 0.5rem;
+      padding-right: 0.5rem;
+
+      &:first-of-type,
+      &.name-cell {
+        padding-left: 0.75rem;
+      }
+
+      &:last-of-type {
+        padding-right: 0.75rem;
+      }
+    }
+
+    .lg-tb-cell {
+      display: none;
     }
   }
 `;

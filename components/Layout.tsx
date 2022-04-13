@@ -59,7 +59,7 @@ export default function Layout({ children, title = 'WBYOC Dashboard' }: Props) {
             </a>
           </Link>
           <div className="primary-nav">
-            <nav>
+            <nav className="lg-nav">
               <Link href="/">
                 <a>All Registrations</a>
               </Link>
@@ -68,6 +68,11 @@ export default function Layout({ children, title = 'WBYOC Dashboard' }: Props) {
               </Link>
               <Link href="/games/camp/Plymouth">
                 <a>Plymouth Games</a>
+              </Link>
+            </nav>
+            <nav className="sm-nav">
+              <Link href="/">
+                <a>All Registrations</a>
               </Link>
             </nav>
             <button
@@ -151,6 +156,14 @@ const LayoutStyles = styled.div`
   .primary-nav {
     display: flex;
     gap: 3.5rem;
+  }
+
+  .lg-nav {
+    display: flex;
+  }
+
+  .sm-nav {
+    display: none;
   }
 
   nav {
@@ -237,6 +250,16 @@ const LayoutStyles = styled.div`
         text-decoration: underline;
         color: #fff;
       }
+    }
+  }
+
+  @media (max-width: 992px) {
+    .lg-nav {
+      display: none;
+    }
+
+    .sm-nav {
+      display: flex;
     }
   }
 `;

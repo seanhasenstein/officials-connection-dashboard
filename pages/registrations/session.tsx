@@ -57,10 +57,10 @@ export default function RegistrationSession() {
                     <table>
                       <thead>
                         <tr>
-                          <th className="text-left">Date</th>
-                          <th className="text-left">Camper</th>
+                          <th className="text-left lg-tb-cell">Date</th>
+                          <th className="text-left name-cell">Camper</th>
                           <th className="text-left">Sessions</th>
-                          <th className="text-left">Contact</th>
+                          <th className="text-left lg-tb-cell">Contact</th>
                           <th className="text-left">Total</th>
                           <th className="text-left">Status</th>
                           <th className="text-center">Menu</th>
@@ -69,10 +69,10 @@ export default function RegistrationSession() {
                       <tbody>
                         {registrations.attending.map((r: Registration) => (
                           <tr key={r._id}>
-                            <td className="date">
+                            <td className="lg-tb-cell">
                               {format(new Date(r.createdAt), 'P hh:mmaa')}
                             </td>
-                            <td>
+                            <td className="name-cell">
                               <div className="camper">
                                 <div className="camper-name">
                                   <Link href={`/registrations/${r._id}`}>
@@ -110,7 +110,7 @@ export default function RegistrationSession() {
                                 ))}
                               </div>
                             </td>
-                            <td>
+                            <td className="lg-tb-cell">
                               <div className="contact">
                                 <div className="email">
                                   <a href={`mailto:${r.email}`}>{r.email}</a>
@@ -161,11 +161,11 @@ export default function RegistrationSession() {
                                     <Link href={`/registrations/${r._id}`}>
                                       <a>View Registration</a>
                                     </Link>
-                                    <Link
+                                    {/* <Link
                                       href={`/registrations/update?rid=${r._id}`}
                                     >
                                       <a>Update Registration</a>
-                                    </Link>
+                                    </Link> */}
                                   </>
                                 </Menu>
                               </div>
@@ -408,6 +408,10 @@ const SessionStyles = styled.div`
     border-bottom: 1px solid #edf0f3;
   }
 
+  .lg-tb-cell {
+    display: table-cell;
+  }
+
   th {
     padding: 0.75rem 1rem;
     font-size: 0.75rem;
@@ -534,6 +538,27 @@ const SessionStyles = styled.div`
 
     &:hover {
       color: #111827;
+    }
+  }
+
+  @media (max-width: 1170px) {
+    th,
+    td {
+      padding-left: 0.5rem;
+      padding-right: 0.5rem;
+
+      &:first-of-type,
+      &.name-cell {
+        padding-left: 0.75rem;
+      }
+
+      &:last-of-type {
+        padding-right: 0.75rem;
+      }
+    }
+
+    .lg-tb-cell {
+      display: none;
     }
   }
 `;
