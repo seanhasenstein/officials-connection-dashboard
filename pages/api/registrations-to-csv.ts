@@ -72,7 +72,7 @@ const handler = nc<Request, NextApiResponse>()
             phone: formatPhoneNumber(cr.phone),
             location: `${cr.address.city}, ${cr.address.state}`,
             wiaaClass: cr.wiaaClass,
-            wiaaNunber: cr.wiaaNumber,
+            wiaaNumber: cr.wiaaNumber,
             associations: cr.associations,
             discount: cr.discount.name,
             crew1: cr.crewMembers[0] || '',
