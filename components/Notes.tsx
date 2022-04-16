@@ -225,22 +225,18 @@ const NoteSectionStyles = styled.div`
 
   textarea {
     width: 100%;
-
-    &:focus {
-      outline-color: #6366f1;
-    }
   }
 
   .add-button {
-    padding: 0.5rem 0.75rem;
-    background-color: #233150;
-    border: 1px solid #0b1019;
-    box-shadow: inset 0 1px 1px #415b94;
+    padding: 0.5rem 1rem;
+    background-color: #1f2937;
+    border: none;
     color: #f3f4f6;
     font-size: 0.875rem;
     font-weight: 500;
     border-radius: 0.25rem;
     cursor: pointer;
+    transition: background-color 100ms linear;
 
     &:hover {
       background-color: #111827;
@@ -252,7 +248,8 @@ const NoteSectionStyles = styled.div`
     }
 
     &:focus-visible {
-      text-decoration: underline;
+      box-shadow: rgb(255, 255, 255) 0px 0px 0px 2px, #2563eb 0px 0px 0px 4px,
+        rgba(0, 0, 0, 0.05) 0px 1px 2px 0px;
     }
   }
 

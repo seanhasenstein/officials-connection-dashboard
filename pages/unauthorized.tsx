@@ -1,34 +1,30 @@
 import Link from 'next/link';
 import styled from 'styled-components';
 import BasicLayout from '../components/BasicLayout';
+import Logo from '../components/Logo';
 
 export default function Unauthorized() {
   return (
     <BasicLayout>
       <UnauthorizedStyles>
-        <div className="logo">
-          <h1>Officials Connection</h1>
-          <h2>Wisconsin Basketball Yearbook Officials Camps</h2>
-        </div>
+        <Logo />
         <div className="container">
           <svg
             xmlns="http://www.w3.org/2000/svg"
             className="icon"
-            fill="none"
-            viewBox="0 0 24 24"
-            stroke="currentColor"
+            viewBox="0 0 20 20"
+            fill="currentColor"
           >
             <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={2}
-              d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z"
+              fillRule="evenodd"
+              d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z"
+              clipRule="evenodd"
             />
           </svg>
           <h3>Unauthorized</h3>
           <p>you must be logged in with a verified email address.</p>
           <Link href="/login">
-            <a className="login-link">Login</a>
+            <a className="login-link">Go to login</a>
           </Link>
         </div>
       </UnauthorizedStyles>
@@ -44,25 +40,6 @@ const UnauthorizedStyles = styled.div`
   background-size: 1280px auto;
   background-position: top -40px center;
 
-  h1 {
-    margin: 0 0 4px;
-    font-size: 2rem;
-    font-weight: 600;
-    text-align: center;
-    letter-spacing: -0.05em;
-    color: #111827;
-    line-height: 1;
-  }
-
-  h2 {
-    margin: 0 0 0 3px;
-    font-size: 0.75rem;
-    font-weight: 600;
-    text-align: center;
-    color: #be123c;
-    line-height: 1;
-  }
-
   h3 {
     margin: 0 0 1rem;
     font-size: 1.25rem;
@@ -71,7 +48,7 @@ const UnauthorizedStyles = styled.div`
 
   p {
     margin: 0;
-    font-size: 0.9375rem;
+    font-size: 1rem;
     font-weight: 500;
     color: #6b7280;
     text-align: center;
@@ -95,9 +72,9 @@ const UnauthorizedStyles = styled.div`
 
   .icon {
     margin: 0 0 0.5rem;
-    height: 1.75rem;
-    width: 1.75rem;
-    color: #9ca3af;
+    height: 1.5rem;
+    width: 1.5rem;
+    color: #c71c45;
   }
 
   .login-link {

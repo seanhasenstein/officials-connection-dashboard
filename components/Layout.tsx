@@ -7,6 +7,7 @@ import styled from 'styled-components';
 import GlobalStyles from '../styles/GlobalStyles';
 import useDownloadToCsv from '../hooks/useDownloadCsv';
 import Sidebar from './Sidebar';
+import Logo from './Logo';
 
 type Props = {
   children: React.ReactNode;
@@ -52,12 +53,7 @@ export default function Layout({ children, title = 'WBYOC Dashboard' }: Props) {
       </div>
       <header>
         <div className="container">
-          <Link href="/">
-            <a className="logo">
-              <h1>Officials Connection</h1>
-              <h2>Wisconsin Basketball Yearbook Officials Camps</h2>
-            </a>
-          </Link>
+          <Logo />
           <div className="primary-nav">
             <nav className="lg-nav">
               <Link href="/">
@@ -123,33 +119,6 @@ const LayoutStyles = styled.div`
       justify-content: space-between;
       max-width: 90rem;
       width: 100%;
-    }
-  }
-
-  .logo {
-    padding: 0.75rem;
-    display: flex;
-    flex-direction: column;
-
-    h1 {
-      margin: 0;
-      font-family: 'Teko', sans-serif;
-      font-size: 2.375rem;
-      font-weight: 400;
-      letter-spacing: 0em;
-      color: #000;
-      line-height: 0.8125;
-    }
-
-    h2 {
-      margin: 0 0 0 0.0625rem;
-      font-family: 'Teko';
-      font-size: 1rem;
-      font-weight: 400;
-      text-align: center;
-      letter-spacing: 0;
-      color: #ac1036;
-      line-height: 1;
     }
   }
 

@@ -222,56 +222,6 @@ export default function Registration() {
                     </p>
                   </div>
                 </div>
-                {/* <div>
-                  <div className="vertical-item">
-                    <h3>Session{registration.sessions.length > 1 && 's'}</h3>
-                    <div className="list">
-                      {registration.sessions.map(s => (
-                        <p
-                          key={s.sessionId}
-                          className={
-                            s.attending ? 'attending' : 'not-attending'
-                          }
-                        >
-                          <Link
-                            href={`/registrations/session?sid=${s.sessionId}`}
-                          >
-                            {formatSessionName(s)}
-                          </Link>
-                        </p>
-                      ))}
-                    </div>
-                  </div>
-                  <div className="vertical-item">
-                    <h3>Crew Members</h3>
-                    <div className="list">
-                      {registration.crewMembers &&
-                      registration.crewMembers.length > 0 ? (
-                        registration.crewMembers?.map(m => <p key={m}>{m}</p>)
-                      ) : (
-                        <p>None</p>
-                      )}
-                    </div>
-                  </div>
-                  {registration.wiaaClass && (
-                    <div className="vertical-item">
-                      <h3>WIAA Class</h3>
-                      <p>{registration.wiaaClass}</p>
-                    </div>
-                  )}
-                  {registration.wiaaNumber && (
-                    <div className="vertical-item">
-                      <h3>WIAA Number</h3>
-                      <p>{registration.wiaaNumber}</p>
-                    </div>
-                  )}
-                  {registration.associations && (
-                    <div className="vertical-item">
-                      <h3>Associations</h3>
-                      <p>{registration.associations}</p>
-                    </div>
-                  )}
-                </div> */}
                 <div className="third-column">
                   <div className="payment-section">
                     <div className="horizontal-item">
@@ -384,7 +334,6 @@ const RegistrationStyles = styled.div`
   .body {
     margin: 1.5rem 0 0;
     display: grid;
-    /* grid-template-columns: 1fr 1fr 31rem; */
     grid-template-columns: 1fr 31rem;
     justify-content: space-between;
   }
@@ -474,6 +423,7 @@ const RegistrationStyles = styled.div`
           outline: 2px solid transparent;
           outline-offset: 2px;
           text-decoration: underline;
+          color: #1d4ed8;
         }
       }
     }
@@ -554,8 +504,17 @@ const RegistrationStyles = styled.div`
     p {
       color: #111827;
 
-      a:hover {
-        text-decoration: underline;
+      a {
+        &:hover {
+          text-decoration: underline;
+        }
+
+        &:focus {
+          outline: 2px solid transparent;
+          outline-offset: 2px;
+          text-decoration: underline;
+          color: #1d4ed8;
+        }
       }
     }
   }

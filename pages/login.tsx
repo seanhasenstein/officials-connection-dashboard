@@ -1,9 +1,10 @@
 import React from 'react';
 import { GetServerSideProps } from 'next';
+import { getSession, signIn } from 'next-auth/react';
 import styled from 'styled-components';
 import BasicLayout from '../components/BasicLayout';
+import Logo from '../components/Logo';
 import LoadingSpinner from '../components/LoadingSpinner';
-import { getSession, signIn } from 'next-auth/react';
 
 export const getServerSideProps: GetServerSideProps = async context => {
   const session = await getSession(context);
@@ -34,23 +35,18 @@ export default function Login() {
   return (
     <BasicLayout>
       <LoginStyles>
-        <div className="logo">
-          <h1>Officials Connection</h1>
-          <h2>Wisconsin Basketball Yearbook Officials Camps</h2>
-        </div>
+        <Logo />
         <div className="container">
           <svg
             xmlns="http://www.w3.org/2000/svg"
             className="icon"
-            fill="none"
-            viewBox="0 0 24 24"
-            stroke="currentColor"
+            viewBox="0 0 20 20"
+            fill="currentColor"
           >
             <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={2}
-              d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"
+              fillRule="evenodd"
+              d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z"
+              clipRule="evenodd"
             />
           </svg>
           <h3>Sign in to your account</h3>
@@ -87,38 +83,16 @@ const LoginStyles = styled.div`
   background-size: 1280px auto;
   background-position: top -40px center;
 
-  h1 {
-    margin: 0 0 4px;
-    font-size: 2rem;
-    font-weight: 600;
-    text-align: center;
-    letter-spacing: -0.05em;
-    color: #111827;
-    line-height: 1;
-  }
-
-  h2 {
-    margin: 0 0 0 3px;
-    font-size: 0.75rem;
-    font-weight: 600;
-    text-align: center;
-    color: #be123c;
-    line-height: 1;
-  }
-
   h3 {
     margin: 0;
     font-size: 1.25rem;
     font-weight: 600;
     text-align: center;
-    color: #4b5563;
+    color: #111827;
   }
 
   .logo {
-    margin: 0 0 2.5rem;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
+    margin: 0 0 2rem;
   }
 
   form {
@@ -165,6 +139,11 @@ const LoginStyles = styled.div`
     border: none;
     border-radius: 0.25rem;
     cursor: pointer;
+    transition: background-color 100ms linear;
+
+    &:hover {
+      background-color: #111827;
+    }
 
     &:focus {
       outline: 2px solid transparent;
