@@ -91,12 +91,14 @@ input, select, textarea {
   box-shadow: rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0.05) 0px 1px 2px 0px;
 
   &:focus {
-    outline-color: #1f2937;
+    outline-color: #888;
   }
 }
+
 input, textarea {
   padding: 0.625rem 0.75rem;
 }
+
 textarea {
   min-height: 7rem;
   resize: vertical;

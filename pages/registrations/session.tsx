@@ -74,6 +74,9 @@ export default function RegistrationSession() {
                             </td>
                             <td className="name-cell">
                               <div className="camper">
+                                {r.notes.length > 0 ? (
+                                  <div className="has-notes">*</div>
+                                ) : null}
                                 <div className="camper-name">
                                   <Link href={`/registrations/${r._id}`}>
                                     <a>
@@ -444,9 +447,17 @@ const SessionStyles = styled.div`
   }
 
   .camper {
+    position: relative;
     display: flex;
     flex-direction: column;
     gap: 0.125rem;
+  }
+
+  .has-notes {
+    position: absolute;
+    top: 0;
+    left: -0.625rem;
+    color: #b91c1c;
   }
 
   .camper-name {
