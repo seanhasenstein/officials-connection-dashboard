@@ -39,22 +39,6 @@ export default function Notes({ notes, addNote, deleteNote }: Props) {
         {notes?.map(n => (
           <div key={n.id} className="note">
             <div className="flex-row">
-              <div className="icon">
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  className="h-6 w-6"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M7 8h10M7 12h4m1 8l-4-4H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-3l-4 4z"
-                  />
-                </svg>
-              </div>
               <div>
                 <div className="text">{n.text}</div>
                 <div className="date">
@@ -62,24 +46,26 @@ export default function Notes({ notes, addNote, deleteNote }: Props) {
                 </div>
               </div>
             </div>
-            <button
-              type="button"
-              onClick={() => handleDeleteClick(n.id)}
-              className="delete-button"
-            >
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                viewBox="0 0 20 20"
-                fill="currentColor"
+            <div>
+              <button
+                type="button"
+                onClick={() => handleDeleteClick(n.id)}
+                className="delete-button"
               >
-                <path
-                  fillRule="evenodd"
-                  d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z"
-                  clipRule="evenodd"
-                />
-              </svg>
-              <span className="sr-only">Delete Note</span>
-            </button>
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  viewBox="0 0 20 20"
+                  fill="currentColor"
+                >
+                  <path
+                    fillRule="evenodd"
+                    d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z"
+                    clipRule="evenodd"
+                  />
+                </svg>
+                <span className="sr-only">Delete Note</span>
+              </button>
+            </div>
           </div>
         ))}
       </div>
@@ -136,68 +122,38 @@ const NoteSectionStyles = styled.div`
 
   .note {
     position: relative;
-    padding: 1rem 0;
+    padding: 1.5rem 0;
     display: flex;
     justify-content: space-between;
-    align-items: center;
-
-    &::after {
-      content: '';
-      position: absolute;
-      left: 0.875rem;
-      bottom: -0.5625rem;
-      width: 2px;
-      height: 1.5rem;
-      background-color: #6b7280;
-    }
+    border-bottom: 1px solid #e5e7eb;
 
     &:last-of-type {
       border-bottom: none;
-
-      &::after {
-        display: none;
-      }
     }
   }
 
   .flex-row {
+    padding-right: 1rem;
     display: flex;
-  }
-
-  .icon {
-    margin: 0 1rem 0 0;
-    height: 2rem;
-    width: 2rem;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    background-color: #f3f4f6;
-    border-radius: 9999px;
-
-    svg {
-      height: 1rem;
-      width: 1rem;
-      color: #6b7280;
-    }
   }
 
   .text {
-    margin: 0.0625rem 0 0.125rem;
+    margin: 0.0625rem 0 0.5rem;
     font-size: 0.9375rem;
     color: #111827;
+    line-height: 1.35;
   }
 
   .date {
-    font-size: 0.875rem;
+    font-size: 0.8125rem;
     font-weight: 500;
     color: #9ca3af;
   }
 
   .delete-button {
     padding: 0.25rem;
-    display: flex;
+    display: inline-flex;
     justify-content: center;
-    align-items: center;
     background-color: transparent;
     border: none;
     cursor: pointer;
@@ -205,8 +161,8 @@ const NoteSectionStyles = styled.div`
     border-radius: 9999px;
 
     svg {
-      height: 0.875rem;
-      width: 0.875rem;
+      height: 0.75rem;
+      width: 0.75rem;
     }
 
     &:hover svg {

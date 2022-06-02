@@ -120,106 +120,108 @@ export default function Registration() {
                 </div> */}
               </div>
               <div className="body">
-                <div className="first-column">
-                  <div className="vertical-item">
-                    <h3>Session{registration.sessions.length > 1 && 's'}</h3>
-                    <div className="list">
-                      {registration.sessions.map(s => (
-                        <p
-                          key={s.sessionId}
-                          className={
-                            s.attending ? 'attending' : 'not-attending'
-                          }
-                        >
-                          <Link
-                            href={`/registrations/session?sid=${s.sessionId}`}
+                <div>
+                  <div className="first-column">
+                    <div className="vertical-item">
+                      <h3>Session{registration.sessions.length > 1 && 's'}</h3>
+                      <div className="list">
+                        {registration.sessions.map(s => (
+                          <p
+                            key={s.sessionId}
+                            className={
+                              s.attending ? 'attending' : 'not-attending'
+                            }
                           >
-                            {formatSessionName(s)}
-                          </Link>
-                        </p>
-                      ))}
+                            <Link
+                              href={`/registrations/session?sid=${s.sessionId}`}
+                            >
+                              {formatSessionName(s)}
+                            </Link>
+                          </p>
+                        ))}
+                      </div>
                     </div>
-                  </div>
-                  <div className="vertical-item">
-                    <h3>Crew Members</h3>
-                    <div className="list">
-                      {registration.crewMembers &&
-                      registration.crewMembers.length > 0 ? (
-                        registration.crewMembers?.map(m => <p key={m}>{m}</p>)
-                      ) : (
-                        <p>None</p>
-                      )}
-                    </div>
-                  </div>
-                  {registration.wiaaClass && (
                     <div className="vertical-item">
-                      <h3>WIAA Class</h3>
-                      <p>{registration.wiaaClass}</p>
+                      <h3>Crew Members</h3>
+                      <div className="list">
+                        {registration.crewMembers &&
+                        registration.crewMembers.length > 0 ? (
+                          registration.crewMembers?.map(m => <p key={m}>{m}</p>)
+                        ) : (
+                          <p>None</p>
+                        )}
+                      </div>
                     </div>
-                  )}
-                  {registration.wiaaNumber && (
+                    {registration.wiaaClass && (
+                      <div className="vertical-item">
+                        <h3>WIAA Class</h3>
+                        <p>{registration.wiaaClass}</p>
+                      </div>
+                    )}
+                    {registration.wiaaNumber && (
+                      <div className="vertical-item">
+                        <h3>WIAA Number</h3>
+                        <p>{registration.wiaaNumber}</p>
+                      </div>
+                    )}
+                    {registration.associations && (
+                      <div className="vertical-item">
+                        <h3>Associations</h3>
+                        <p>{registration.associations}</p>
+                      </div>
+                    )}
                     <div className="vertical-item">
-                      <h3>WIAA Number</h3>
-                      <p>{registration.wiaaNumber}</p>
+                      <h3>Email</h3>
+                      <p>
+                        <a href={`mailto:${registration.email}`}>
+                          {registration.email}
+                        </a>
+                      </p>
                     </div>
-                  )}
-                  {registration.associations && (
                     <div className="vertical-item">
-                      <h3>Associations</h3>
-                      <p>{registration.associations}</p>
+                      <h3>Phone</h3>
+                      <p>{formatPhoneNumber(registration.phone)}</p>
                     </div>
-                  )}
-                  <div className="vertical-item">
-                    <h3>Email</h3>
-                    <p>
-                      <a href={`mailto:${registration.email}`}>
-                        {registration.email}
-                      </a>
-                    </p>
-                  </div>
-                  <div className="vertical-item">
-                    <h3>Phone</h3>
-                    <p>{formatPhoneNumber(registration.phone)}</p>
-                  </div>
-                  <div className="vertical-item">
-                    <h3>Address</h3>
-                    <p>
-                      {registration.address.street} <br />
-                      {registration.address.street2 && (
-                        <>
-                          Apt. {registration.address.street2} <br />
-                        </>
-                      )}
-                      {registration.address.city}
-                      {registration.address.city &&
-                        registration.address.state &&
-                        ','}{' '}
-                      {registration.address.state}{' '}
-                      {registration.address.zipcode}
-                    </p>
-                  </div>
-                  <div className="vertical-item">
-                    <h3>Food Allergies</h3>
-                    <p>
-                      {registration.foodAllergies
-                        ? registration.foodAllergies
-                        : 'None provided'}{' '}
-                    </p>
-                  </div>
-                  <div className="vertical-item">
-                    <h3>Emergency Contact</h3>
-                    <p>
-                      {registration.emergencyContact.name ? (
-                        <>
-                          {registration.emergencyContact.name} <br />
-                          {formatPhoneNumber(
-                            registration.emergencyContact.phone
-                          )}
-                        </>
-                      ) : (
-                        'None provided'
-                      )}
-                    </p>
+                    <div className="vertical-item">
+                      <h3>Address</h3>
+                      <p>
+                        {registration.address.street} <br />
+                        {registration.address.street2 && (
+                          <>
+                            Apt. {registration.address.street2} <br />
+                          </>
+                        )}
+                        {registration.address.city}
+                        {registration.address.city &&
+                          registration.address.state &&
+                          ','}{' '}
+                        {registration.address.state}{' '}
+                        {registration.address.zipcode}
+                      </p>
+                    </div>
+                    <div className="vertical-item">
+                      <h3>Food Allergies</h3>
+                      <p>
+                        {registration.foodAllergies
+                          ? registration.foodAllergies
+                          : 'None provided'}{' '}
+                      </p>
+                    </div>
+                    <div className="vertical-item">
+                      <h3>Emergency Contact</h3>
+                      <p>
+                        {registration.emergencyContact.name ? (
+                          <>
+                            {registration.emergencyContact.name} <br />
+                            {formatPhoneNumber(
+                              registration.emergencyContact.phone
+                            )}
+                          </>
+                        ) : (
+                          'None provided'
+                        )}
+                      </p>
+                    </div>
                   </div>
                 </div>
                 <div className="third-column">
