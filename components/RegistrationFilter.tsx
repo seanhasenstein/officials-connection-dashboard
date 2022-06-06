@@ -188,6 +188,7 @@ const RegistrationFilterStyles = styled.div<{ isOpen: boolean }>`
     display: ${props => (props.isOpen ? 'flex' : 'none')};
     gap: 1rem;
     white-space: nowrap;
+    z-index: 100;
   }
 
   .nav {
