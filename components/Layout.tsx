@@ -200,6 +200,7 @@ const LayoutStyles = styled.div`
     button {
       margin: 0;
       padding: 0;
+      display: block;
       font-size: 0.8125rem;
       color: #e5e7eb;
       background-color: transparent;

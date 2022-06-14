@@ -70,7 +70,14 @@ const handler = nc<Request, NextApiResponse>()
             lastName: cr.lastName,
             email: cr.email,
             phone: formatPhoneNumber(cr.phone),
-            location: `${cr.address.city}, ${cr.address.state}`,
+            location:
+              cr.address.city && cr.address.state
+                ? `${cr.address.city}, ${cr.address.state}`
+                : cr.address.city
+                ? cr.address.city
+                : cr.address.state
+                ? cr.address.state
+                : '',
             wiaaClass: cr.wiaaClass,
             wiaaNumber: cr.wiaaNumber,
             associations: cr.associations,
