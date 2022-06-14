@@ -51,10 +51,8 @@ const handler = nc<Request, NextApiResponse>()
 
     const csvStringifier = createObjectCsvStringifier({ header });
 
-    type Accumulator = Record<string, any>;
-
     const registrationsBySession = allRegistrations.reduce(
-      (acc: Accumulator, cr) => {
+      (acc: Record<string, any>, cr) => {
         const zonedDate = utcToZonedTime(
           new Date(cr.createdAt),
           'America/Chicago'

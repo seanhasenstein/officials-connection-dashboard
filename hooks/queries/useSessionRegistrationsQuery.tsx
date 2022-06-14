@@ -1,6 +1,6 @@
 import { useQuery, useQueryClient } from 'react-query';
 import { Registration, SessionsQuery } from '../../interfaces';
-import { registrationKeys } from '../queries';
+import { registrationKeys } from '.';
 import { sessionReducer } from '../../utils/misc';
 
 async function fetchSessions(sessionId: string | undefined) {

@@ -6,6 +6,7 @@ import Link from 'next/link';
 import styled from 'styled-components';
 import GlobalStyles from '../styles/GlobalStyles';
 import useDownloadToCsv from '../hooks/useDownloadCsv';
+import useDownloadNameLabels from '../hooks/useDownloadNameLabels';
 import Sidebar from './Sidebar';
 import Logo from './Logo';
 
@@ -16,7 +17,9 @@ type Props = {
 
 export default function Layout({ children, title = 'WBYOC Dashboard' }: Props) {
   const router = useRouter();
-  const { handleDownloadClick, linkRef } = useDownloadToCsv();
+  const { handleDownloadToCsvClick, csvLinkRef } = useDownloadToCsv();
+  const { handleDownloadNameLabelsClick, nameLabelLinkRef } =
+    useDownloadNameLabels();
   const [isOpen, setIsOpen] = React.useState(false);
 
   React.useEffect(() => {
@@ -38,14 +41,18 @@ export default function Layout({ children, title = 'WBYOC Dashboard' }: Props) {
           <Link href="/registrations/add">
             <a>Add an offline Registration</a>
           </Link>
-          <div>
-            <button type="button" onClick={handleDownloadClick}>
-              Download Registrations to CSV
-            </button>
-            <a ref={linkRef} className="sr-only">
-              Download registrations
-            </a>
-          </div>
+          <button type="button" onClick={handleDownloadToCsvClick}>
+            Download Registrations to CSV
+          </button>
+          <button type="button" onClick={handleDownloadNameLabelsClick}>
+            Download Name Labels
+          </button>
+          <a ref={csvLinkRef} className="sr-only">
+            Download registrations
+          </a>
+          <a ref={nameLabelLinkRef} className="sr-only">
+            Download Name Labels
+          </a>
           <button type="button" onClick={() => signOut()}>
             Sign Out
           </button>

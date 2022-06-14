@@ -1,6 +1,6 @@
 import { useQuery, useQueryClient } from 'react-query';
 import { Registration } from '../../interfaces';
-import { registrationKeys } from '../queries';
+import { registrationKeys } from '.';
 
 async function fetchRegistration(id: string | undefined) {
   if (!id) return;
