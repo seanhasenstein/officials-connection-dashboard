@@ -1,21 +1,89 @@
-import { PaymentMethod, RegistrationDbFormat } from '../interfaces';
+import {
+  PaymentMethod,
+  PaymentStatus,
+  RegistrationForDb,
+  RegistrationDiscount,
+  RegistrationInput,
+  Session,
+  TemporaryDiscountName,
+  WiaaClass,
+  DiscountName,
+} from '../interfaces';
 import {
   calculateTotals,
   checkForDefault,
+  createIdNumber,
   formatZipcode,
   removeNonDigits,
 } from './misc';
 
-export function formatRegistrationForDb(input: RegistrationDbFormat) {
-  const { subtotal, total } = calculateTotals(
-    input.paymentMethod as PaymentMethod,
-    input.subtotal,
-    input.refundAmount,
-    input.discount.amount
+function verifySelectedSessions(
+  unverifiedSessions: Session[],
+  serverSessions: Session[]
+) {
+  const verifiedSessions = unverifiedSessions.reduce(
+    (acc: Session[], currUnverifiedSession: Session) => {
+      if (currUnverifiedSession.isChecked) {
+        const session = serverSessions.find(
+          serverSession =>
+            serverSession.sessionId === currUnverifiedSession.sessionId
+        );
+
+        if (!session) return acc;
+
+        const { isChecked, active, createdAt, updatedAt, ...formattedSession } =
+          currUnverifiedSession;
+        return [...acc, { ...formattedSession }];
+      }
+
+      return acc;
+    },
+    []
   );
 
-  const registration = {
-    registrationId: input.registrationId,
+  return verifiedSessions;
+}
+
+function formatDiscountName(
+  discount: RegistrationDiscount,
+  temporaryDiscountName: TemporaryDiscountName
+) {
+  if (discount.active === false || temporaryDiscountName === 'default') {
+    return '';
+  }
+
+  if (temporaryDiscountName === 'hscrew') {
+    return 'HSCREW';
+  }
+
+  return discount.name.toUpperCase();
+}
+
+export function formatRegistrationForDb(
+  input: RegistrationInput,
+  serverSessions: Session[]
+) {
+  const {
+    paymentMethod,
+    subtotal: inputSubtotal,
+    refundAmount,
+    discount,
+  } = input;
+  const selectedSessions = input.sessions.filter(session => session.isChecked);
+  const verifiedSessions = verifySelectedSessions(
+    selectedSessions,
+    serverSessions
+  );
+  const { subtotal, total } = calculateTotals(
+    paymentMethod,
+    inputSubtotal,
+    refundAmount,
+    discount.amount
+  );
+  const timestamp = new Date().toISOString();
+
+  const registrationForDb: RegistrationForDb = {
+    registrationId: createIdNumber(),
     firstName: input.firstName.trim(),
     lastName: input.lastName.trim(),
     email: input.email.toLowerCase().trim(),
@@ -27,7 +95,8 @@ export function formatRegistrationForDb(input: RegistrationDbFormat) {
       state: checkForDefault(input.address.state),
       zipcode: formatZipcode(input.address.zipcode),
     },
-    wiaaClass: checkForDefault(input.wiaaClass),
+    sessions: verifiedSessions,
+    wiaaClass: checkForDefault(input.wiaaClass.trim() as WiaaClass),
     wiaaNumber: input.wiaaNumber.trim(),
     associations: input.associations.trim(),
     foodAllergies: input.foodAllergies.trim(),
@@ -35,26 +104,26 @@ export function formatRegistrationForDb(input: RegistrationDbFormat) {
       name: input.emergencyContact.name.trim(),
       phone: removeNonDigits(input.emergencyContact.phone),
     },
-    sessions: input.sessions,
     discount: {
       active: input.discount.active,
-      name: input.discount.name,
+      name: formatDiscountName(
+        input.discount,
+        input.temporaryDiscountName
+      ) as DiscountName,
       amount: input.discount.active ? input.discount.amount * 100 : 0,
     },
-    crewMembers: input.crewMembers
-      .filter((m: string) => m.trim())
-      .map((m: string) => m.trim()),
+    crewMembers: input.crewMembers,
     subtotal,
     total,
-    paymentStatus: checkForDefault(input.paymentStatus),
-    paymentMethod: checkForDefault(input.paymentMethod),
-    checkNumber: input.checkNumber.trim(),
-    stripeId: input.stripeId,
-    refundAmount: input.refundAmount * 100,
+    paymentStatus: checkForDefault(input.paymentStatus) as PaymentStatus,
+    paymentMethod: checkForDefault(input.paymentMethod) as PaymentMethod,
+    checkNumber: input.checkNumber,
+    refundAmount: input.refundAmount,
     notes: input.notes,
-    createdAt: input.createdAt,
-    updatedAt: input.updatedAt,
+    stripeId: null,
+    createdAt: timestamp,
+    updatedAt: timestamp,
   };
 
-  return registration;
+  return registrationForDb;
 }

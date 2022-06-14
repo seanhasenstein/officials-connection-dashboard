@@ -25,6 +25,7 @@ export default function Menu({ open, setOpen, children, className }: Props) {
 const TableMenuStyles = styled.div<{ open: boolean }>`
   padding: 0;
   overflow: auto;
+  white-space: nowrap;
   position: absolute;
   top: 1.875rem;
   right: 0rem;

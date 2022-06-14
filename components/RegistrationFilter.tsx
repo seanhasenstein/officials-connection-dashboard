@@ -4,7 +4,7 @@ import { FilterOptions } from '../interfaces';
 import { formatSessionName } from '../utils/misc';
 import useEscapeKeydownClose from '../hooks/useEscapeKeydownClose';
 import useOutsideClick from '../hooks/useOutsideClick';
-import { useYearQuery } from '../hooks/useYearQuery';
+import useYearQuery from '../hooks/queries/useYearQuery';
 
 type Props = {
   filter: { paymentStatus: string[]; sessions: string[] };

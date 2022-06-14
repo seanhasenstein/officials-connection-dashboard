@@ -1,7 +1,7 @@
 import { useQuery, useQueryClient } from 'react-query';
-import { Registration, SessionsQuery } from '../interfaces';
-import { registrationKeys } from './queries';
-import { sessionReducer } from '../utils/misc';
+import { Registration, SessionsQuery } from '../../interfaces';
+import { registrationKeys } from '../queries';
+import { sessionReducer } from '../../utils/misc';
 
 async function fetchSessions(sessionId: string | undefined) {
   if (!sessionId) {
@@ -18,7 +18,7 @@ async function fetchSessions(sessionId: string | undefined) {
   return data.registrations;
 }
 
-export function useSessionRegistrationsQuery(sessionId: string) {
+export default function useSessionRegistrationsQuery(sessionId: string) {
   const queryClient = useQueryClient();
 
   return useQuery<SessionsQuery, Error>(

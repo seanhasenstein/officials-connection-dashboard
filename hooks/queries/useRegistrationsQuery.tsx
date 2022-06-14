@@ -1,6 +1,6 @@
 import { useQuery, useQueryClient } from 'react-query';
-import { Registration } from '../interfaces';
-import { registrationKeys } from './queries';
+import { Registration } from '../../interfaces';
+import { registrationKeys } from '../queries';
 
 async function fetchRegistrations() {
   const response = await fetch('/api/registrations');
@@ -13,7 +13,7 @@ async function fetchRegistrations() {
   return data.registrations;
 }
 
-export function useRegistrationsQuery() {
+export default function useRegistrationsQuery() {
   const queryClient = useQueryClient();
 
   return useQuery<Registration[], Error>(

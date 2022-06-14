@@ -1,9 +1,5 @@
 import { Db, ObjectId } from 'mongodb';
-import {
-  Registration,
-  RegistrationDbFormat,
-  RegistrationUpdate,
-} from '../interfaces';
+import { Registration, RegistrationForDb } from '../interfaces';
 
 export const getRegistration = async (db: Db, id: string) => {
   const result = await db
@@ -30,23 +26,30 @@ export const getRegistrations = async (
   return data;
 };
 
-export async function addRegistration(
-  db: Db,
-  registration: RegistrationDbFormat
-) {
+export async function addRegistration(db: Db, input: RegistrationForDb) {
+  const timestamp = new Date().toISOString();
+  const registration: RegistrationForDb = {
+    ...input,
+    createdAt: timestamp,
+    updatedAt: timestamp,
+  };
   const result = await db.collection('registrations').insertOne(registration);
   return result.insertedId;
 }
 
 export async function updateRegistration(
   db: Db,
-  id: string,
-  update: RegistrationUpdate
+  _id: string,
+  input: RegistrationForDb
 ) {
+  const update: RegistrationForDb = {
+    ...input,
+    updatedAt: new Date().toISOString(),
+  };
   const result = await db
     .collection('registrations')
     .findOneAndUpdate(
-      { _id: new ObjectId(id) },
+      { _id: new ObjectId(_id) },
       { $set: update },
       { returnDocument: 'after' }
     );

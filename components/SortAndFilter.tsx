@@ -14,7 +14,7 @@ import {
 } from '../utils/misc';
 import RegistrationFilter from './RegistrationFilter';
 import RegistrationSort from './RegistrationSort';
-import { useYearQuery } from '../hooks/useYearQuery';
+import useYearQuery from '../hooks/queries/useYearQuery';
 
 type Props = {
   regQueryData: Registration[] | undefined;

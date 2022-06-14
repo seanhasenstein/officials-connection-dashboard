@@ -13,8 +13,8 @@ import useAuthSession from '../hooks/useAuthSession';
 import useMenu from '../hooks/useMenu';
 import useNotification from '../hooks/useNotification';
 import useRegistrationSearch from '../hooks/useRegistrationSearch';
-import { useRegistrationsQuery } from '../hooks/useRegistrationsQuery';
-import { useYearQuery } from '../hooks/useYearQuery';
+import useRegistrationsQuery from '../hooks/queries/useRegistrationsQuery';
+import useYearQuery from '../hooks/queries/useYearQuery';
 import {
   formatSessionName,
   formatToMoney,
@@ -242,11 +242,11 @@ export default function Home() {
                                     <Link href={`/registrations/${r._id}`}>
                                       <a>View Registration</a>
                                     </Link>
-                                    {/* <Link
+                                    <Link
                                       href={`/registrations/update?rid=${r._id}`}
                                     >
                                       <a>Update Registration</a>
-                                    </Link> */}
+                                    </Link>
                                   </>
                                 </Menu>
                               </div>

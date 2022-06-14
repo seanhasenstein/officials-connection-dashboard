@@ -4,8 +4,8 @@ import Link from 'next/link';
 import { formatSessionName } from '../utils/misc';
 import useEscapeKeydownClose from '../hooks/useEscapeKeydownClose';
 import useOutsideClick from '../hooks/useOutsideClick';
-import { useRegistrationsQuery } from '../hooks/useRegistrationsQuery';
-import { useYearQuery } from '../hooks/useYearQuery';
+import useRegistrationsQuery from '../hooks/queries/useRegistrationsQuery';
+import useYearQuery from '../hooks/queries/useYearQuery';
 
 type Props = {
   isOpen: boolean;

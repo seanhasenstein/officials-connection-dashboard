@@ -91,7 +91,7 @@ input, select, textarea {
   box-shadow: rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0.05) 0px 1px 2px 0px;
 
   &:focus {
-    outline-color: #888;
+    outline-color: #0448bf;
   }
 }
 
@@ -125,7 +125,7 @@ input[type='checkbox'] {
   width: 1rem;
   height: 1rem;
   border-radius: 0.25rem;
-  color: #4F46E5;
+  color: #0441ac;
   border: 1px solid #d1d5db;
   color-adjust: exact;
   display: inline-block;

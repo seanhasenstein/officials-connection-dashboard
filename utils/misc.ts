@@ -109,32 +109,6 @@ export function formatGameDate(date: string, time: string) {
   return formatISO(zonedTime);
 }
 
-export function verifySelectedSessions(
-  unverifiedSessions: Session[],
-  serverSessions: Session[]
-) {
-  const verifiedSessions = unverifiedSessions.reduce(
-    (acc: Session[], currSession: Session) => {
-      if (currSession.isChecked) {
-        const session = serverSessions.find(
-          s => s.sessionId === currSession.sessionId
-        );
-
-        if (!session) return acc;
-
-        const { isChecked, active, createdAt, updatedAt, ...formattedSession } =
-          currSession;
-        return [...acc, { ...formattedSession }];
-      }
-
-      return acc;
-    },
-    []
-  );
-
-  return verifiedSessions;
-}
-
 export function sessionReducer(
   registrations: Registration[],
   sessionId: string | undefined
@@ -186,7 +160,7 @@ function calculateSubtotal(paymentMethod: PaymentMethod, subtotal: number) {
   return subtotal * 100;
 }
 
-function calculateTotal(
+export function calculateTotal(
   paymentMethod: PaymentMethod,
   subtotal: number,
   refundAmount: number,
@@ -196,7 +170,8 @@ function calculateTotal(
     return 0;
   }
 
-  return (subtotal - refundAmount - discountAmount) * 100;
+  const total = (subtotal - refundAmount - discountAmount) * 100;
+  return total < 0 ? 0 : total;
 }
 
 export function calculateTotals(

@@ -1,7 +1,7 @@
 import { useMutation, useQueryClient } from 'react-query';
-import { gameKeys, registrationKeys } from './queries';
+import { gameKeys, registrationKeys } from '../queries';
 
-export function useDeleteRegistration() {
+export default function useDeleteRegistration() {
   const queryClient = useQueryClient();
 
   return useMutation(

@@ -22,7 +22,8 @@ export type WiaaClass =
   | 'L2'
   | 'L1'
   | 'LR'
-  | 'New';
+  | 'New'
+  | '';
 
 export type PaymentStatus =
   | 'default'
@@ -39,7 +40,13 @@ export type PaymentMethod =
   | 'cash'
   | 'free';
 
-type Discount = 'HSCREW' | 'TOURNAMENT';
+export type DiscountName =
+  | 'HSCREW'
+  | 'TOURNAMENT'
+  | 'EASTER'
+  | 'MEMORIAL'
+  | 'OTHER'
+  | '';
 
 export type SortOrder = 'ascending' | 'descending';
 
@@ -126,6 +133,12 @@ export interface SessionsQuery {
   notAttending: Registration[];
 }
 
+export interface RegistrationDiscount {
+  active: boolean;
+  name: DiscountName;
+  amount: number;
+}
+
 export interface Registration {
   _id: string;
   registrationId: string;
@@ -140,6 +153,7 @@ export interface Registration {
     state: string;
     zipcode: string;
   };
+  sessions: Session[];
   wiaaClass: WiaaClass;
   wiaaNumber: string;
   associations: string;
@@ -148,12 +162,7 @@ export interface Registration {
     name: string;
     phone: string;
   };
-  sessions: Session[];
-  discount: {
-    active: boolean;
-    name: Discount;
-    amount: number;
-  };
+  discount: RegistrationDiscount;
   crewMembers: string[];
   subtotal: number;
   total: number;
@@ -167,58 +176,13 @@ export interface Registration {
   updatedAt: string;
 }
 
-export interface RegistrationInput {
-  registrationId?: string;
-  firstName: string;
-  lastName: string;
-  email: string;
-  phone: string;
-  address: {
-    street: string;
-    street2: string;
-    city: string;
-    state: string;
-    zipcode: string;
-  };
-  sessions: Session[];
-  wiaaClass: WiaaClass;
-  wiaaNumber: string;
-  associations: string;
-  foodAllergies: string;
-  emergencyContact: {
-    name: string;
-    phone: string;
-  };
-  discount: {
-    active: boolean;
-    name: string;
-    amount: number;
-  };
-  crewMembers: string[];
-  subtotal: number;
-  paymentStatus: PaymentStatus;
-  paymentMethod: PaymentMethod;
-  checkNumber: string;
-  refundAmount: number;
-  notes: Note[];
+export type TemporaryDiscountName = 'default' | 'hscrew' | 'other' | 'skip';
+
+export interface RegistrationInput extends Omit<Registration, '_id'> {
+  temporaryDiscountName: TemporaryDiscountName;
 }
 
-export interface RegistrationDbFormat
-  extends Omit<
-    RegistrationInput,
-    'wiaaClass' | 'paymentStatus' | 'paymentMethod'
-  > {
-  registrationId: string;
-  wiaaClass: string;
-  paymentStatus: string;
-  paymentMethod: string;
-  total: number;
-  stripeId: string | null;
-  createdAt: string;
-  updatedAt: string;
-}
-
-export type RegistrationUpdate = Partial<RegistrationDbFormat>;
+export type RegistrationForDb = Omit<Registration, '_id'>;
 
 export interface Request extends NextApiRequest {
   db: Db;

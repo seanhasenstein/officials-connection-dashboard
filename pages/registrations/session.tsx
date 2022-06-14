@@ -6,8 +6,8 @@ import { format } from 'date-fns';
 import { Registration, Session } from '../../interfaces';
 import useAuthSession from '../../hooks/useAuthSession';
 import useMenu from '../../hooks/useMenu';
-import { useSessionRegistrationsQuery } from '../../hooks/useSessionRegistrationsQuery';
-import { useYearQuery } from '../../hooks/useYearQuery';
+import useSessionRegistrationsQuery from '../../hooks/queries/useSessionRegistrationsQuery';
+import useYearQuery from '../../hooks/queries/useYearQuery';
 import {
   formatSessionName,
   formatPhoneNumber,

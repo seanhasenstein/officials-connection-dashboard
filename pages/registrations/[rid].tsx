@@ -9,12 +9,12 @@ import {
   formatToMoney,
   getUrlParam,
 } from '../../utils/misc';
-import { useRegistrationQuery } from '../../hooks/useRegistrationQuery';
-import { useDeleteRegistration } from '../../hooks/useDeleteRegistration';
-import { useRegistrationNoteMutations } from '../../hooks/useRegistrationNoteMutations';
+import useRegistrationQuery from '../../hooks/queries/useRegistrationQuery';
+import useDeleteRegistration from '../../hooks/mutations/useDeleteRegistration';
+import useUpdateRegistrationNotes from '../../hooks/mutations/useUpdateRegistrationNotes';
 import useAuthSession from '../../hooks/useAuthSession';
 import Layout from '../../components/Layout';
-// import Menu from '../../components/Menu';
+import Menu from '../../components/Menu';
 import Notes from '../../components/Notes';
 import LoadingSpinner from '../../components/LoadingSpinner';
 import DeleteModal from '../../components/DeleteModal';
@@ -28,16 +28,14 @@ export default function Registration() {
     data: registration,
   } = useRegistrationQuery(getUrlParam(router.query.rid));
   const deleteRegistration = useDeleteRegistration();
-  const { addNote, deleteNote } = useRegistrationNoteMutations(
-    getUrlParam(router.query.rid)
-  );
-  // const [isMenuOpen, setIsMenuOpen] = React.useState(false);
+  const notesMutation = useUpdateRegistrationNotes();
+  const [isMenuOpen, setIsMenuOpen] = React.useState(false);
   const [showDeleteModal, setShowDeleteModal] = React.useState(false);
 
-  // const handleDeleteMenuClick = () => {
-  //   setIsMenuOpen(false);
-  //   setShowDeleteModal(true);
-  // };
+  const handleDeleteMenuClick = () => {
+    setIsMenuOpen(false);
+    setShowDeleteModal(true);
+  };
 
   const deleteCallback = () =>
     deleteRegistration.mutate(`${registration?._id}`, {
@@ -86,7 +84,7 @@ export default function Registration() {
                     </div>
                   </div>
                 </div>
-                {/* <div className="menu">
+                <div className="menu">
                   <button
                     type="button"
                     onClick={() => setIsMenuOpen(prevState => !prevState)}
@@ -107,7 +105,7 @@ export default function Registration() {
                       />
                     </svg>
                   </button>
-                  <RegistrationMenu open={isMenuOpen} setOpen={setIsMenuOpen}>
+                  <Menu open={isMenuOpen} setOpen={setIsMenuOpen}>
                     <Link
                       href={`/registrations/update?rid=${registration._id}`}
                     >
@@ -116,8 +114,8 @@ export default function Registration() {
                     <button type="button" onClick={handleDeleteMenuClick}>
                       Delete Registration
                     </button>
-                  </RegistrationMenu>
-                </div> */}
+                  </Menu>
+                </div>
               </div>
               <div className="body">
                 <div>
@@ -146,7 +144,9 @@ export default function Registration() {
                       <div className="list">
                         {registration.crewMembers &&
                         registration.crewMembers.length > 0 ? (
-                          registration.crewMembers?.map(m => <p key={m}>{m}</p>)
+                          registration.crewMembers?.map((m, i) => (
+                            <p key={`${i}`}>{m}</p>
+                          ))
                         ) : (
                           <p>None</p>
                         )}
@@ -289,8 +289,14 @@ export default function Registration() {
                   <div className="notes-section">
                     <Notes
                       notes={registration.notes}
-                      addNote={addNote}
-                      deleteNote={deleteNote}
+                      document={registration}
+                      addNotesMutation={updatedNotes => {
+                        notesMutation.mutate({ registration, updatedNotes });
+                      }}
+                      deleteNotesMutation={updatedNotes => {
+                        notesMutation.mutate({ registration, updatedNotes });
+                      }}
+                      isLoading={notesMutation.isLoading}
                     />
                   </div>
                 </div>
@@ -527,6 +533,8 @@ const RegistrationStyles = styled.div`
   }
 
   .menu {
+    position: relative;
+
     .menu-button {
       margin: 0;
       padding: 0.25rem;
@@ -590,11 +598,6 @@ const RegistrationStyles = styled.div`
     padding: 5rem 2.5rem;
   }
 `;
-
-// const RegistrationMenu = styled(Menu)`
-//   top: 4.25rem;
-//   right: 3.5rem;
-// `;
 
 const RegistrationSpinner = styled(LoadingSpinner)`
   display: flex;

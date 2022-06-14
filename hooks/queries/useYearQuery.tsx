@@ -1,6 +1,6 @@
 import React from 'react';
 import { useQuery } from 'react-query';
-import { Session, Year } from '../interfaces';
+import { Session, Year } from '../../interfaces';
 
 async function fetchYear() {
   const response = await fetch('/api/year');
@@ -13,7 +13,7 @@ async function fetchYear() {
   return data.year;
 }
 
-export function useYearQuery() {
+export default function useYearQuery() {
   const yearQuery = useQuery<Year, Error>(['year', '2022'], fetchYear, {
     staleTime: Infinity,
   });

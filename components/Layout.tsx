@@ -35,9 +35,9 @@ export default function Layout({ children, title = 'WBYOC Dashboard' }: Props) {
           {/* <Link href="/games/add">
             <a>Add a Game</a>
           </Link> */}
-          {/* <Link href="/registrations/add">
-            <a>Add a Registration</a>
-          </Link> */}
+          <Link href="/registrations/add">
+            <a>Add an offline Registration</a>
+          </Link>
           <div>
             <button type="button" onClick={handleDownloadClick}>
               Download Registrations to CSV

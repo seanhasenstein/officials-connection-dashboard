@@ -1,18 +1,24 @@
 import React from 'react';
 import styled from 'styled-components';
 import { format } from 'date-fns';
-import { UseMutationResult } from 'react-query';
 import { Note, Registration } from '../interfaces';
 import { createIdNumber } from '../utils/misc';
 import LoadingSpinner from './LoadingSpinner';
 
 type Props = {
   notes: Note[];
-  addNote: UseMutationResult<Registration, unknown, Note[], unknown>;
-  deleteNote: UseMutationResult<Registration, unknown, Note[], unknown>;
+  document: Registration | Record<string, any>;
+  addNotesMutation: (updatedNotes: Note[]) => void;
+  deleteNotesMutation: (updatedNotes: Note[]) => void;
+  isLoading: boolean;
 };
 
-export default function Notes({ notes, addNote, deleteNote }: Props) {
+export default function Notes({
+  notes,
+  addNotesMutation,
+  deleteNotesMutation,
+  isLoading,
+}: Props) {
   const [text, setText] = React.useState('');
 
   const handleAddClick = () => {
@@ -24,12 +30,14 @@ export default function Notes({ notes, addNote, deleteNote }: Props) {
       createdAt: `${new Date().toISOString()}`,
       updatedAt: `${new Date().toISOString()}`,
     };
-    addNote.mutate([...notes, newNote], { onSuccess: () => setText('') });
+
+    addNotesMutation([...notes, newNote]);
+    setText('');
   };
 
   const handleDeleteClick = (id: string) => {
     const filteredNotes = notes.filter(n => n.id !== id);
-    deleteNote.mutate(filteredNotes);
+    deleteNotesMutation(filteredNotes);
   };
 
   return (
@@ -76,37 +84,17 @@ export default function Notes({ notes, addNote, deleteNote }: Props) {
           onChange={e => setText(e.target.value)}
         />
         <div className="note-actions">
-          <LoadingSpinner isLoading={addNote.isLoading} />
+          <LoadingSpinner isLoading={isLoading} />
           <button
             type="button"
             onClick={handleAddClick}
-            disabled={addNote.isLoading || deleteNote.isLoading}
+            disabled={isLoading}
             className="add-button"
           >
             Add note
           </button>
         </div>
       </div>
-      <DeleteLoadingSpinner isLoading={deleteNote.isLoading} />
-      {addNote.isError ||
-        (deleteNote.isError && (
-          <div className="error">
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              className="h-5 w-5"
-              viewBox="0 0 20 20"
-              fill="currentColor"
-            >
-              <path
-                fillRule="evenodd"
-                d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z"
-                clipRule="evenodd"
-              />
-            </svg>
-            {addNote.error instanceof Error && addNote.error.message}
-            {deleteNote.error instanceof Error && deleteNote.error.message}
-          </div>
-        ))}
     </NoteSectionStyles>
   );
 }
@@ -227,10 +215,4 @@ const NoteSectionStyles = styled.div`
       color: #f87171;
     }
   }
-`;
-
-const DeleteLoadingSpinner = styled(LoadingSpinner)`
-  position: absolute;
-  top: 1.5rem;
-  right: 1rem;
 `;

@@ -2,7 +2,7 @@ import React from 'react';
 import styled from 'styled-components';
 import { Game, GameOfficial } from '../interfaces';
 import { formatGameName, formatSessionName } from '../utils/misc';
-import { useRegistrationsQuery } from '../hooks/useRegistrationsQuery';
+import useRegistrationsQuery from '../hooks/queries/useRegistrationsQuery';
 import useGame from '../hooks/useGame';
 import useOutsideClick from '../hooks/useOutsideClick';
 import useEscapeKeydownClose from '../hooks/useEscapeKeydownClose';
