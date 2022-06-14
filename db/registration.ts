@@ -27,25 +27,15 @@ export const getRegistrations = async (
 };
 
 export async function addRegistration(db: Db, input: RegistrationForDb) {
-  const timestamp = new Date().toISOString();
-  const registration: RegistrationForDb = {
-    ...input,
-    createdAt: timestamp,
-    updatedAt: timestamp,
-  };
-  const result = await db.collection('registrations').insertOne(registration);
+  const result = await db.collection('registrations').insertOne(input);
   return result.insertedId;
 }
 
 export async function updateRegistration(
   db: Db,
   _id: string,
-  input: RegistrationForDb
+  update: RegistrationForDb
 ) {
-  const update: RegistrationForDb = {
-    ...input,
-    updatedAt: new Date().toISOString(),
-  };
   const result = await db
     .collection('registrations')
     .findOneAndUpdate(

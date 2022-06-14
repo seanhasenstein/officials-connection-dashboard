@@ -120,8 +120,8 @@ export function formatRegistrationForDb(
     checkNumber: input.checkNumber,
     refundAmount: input.refundAmount,
     notes: input.notes,
-    stripeId: null,
-    createdAt: timestamp,
+    stripeId: input.stripeId ? input.stripeId : null,
+    createdAt: input.createdAt === '' ? timestamp : input.createdAt,
     updatedAt: timestamp,
   };
 

@@ -281,6 +281,12 @@ export default function Registration() {
                       <h3>Discount:</h3>
                       <p>{formatToMoney(registration.discount.amount, true)}</p>
                     </div>
+                    {registration.discount.active && (
+                      <div className="horizontal-item">
+                        <h3>Discount:</h3>
+                        <p>{registration.discount.name}</p>
+                      </div>
+                    )}
                     <div className="horizontal-item total">
                       <h3>Total:</h3>
                       <p>{formatToMoney(registration.total, true)}</p>

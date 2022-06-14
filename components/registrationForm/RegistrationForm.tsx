@@ -183,12 +183,20 @@ export default function RegistrationForm(props: Props) {
               </div>
               <div className="item">
                 <label htmlFor="paymentMethod">Payment method</label>
-                <Field id="paymentMethod" name="paymentMethod" as="select">
+                <Field
+                  id="paymentMethod"
+                  name="paymentMethod"
+                  as="select"
+                  disabled={values.paymentMethod === 'card'}
+                >
                   <option value="default">Select a method</option>
                   <option value="cash">Cash</option>
                   <option value="check">Check</option>
                   <option value="unpaid">Still needs to pay</option>
                   <option value="free">Free Entry</option>
+                  {values.paymentMethod === 'card' && (
+                    <option value="card">Card</option>
+                  )}
                 </Field>
               </div>
               {values.paymentMethod === 'check' && (
