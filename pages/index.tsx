@@ -15,11 +15,7 @@ import useNotification from '../hooks/useNotification';
 import useRegistrationSearch from '../hooks/useRegistrationSearch';
 import useRegistrationsQuery from '../hooks/queries/useRegistrationsQuery';
 import useYearQuery from '../hooks/queries/useYearQuery';
-import {
-  formatSessionName,
-  formatToMoney,
-  formatPhoneNumber,
-} from '../utils/misc';
+import { formatSessionName, formatToMoney } from '../utils/misc';
 import Layout from '../components/Layout';
 import Menu from '../components/Menu';
 import Notification from '../components/Notification';
@@ -122,10 +118,10 @@ export default function Home() {
                     <table>
                       <thead>
                         <tr>
-                          <th className="text-left lg-tb-cell">Date</th>
+                          <th className="text-left lg-td">Date</th>
                           <th className="text-left name-cell">Camper</th>
                           <th className="text-left">Sessions</th>
-                          <th className="text-left lg-tb-cell">Contact</th>
+                          <th className="text-left lg-td">WIAA Information</th>
                           <th className="text-left">Total</th>
                           <th className="text-left">Status</th>
                           <th className="text-center">Menu</th>
@@ -139,7 +135,7 @@ export default function Home() {
                         )}
                         {searchResults.map((r: Registration) => (
                           <tr key={r._id}>
-                            <td className="lg-tb-cell">
+                            <td className="lg-td">
                               {format(new Date(r.createdAt), 'P hh:mmaa')}
                             </td>
                             <td className="name-cell">
@@ -154,7 +150,16 @@ export default function Home() {
                                     </a>
                                   </Link>
                                 </div>
-                                <div className="camper-location">
+                                <div className="camper-detail">
+                                  <a
+                                    href={`mailto:${r.email}`}
+                                    target="_blank"
+                                    rel="noreferrer"
+                                  >
+                                    {r.email}
+                                  </a>
+                                </div>
+                                <div className="camper-detail">
                                   {r.address.city}
                                   {r.address.city && r.address.state ? (
                                     <>{', '}</>
@@ -164,7 +169,7 @@ export default function Home() {
                               </div>
                             </td>
                             <td>
-                              <div className="sessions">
+                              <div className="flex-col">
                                 {r.sessions.map(s => (
                                   <div
                                     key={s.sessionId}
@@ -183,18 +188,10 @@ export default function Home() {
                                 ))}
                               </div>
                             </td>
-                            <td className="lg-tb-cell">
-                              <div className="contact">
-                                <div className="email">
-                                  <a
-                                    href={`mailto:${r.email}`}
-                                    target="_blank"
-                                    rel="noreferrer"
-                                  >
-                                    {r.email}
-                                  </a>
-                                </div>
-                                <div>{formatPhoneNumber(r.phone)}</div>
+                            <td className="lg-td">
+                              <div className="flex-col">
+                                <div>{r.wiaaClass}</div>
+                                <div>{r.wiaaNumber}</div>
                               </div>
                             </td>
                             <td>{formatToMoney(r.total, true)}</td>
@@ -395,7 +392,7 @@ const HomeStyles = styled.div<{ showDeleteButton: boolean }>`
     border-bottom: 1px solid #edf0f3;
   }
 
-  .lg-tb-cell {
+  .lg-td {
     display: table-cell;
   }
 
@@ -451,21 +448,20 @@ const HomeStyles = styled.div<{ showDeleteButton: boolean }>`
     color: #111827;
   }
 
-  .camper-location {
+  .camper-detail {
     font-size: 0.75rem;
     font-weight: 500;
     color: #9ca3af;
   }
 
-  .sessions a:hover {
-    text-decoration: underline;
-  }
-
-  .sessions,
-  .contact {
+  .flex-col {
     display: flex;
     flex-direction: column;
     gap: 0.25rem;
+
+    a:hover {
+      text-decoration: underline;
+    }
   }
 
   .not-attending a {
@@ -553,7 +549,7 @@ const HomeStyles = styled.div<{ showDeleteButton: boolean }>`
       }
     }
 
-    .lg-tb-cell {
+    .lg-td {
       display: none;
     }
   }

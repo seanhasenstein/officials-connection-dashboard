@@ -21,6 +21,7 @@ export type WiaaClass =
   | 'L3'
   | 'L2'
   | 'L1'
+  | 'L0'
   | 'LR'
   | 'New'
   | '';

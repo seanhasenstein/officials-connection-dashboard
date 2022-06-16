@@ -10,7 +10,6 @@ import useSessionRegistrationsQuery from '../../hooks/queries/useSessionRegistra
 import useYearQuery from '../../hooks/queries/useYearQuery';
 import {
   formatSessionName,
-  formatPhoneNumber,
   formatToMoney,
   getUrlParam,
 } from '../../utils/misc';
@@ -57,10 +56,10 @@ export default function RegistrationSession() {
                     <table>
                       <thead>
                         <tr>
-                          <th className="text-left lg-tb-cell">Date</th>
+                          <th className="text-left lg-td">Date</th>
                           <th className="text-left name-cell">Camper</th>
                           <th className="text-left">Sessions</th>
-                          <th className="text-left lg-tb-cell">Contact</th>
+                          <th className="text-left lg-td">WIAA Information</th>
                           <th className="text-left">Total</th>
                           <th className="text-left">Status</th>
                           <th className="text-center">Menu</th>
@@ -69,7 +68,7 @@ export default function RegistrationSession() {
                       <tbody>
                         {registrations.attending.map((r: Registration) => (
                           <tr key={r._id}>
-                            <td className="lg-tb-cell">
+                            <td className="lg-td">
                               {format(new Date(r.createdAt), 'P hh:mmaa')}
                             </td>
                             <td className="name-cell">
@@ -84,7 +83,16 @@ export default function RegistrationSession() {
                                     </a>
                                   </Link>
                                 </div>
-                                <div className="camper-location">
+                                <div className="camper-detail">
+                                  <a
+                                    href={`mailto:${r.email}`}
+                                    target="_blank"
+                                    rel="noreferrer"
+                                  >
+                                    {r.email}
+                                  </a>
+                                </div>
+                                <div className="camper-detail">
                                   {r.address.city}
                                   {r.address.city && r.address.state ? (
                                     <>{', '}</>
@@ -94,7 +102,7 @@ export default function RegistrationSession() {
                               </div>
                             </td>
                             <td>
-                              <div className="sessions">
+                              <div className="flex-col">
                                 {r.sessions.map(s => (
                                   <div
                                     key={s.sessionId}
@@ -113,12 +121,10 @@ export default function RegistrationSession() {
                                 ))}
                               </div>
                             </td>
-                            <td className="lg-tb-cell">
-                              <div className="contact">
-                                <div className="email">
-                                  <a href={`mailto:${r.email}`}>{r.email}</a>
-                                </div>
-                                <div>{formatPhoneNumber(r.phone)}</div>
+                            <td className="lg-td">
+                              <div className="flex-col">
+                                <div>{r.wiaaClass}</div>
+                                <div>{r.wiaaNumber}</div>
                               </div>
                             </td>
                             <td>{formatToMoney(r.total, true)}</td>
@@ -164,11 +170,11 @@ export default function RegistrationSession() {
                                     <Link href={`/registrations/${r._id}`}>
                                       <a>View Registration</a>
                                     </Link>
-                                    {/* <Link
+                                    <Link
                                       href={`/registrations/update?rid=${r._id}`}
                                     >
                                       <a>Update Registration</a>
-                                    </Link> */}
+                                    </Link>
                                   </>
                                 </Menu>
                               </div>
@@ -197,7 +203,7 @@ export default function RegistrationSession() {
                           <th className="text-left">Date</th>
                           <th className="text-left">Camper</th>
                           <th className="text-left">Sessions</th>
-                          <th className="text-left">Contact</th>
+                          <th className="text-left">WIAA Information</th>
                           <th className="text-left">Total</th>
                           <th className="text-left">Status</th>
                           <th className="text-center">Menu</th>
@@ -218,7 +224,16 @@ export default function RegistrationSession() {
                                     </a>
                                   </Link>
                                 </div>
-                                <div className="camper-location">
+                                <div className="camper-detail">
+                                  <a
+                                    href={`mailto:${r.email}`}
+                                    target="_blank"
+                                    rel="noreferrer"
+                                  >
+                                    {r.email}
+                                  </a>
+                                </div>
+                                <div className="camper-detail">
                                   {r.address.city}
                                   {r.address.city && r.address.state ? (
                                     <>{', '}</>
@@ -228,7 +243,7 @@ export default function RegistrationSession() {
                               </div>
                             </td>
                             <td>
-                              <div className="sessions">
+                              <div className="flex-col">
                                 {r.sessions.map(s => (
                                   <div
                                     key={s.sessionId}
@@ -248,11 +263,9 @@ export default function RegistrationSession() {
                               </div>
                             </td>
                             <td>
-                              <div className="contact">
-                                <div className="email">
-                                  <a href={`mailto:${r.email}`}>{r.email}</a>
-                                </div>
-                                <div>{formatPhoneNumber(r.phone)}</div>
+                              <div className="flex-col">
+                                <div>{r.wiaaClass}</div>
+                                <div>{r.wiaaNumber}</div>
                               </div>
                             </td>
                             <td>{formatToMoney(r.total, true)}</td>
@@ -411,7 +424,7 @@ const SessionStyles = styled.div`
     border-bottom: 1px solid #edf0f3;
   }
 
-  .lg-tb-cell {
+  .lg-td {
     display: table-cell;
   }
 
@@ -470,14 +483,13 @@ const SessionStyles = styled.div`
     }
   }
 
-  .camper-location {
+  .camper-detail {
     font-size: 0.75rem;
     font-weight: 500;
     color: #9ca3af;
   }
 
-  .sessions,
-  .contact {
+  .flex-col {
     display: flex;
     flex-direction: column;
     gap: 0.25rem;
@@ -568,7 +580,7 @@ const SessionStyles = styled.div`
       }
     }
 
-    .lg-tb-cell {
+    .lg-td {
       display: none;
     }
   }

@@ -1,10 +1,22 @@
 import React from 'react';
 import { Field } from 'formik';
-import { RegistrationInput } from '../../interfaces';
+import { RegistrationInput, WiaaClass } from '../../interfaces';
 
 type Props = {
   values: RegistrationInput;
 };
+
+const wiaaClasses: { value: WiaaClass; label: string }[] = [
+  { value: 'Master', label: 'Master' },
+  { value: 'L5', label: 'L5' },
+  { value: 'L4', label: 'L4' },
+  { value: 'L3', label: 'L3' },
+  { value: 'L2', label: 'L2' },
+  { value: 'L1', label: 'L1' },
+  { value: 'L0', label: 'L0' },
+  { value: 'LR', label: 'LR' },
+  { value: 'New', label: 'New Official' },
+];
 
 export default function HighSchoolFields({ values }: Props) {
   const [show, setShow] = React.useState(false);
@@ -27,14 +39,11 @@ export default function HighSchoolFields({ values }: Props) {
                 <label htmlFor="wiaaClass">WIAA classification</label>
                 <Field name="wiaaClass" as="select">
                   <option value="default">Select a class</option>
-                  <option value="Master">Master</option>
-                  <option value="L5">L5</option>
-                  <option value="L4">L4</option>
-                  <option value="L3">L3</option>
-                  <option value="L2">L2</option>
-                  <option value="L1">L1</option>
-                  <option value="LR">LR</option>
-                  <option value="New">New Official</option>
+                  {wiaaClasses.map(wc => (
+                    <option key={wc.value} value={wc.value}>
+                      {wc.label}
+                    </option>
+                  ))}
                 </Field>
               </div>
               <div className="item">
