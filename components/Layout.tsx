@@ -15,7 +15,7 @@ type Props = {
   title?: string;
 };
 
-export default function Layout({ children, title = 'WBYOC Dashboard' }: Props) {
+export default function Layout({ children, title = '' }: Props) {
   const router = useRouter();
   const { handleDownloadToCsvClick, csvLinkRef } = useDownloadToCsv();
   const { handleDownloadNameLabelsClick, nameLabelLinkRef } =
@@ -30,14 +30,11 @@ export default function Layout({ children, title = 'WBYOC Dashboard' }: Props) {
     <LayoutStyles>
       <GlobalStyles />
       <Head>
-        <title>{title}</title>
+        <title>{title === '' ? '' : `${title} | `}WBYOC Dashboard</title>
       </Head>
       <Sidebar isOpen={isOpen} setIsOpen={setIsOpen} />
       <div className="secondary-nav">
         <div className="container">
-          {/* <Link href="/games/add">
-            <a>Add a Game</a>
-          </Link> */}
           <Link href="/registrations/add">
             <a>Add an offline Registration</a>
           </Link>
@@ -53,6 +50,9 @@ export default function Layout({ children, title = 'WBYOC Dashboard' }: Props) {
           <a ref={nameLabelLinkRef} className="sr-only">
             Download Name Labels
           </a>
+          <Link href="/filmed-games/add">
+            <a>Add filmed game</a>
+          </Link>
           <button type="button" onClick={() => signOut()}>
             Sign Out
           </button>
@@ -66,11 +66,8 @@ export default function Layout({ children, title = 'WBYOC Dashboard' }: Props) {
               <Link href="/">
                 <a>All Registrations</a>
               </Link>
-              <Link href="/games/camp/Kaukauna">
-                <a>Kaukauna Games</a>
-              </Link>
-              <Link href="/games/camp/Plymouth">
-                <a>Plymouth Games</a>
+              <Link href="/filmed-games">
+                <a>Filmed Games</a>
               </Link>
             </nav>
             <nav className="sm-nav">

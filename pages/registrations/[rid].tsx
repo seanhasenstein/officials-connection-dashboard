@@ -45,7 +45,13 @@ export default function Registration() {
   if (sessionLoading || !session) return <div />;
 
   return (
-    <Layout>
+    <Layout
+      title={
+        isLoading
+          ? 'Loading...'
+          : `${registration?.firstName} ${registration?.lastName}`
+      }
+    >
       <RegistrationStyles>
         <div className="container">
           {isLoading && <RegistrationSpinner isLoading={isLoading} />}

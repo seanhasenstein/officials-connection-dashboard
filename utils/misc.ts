@@ -1,8 +1,5 @@
 import * as crypto from 'crypto';
-import { format, formatISO } from 'date-fns';
-import { utcToZonedTime } from 'date-fns-tz';
 import {
-  Game,
   PaymentMethod,
   Registration,
   Session,
@@ -72,15 +69,6 @@ export function formatSessionNameFromId(sessions: Session[], id: string) {
   }
 }
 
-export function formatGameName(game: Game) {
-  const camp = getCampAbbreviation(game.camp);
-  const category = getCategoryAbbreviation(game.category);
-  const timestamp = format(new Date(game.date), 'EEE @ h:mmaaa');
-  const court = game.court;
-
-  return `${camp} ${category} ${timestamp} - ${court}`;
-}
-
 export function formatPhoneNumber(input: string) {
   const digits = removeNonDigits(input);
   const digitsArray = digits.split('');
@@ -98,15 +86,6 @@ export function formatZipcode(input: string) {
   const digits = removeNonDigits(input);
   const digitsArray = digits.split('');
   return digitsArray.filter((_d, i) => i < 5).join('');
-}
-
-export function formatGameDate(date: string, time: string) {
-  const hour = Number(time.slice(0, 2));
-  const minute = Number(time.slice(3));
-  const timezone = 'America/Chicago';
-  const zonedTime = utcToZonedTime(date, timezone);
-  zonedTime.setHours(hour, minute);
-  return formatISO(zonedTime);
 }
 
 export function sessionReducer(
@@ -210,6 +189,12 @@ export function createIdNumber() {
 
 export function splitCamelCase(term: string) {
   return term.split(/(?=[A-Z])/).join(' ');
+}
+
+export function titleCase(string: string) {
+  const charsArray = string.split('');
+  charsArray[0] = charsArray[0].toUpperCase();
+  return charsArray.join('');
 }
 
 export const stateList = [

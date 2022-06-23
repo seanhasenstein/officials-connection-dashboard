@@ -18,8 +18,12 @@ export default function useYearQuery() {
     staleTime: Infinity,
   });
 
-  const kaukaunaCamp = yearQuery.data?.camps.find(c => c.name === 'Kaukauna');
-  const plymouthCamp = yearQuery.data?.camps.find(c => c.name === 'Plymouth');
+  const kaukaunaCamp = yearQuery.data?.camps.find(
+    c => c.name === 'Kaukauna Camp'
+  );
+  const plymouthCamp = yearQuery.data?.camps.find(
+    c => c.name === 'Plymouth Camp'
+  );
 
   const sessions = React.useMemo(
     () =>

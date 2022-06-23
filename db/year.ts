@@ -1,5 +1,5 @@
 import { Db } from 'mongodb';
-import { Session, Year } from '../interfaces';
+import { FilmedGame, Session, Year } from '../interfaces';
 
 export async function getYear(db: Db, year: string) {
   const result: Year | null = await db
@@ -30,4 +30,17 @@ export async function getSessions(db: Db, year: string) {
     []
   );
   return sessions;
+}
+
+export async function updateFilmedGames(
+  db: Db,
+  updatedFilmedGames: FilmedGame[]
+) {
+  const result = await db
+    .collection<Year>('camps')
+    .findOneAndUpdate(
+      { year: '2022' },
+      { $set: { filmedGames: updatedFilmedGames } }
+    );
+  return result.value;
 }

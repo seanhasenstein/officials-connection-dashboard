@@ -7,12 +7,6 @@ export type FilterOptions = { paymentStatus: string[]; sessions: string[] };
 
 type SessionCategory = "Men's College" | "Women's College" | 'High School';
 
-export type GameCategory =
-  | "Men's College"
-  | "Women's College"
-  | 'High School'
-  | 'Mixed';
-
 export type WiaaClass =
   | 'default'
   | 'Master'
@@ -53,12 +47,14 @@ export type SortOrder = 'ascending' | 'descending';
 
 export type SortVariable = 'lastName' | 'date';
 
-export interface GameOfficial {
-  key: string;
+export interface FilmedGame {
+  id: string;
+  camp: string;
+  sessions: string[];
   name: string;
-  rid: string;
-  sid: string;
-  sessionName: string;
+  url: string;
+  officials: { _id: string; name: string }[];
+  clinicians: string;
 }
 
 export interface Note {
@@ -72,6 +68,7 @@ export interface Year {
   _id: string;
   year: string;
   camps: Camp[];
+  filmedGames: FilmedGame[];
 }
 
 export interface Camp {
@@ -90,24 +87,6 @@ export interface Camp {
   active: boolean;
   createdAt: string;
   updatedAt: string;
-}
-
-export interface Game {
-  _id: string;
-  camp: 'Kaukauna' | 'Plymouth';
-  category: GameCategory;
-  date: string;
-  court: string;
-  clinician: string;
-  url: string;
-  filmed: 'true' | 'false';
-  officials: GameOfficial[];
-  createdAt?: string;
-  updatedAt?: string;
-}
-
-export interface GameInput extends Omit<Game, '_id'> {
-  time: string;
 }
 
 export interface Session {
