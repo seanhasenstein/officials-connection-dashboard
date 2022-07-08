@@ -28,6 +28,7 @@ export default function useAddRegistration() {
       // },
       onSettled: () => {
         queryClient.invalidateQueries(registrationKeys.all);
+        queryClient.invalidateQueries('sessions');
       },
     }
   );

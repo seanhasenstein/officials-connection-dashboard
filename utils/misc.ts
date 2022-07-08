@@ -57,7 +57,8 @@ export function formatSessionName(session: Session) {
   const camp = getCampAbbreviation(session.camp.name);
   const category = getCategoryAbbreviation(session.category);
   const days = getSessionDays(session.dates);
-  const levels = session.levels ? ` (${session.levels})` : '';
+  const levels =
+    session.category === 'High School' ? ` (${session.levels})` : '';
 
   return `${camp} ${category} ${days}${levels}`;
 }

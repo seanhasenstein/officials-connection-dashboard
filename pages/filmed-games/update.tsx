@@ -13,45 +13,49 @@ export default function UpdateFilmedGame() {
   const queryClient = useQueryClient();
   const { year, isLoading } = useYearQuery();
 
-  const updateGame = useMutation(async (updatedGame: FilmedGame) => {
-    const updatedGames = year?.filmedGames.map(cg => {
-      if (cg.id === updatedGame.id) {
-        return updatedGame;
-      } else {
-        return cg;
+  const updateGame = useMutation(
+    async (updatedGame: FilmedGame) => {
+      const updatedGames = year?.filmedGames.map(cg => {
+        if (cg.id === updatedGame.id) {
+          return updatedGame;
+        } else {
+          return cg;
+        }
+      });
+      const response = await fetch('/api/filmed-games/update', {
+        method: 'POST',
+        body: JSON.stringify(updatedGames),
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to update the game.');
       }
-    });
-    const response = await fetch('/api/filmed-games/update', {
-      method: 'POST',
-      body: JSON.stringify(updatedGames),
-      headers: {
-        'Content-Type': 'application/json',
+
+      const data: { year: Year } = await response.json();
+      return data.year;
+    },
+    {
+      onSettled: () => {
+        queryClient.invalidateQueries('year');
       },
-    });
-
-    if (!response.ok) {
-      throw new Error('Failed to update the game.');
     }
-
-    const data: { year: Year } = await response.json();
-    return data.year;
-  });
+  );
 
   const onSubmit = (values: FilmedGame, actions: FormikHelpers<FilmedGame>) => {
-    updateGame.mutate(
-      { ...values, url: values.url.toLowerCase() },
-      {
-        onSuccess: (_, updatedGame) => {
-          router.push(`/filmed-games?active=${updatedGame.camp}`);
-        },
-        onError: () => {
-          actions.setSubmitting(false);
-        },
-        onSettled: () => {
-          queryClient.invalidateQueries('year');
-        },
-      }
-    );
+    updateGame.mutate(values, {
+      onSuccess: (_, updatedGame) => {
+        router.push(`/filmed-games?active=${updatedGame.camp}`);
+      },
+      onError: () => {
+        actions.setSubmitting(false);
+      },
+      onSettled: () => {
+        queryClient.invalidateQueries('year');
+      },
+    });
   };
 
   return (

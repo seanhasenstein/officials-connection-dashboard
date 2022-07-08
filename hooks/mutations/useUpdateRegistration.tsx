@@ -106,6 +106,7 @@ export default function useUpdateRegistration(
     {
       onSettled: () => {
         queryClient.invalidateQueries(registrationKeys.all);
+        queryClient.invalidateQueries('sessions');
       },
     }
   );

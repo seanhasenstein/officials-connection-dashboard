@@ -3,7 +3,10 @@ import { Db, MongoClient } from 'mongodb';
 
 export type ActiveOption = 'filter' | 'sort' | undefined;
 
-export type FilterOptions = { paymentStatus: string[]; sessions: string[] };
+export type FilterOptions = {
+  paymentStatus: string[];
+  sessions: string[];
+};
 
 type SessionCategory = "Men's College" | "Women's College" | 'High School';
 
@@ -34,6 +37,14 @@ export type PaymentMethod =
   | 'check'
   | 'cash'
   | 'free';
+
+export interface CloudinaryAttachment {
+  public_id: string;
+  filename: string;
+  url: string;
+  secure_url: string;
+  session_ids: string | undefined;
+}
 
 export type DiscountName =
   | 'HSCREW'
@@ -85,6 +96,7 @@ export interface Camp {
   };
   sessions: Session[];
   active: boolean;
+  questionnaireEmailSent: boolean;
   createdAt: string;
   updatedAt: string;
 }
@@ -104,8 +116,17 @@ export interface Session {
   attending: boolean;
   active?: boolean;
   isChecked?: boolean;
+  filmedGamesEmailSent: boolean;
   createdAt?: string;
   updatedAt?: string;
+}
+
+export interface SessionWithAttachment extends Session {
+  attachment: CloudinaryAttachment;
+}
+
+export interface HydratedSession extends Session {
+  isReadyToSendEmail: boolean;
 }
 
 export interface SessionsQuery {

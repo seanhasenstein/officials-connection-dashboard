@@ -118,6 +118,7 @@ export default function Home() {
                     <table>
                       <thead>
                         <tr>
+                          <th />
                           <th className="text-left lg-td">Date</th>
                           <th className="text-left name-cell">Camper</th>
                           <th className="text-left">Sessions</th>
@@ -133,8 +134,9 @@ export default function Home() {
                             <td>No registrations match your filter.</td>
                           </tr>
                         )}
-                        {searchResults.map((r: Registration) => (
+                        {searchResults.map((r, i) => (
                           <tr key={r._id}>
+                            <td>{`${i + 1}.`}</td>
                             <td className="lg-td">
                               {format(new Date(r.createdAt), 'P hh:mmaa')}
                             </td>

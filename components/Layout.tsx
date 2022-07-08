@@ -36,25 +36,25 @@ export default function Layout({ children, title = '' }: Props) {
       <div className="secondary-nav">
         <div className="container">
           <Link href="/registrations/add">
-            <a>Add an offline Registration</a>
+            <a>Add an offline registration</a>
           </Link>
           <button type="button" onClick={handleDownloadToCsvClick}>
-            Download Registrations to CSV
+            Download registrations to csv
           </button>
           <button type="button" onClick={handleDownloadNameLabelsClick}>
-            Download Name Labels
+            Download name labels
           </button>
           <a ref={csvLinkRef} className="sr-only">
             Download registrations
           </a>
           <a ref={nameLabelLinkRef} className="sr-only">
-            Download Name Labels
+            Download name labels
           </a>
           <Link href="/filmed-games/add">
             <a>Add filmed game</a>
           </Link>
           <button type="button" onClick={() => signOut()}>
-            Sign Out
+            Sign out
           </button>
         </div>
       </div>
@@ -69,6 +69,9 @@ export default function Layout({ children, title = '' }: Props) {
               <Link href="/filmed-games">
                 <a>Filmed Games</a>
               </Link>
+              <Link href="/questionnaire-emails">
+                <a>Questionnaire Emails</a>
+              </Link>
             </nav>
             <nav className="sm-nav">
               <Link href="/">
@@ -78,7 +81,9 @@ export default function Layout({ children, title = '' }: Props) {
             <button
               type="button"
               className="sidebar-btn"
-              onClick={() => setIsOpen(true)}
+              onClick={() => {
+                setIsOpen(true);
+              }}
             >
               <svg
                 xmlns="http://www.w3.org/2000/svg"

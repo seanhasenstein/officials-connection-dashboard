@@ -15,7 +15,7 @@ async function fetchSession() {
 type Props = {
   required?: boolean;
   redirectTo?: string;
-  queryConfig?: UseQueryOptions;
+  queryConfig?: UseQueryOptions<unknown, unknown, unknown, 'session'>;
 };
 
 export default function useAuthSession({

@@ -5,6 +5,7 @@ import { Formik, Form, Field, ErrorMessage, FormikHelpers } from 'formik';
 import * as Yup from 'yup';
 import useRegistrationsQuery from '../hooks/queries/useRegistrationsQuery';
 import useYearQuery from '../hooks/queries/useYearQuery';
+import useOutsideClick from '../hooks/useOutsideClick';
 import { FilmedGame, Registration } from '../interfaces';
 import { formatSessionName } from '../utils/misc';
 
@@ -25,14 +26,11 @@ export default function FilmedGameForm(props: Props) {
   const { kaukaunaCamp, plymouthCamp } = useYearQuery();
   const [searchInput, setSearchInput] = React.useState('');
   const [searchResults, setSearchResults] = React.useState<Registration[]>([]);
+  const [hasSearchResults, setHasSearchResults] = React.useState(false);
   const [shouldRedirectOnSuccess, setShouldRedirectOnSuccess] =
     React.useState(true);
-
-  const validationSchema = Yup.object().shape({
-    camp: Yup.string().required('Camp is required.'),
-    sessions: Yup.array().min(1, 'At least 1 session is required.'),
-    name: Yup.string().required('A game name is required.'),
-  });
+  const searchResultsRef = React.useRef<HTMLDivElement>(null);
+  useOutsideClick(hasSearchResults, setHasSearchResults, searchResultsRef);
 
   React.useEffect(() => {
     if (registrationsQuery.data && searchInput.length > 2) {
@@ -45,6 +43,22 @@ export default function FilmedGameForm(props: Props) {
       setSearchResults([]);
     }
   }, [registrationsQuery.data, searchInput]);
+
+  React.useEffect(() => {
+    if (searchResults.length > 0) {
+      setHasSearchResults(true);
+
+      if (!hasSearchResults) {
+        setSearchResults([]);
+      }
+    }
+  }, [hasSearchResults, searchResults]);
+
+  const validationSchema = Yup.object().shape({
+    camp: Yup.string().required('Camp is required.'),
+    sessions: Yup.array().min(1, 'At least 1 session is required.'),
+    name: Yup.string().required('A game name is required.'),
+  });
 
   const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
     setSearchInput(e.target.value);
@@ -126,31 +140,45 @@ export default function FilmedGameForm(props: Props) {
                 value={searchInput}
               />
               <div className="officials">
-                <div className="search-results">
-                  <hr />
-                  {searchResults.map(sr => (
-                    <button
-                      key={sr._id}
-                      type="button"
-                      onClick={() => {
-                        setFieldValue('officials', [
-                          ...values.officials,
-                          {
-                            _id: sr._id,
-                            name: `${sr.firstName} ${sr.lastName}`,
-                          },
-                        ]);
-                        setSearchInput('');
-                        setSearchResults([]);
-                      }}
-                      className="add-official-button"
-                    >
-                      <div className="inner">
-                        {sr.firstName} {sr.lastName}
-                      </div>
-                    </button>
-                  ))}
-                </div>
+                {hasSearchResults && (
+                  <div ref={searchResultsRef} className="search-results">
+                    <hr />
+                    {searchResults.map(sr => (
+                      <button
+                        key={sr._id}
+                        type="button"
+                        onClick={() => {
+                          setFieldValue('officials', [
+                            ...values.officials,
+                            {
+                              _id: sr._id,
+                              name: `${sr.firstName} ${sr.lastName}`,
+                            },
+                          ]);
+                          setSearchInput('');
+                          setSearchResults([]);
+                        }}
+                        className="add-official-button"
+                      >
+                        <div className="inner">
+                          <div>
+                            {sr.firstName} {sr.lastName}{' '}
+                            <span className="light">
+                              [#{sr.registrationId}]
+                            </span>
+                          </div>
+                          <div className="reg-sessions">
+                            {sr.sessions.map(s => (
+                              <div key={s.sessionId}>
+                                {formatSessionName(s)}
+                              </div>
+                            ))}
+                          </div>
+                        </div>
+                      </button>
+                    ))}
+                  </div>
+                )}
                 {values.officials.length > 0 ? (
                   <div className="selected-officials">
                     {values.officials.map(o => (
@@ -357,10 +385,24 @@ const FilmedGameFormStyles = styled.div<{ hasSearchResults: boolean }>`
 
     .inner {
       margin: 0 auto;
-      padding: 0.5rem 0;
+      padding: 0.75rem 0;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
       border-width: 0 0 1px 0;
       border-style: solid;
       border-color: #d1d5db;
+    }
+
+    .light {
+      font-size: 0.75rem;
+      color: #9ca3af;
+    }
+
+    .reg-sessions {
+      display: flex;
+      flex-direction: column;
+      gap: 0.25rem;
     }
   }
 

@@ -2,8 +2,8 @@ import NextAuth from 'next-auth';
 import EmailProvider from 'next-auth/providers/email';
 import { MongoDBAdapter } from '@next-auth/mongodb-adapter';
 import nodemailer from 'nodemailer';
-import clientPromise from '../../../db/auth';
-import { html, text } from '../../../utils/email';
+import { mongoClientPromise } from '../../../db/connect';
+import { html, text } from '../../../emails/login';
 import { createIdNumber } from '../../../utils/misc';
 
 if (!process.env.NEXTAUTH_SECRET) {
@@ -33,7 +33,7 @@ export default NextAuth({
       },
     }),
   ],
-  adapter: MongoDBAdapter(clientPromise),
+  adapter: MongoDBAdapter(mongoClientPromise),
   secret: process.env.NEXTAUTH_SECRET,
   callbacks: {
     async signIn(context) {

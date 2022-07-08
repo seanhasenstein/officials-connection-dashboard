@@ -23,7 +23,7 @@ export const getRegistrations = async (
     .toArray();
   const data = await result;
 
-  return data;
+  return data.map(r => ({ ...r, _id: r._id.toString() }));
 };
 
 export async function addRegistration(db: Db, input: RegistrationForDb) {

@@ -50,7 +50,7 @@ export default function AddFilmedGame() {
     shouldRedirectOnSuccess: boolean
   ) => {
     addGame.mutate(
-      { ...values, id: createIdNumber(), url: values.url.toLowerCase() },
+      { ...values, id: createIdNumber() },
       {
         onSuccess: (_, newGame) => {
           if (shouldRedirectOnSuccess) {

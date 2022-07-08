@@ -32,6 +32,18 @@ export async function getSessions(db: Db, year: string) {
   return sessions;
 }
 
+export async function updateYear(db: Db, input: Year) {
+  const { _id, ...updatedYear } = input;
+  const result = await db.collection<Year>('camps').findOneAndUpdate(
+    { year: '2022' },
+    { $set: updatedYear },
+    {
+      returnDocument: 'after',
+    }
+  );
+  return result.value;
+}
+
 export async function updateFilmedGames(
   db: Db,
   updatedFilmedGames: FilmedGame[]

@@ -44,7 +44,11 @@ export default function RegistrationSession() {
             [<span>{session && formatSessionName(session)}</span>]
           </h3>
           {isLoading && <SessionLoadingSpinner isLoading={isLoading} />}
-          {error instanceof Error && <div>Error: {error}</div>}
+          {error instanceof Error && (
+            <div>
+              <>Error: {error}</>
+            </div>
+          )}
           {registrations && (
             <>
               {registrations.attending.length > 0 ? (
