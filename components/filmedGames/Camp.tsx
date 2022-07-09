@@ -201,7 +201,7 @@ export default function Camp(props: Props) {
                     ))}
                   </div>
                   <div className="url">
-                    {game.url && (
+                    {game.url ? (
                       <a href={game.url} target="_blank" rel="noreferrer">
                         <svg
                           xmlns="http://www.w3.org/2000/svg"
@@ -216,6 +216,19 @@ export default function Camp(props: Props) {
                         </svg>
                         <span className="sr-only">{game.url}</span>
                       </a>
+                    ) : (
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        className="no-url-warning"
+                        viewBox="0 0 20 20"
+                        fill="currentColor"
+                      >
+                        <path
+                          fillRule="evenodd"
+                          d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z"
+                          clipRule="evenodd"
+                        />
+                      </svg>
                     )}
                   </div>
                   <div>
@@ -283,9 +296,11 @@ const CampStyles = styled.div`
       text-decoration: underline;
     }
 
-    &:last-of-type {
-      padding-bottom: 0;
-      border-bottom: none;
+    &:nth-of-type(even) {
+      background-color: #f3f4f6;
+      border-left: 1px solid #e5e7eb;
+      border-right: 1px solid #e5e7eb;
+      border-radius: 0.125rem;
     }
   }
 
@@ -365,11 +380,16 @@ const CampStyles = styled.div`
     svg {
       height: 1.125rem;
       width: 1.125rem;
+
+      &.no-url-warning {
+        color: #be123c;
+      }
     }
   }
 
   .edit-link {
-    color: #4338ca;
+    color: #0441ac;
+    font-weight: 500;
   }
 
   .empty {

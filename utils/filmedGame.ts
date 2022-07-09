@@ -37,13 +37,7 @@ export function hydrateSessions(
       const isReadyToSendEmail = filmedGamesSortedBySession[
         session.sessionId
       ].every(fgsbs => {
-        const hasRequiredFields =
-          fgsbs.camp &&
-          fgsbs.name &&
-          fgsbs.url &&
-          fgsbs.officials.length >= session.mechanics
-            ? true
-            : false;
+        const hasRequiredFields = fgsbs.camp && fgsbs.name && fgsbs.url;
         const allOfficialsAreValid = fgsbs.officials.every(official => {
           const registration = registrations.find(r => r._id === official._id);
           return (
