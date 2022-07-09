@@ -194,7 +194,7 @@ export default function Registration() {
                         {registration.address.street} <br />
                         {registration.address.street2 && (
                           <>
-                            Apt. {registration.address.street2} <br />
+                            {registration.address.street2} <br />
                           </>
                         )}
                         {registration.address.city}
