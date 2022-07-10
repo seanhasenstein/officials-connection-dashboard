@@ -15,11 +15,6 @@ const handler = nc<Request, NextApiResponse>()
       return;
     }
 
-    if (!req.query.metadata) {
-      res.status(500).json({ error: 'metadata query parameter not provided.' });
-      return;
-    }
-
     if (!process.env.NEXT_PUBLIC_CLOUDINARY_NAME) {
       res.status(500).json({ error: 'Cloudinary cloud_name not provided.' });
       return;
