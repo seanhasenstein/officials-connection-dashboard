@@ -1,5 +1,4 @@
 import fs from 'fs';
-import path from 'path';
 import { NextApiResponse } from 'next';
 import nc from 'next-connect';
 import database from '../../middleware/db';
@@ -95,9 +94,8 @@ const handler = nc<Request, NextApiResponse>()
     }
 
     for (const attachment of attachmentsToDelete) {
-      const filepath = path.join(process.cwd(), 'tmp', attachment);
-      fs.unlink(filepath, () => {
-        console.log(`successfully deleted ${filepath}`);
+      fs.unlink(`/tmp/${attachment}`, () => {
+        console.log(`successfully deleted /tmp/${attachment}`);
       });
     }
 

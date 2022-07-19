@@ -1,5 +1,4 @@
 import fs from 'fs';
-import path from 'path';
 import fetch from 'node-fetch';
 import FormData from 'form-data';
 
@@ -43,10 +42,9 @@ export async function sendEmail({
     if (attachments) {
       for (const attachment of attachments) {
         const filename = attachment.filename;
-        const filepath = path.join(process.cwd(), 'tmp', filename);
 
         // check to see if the file already exists
-        const fileExists = fs.existsSync(filepath);
+        const fileExists = fs.existsSync(`/tmp/${filename}`);
 
         // if NO then fetch and writeFileSync
         if (!fileExists) {
@@ -58,15 +56,15 @@ export async function sendEmail({
 
           const arrayBuffer = await response.arrayBuffer();
 
-          fs.writeFileSync(filepath, Buffer.from(arrayBuffer), {
+          fs.writeFileSync(`/tmp/${filename}`, Buffer.from(arrayBuffer), {
             encoding: null,
           });
 
-          console.log('FILEPATH: ', filepath);
+          console.log('FILEPATH: ', `/tmp/${filename}`);
         }
 
         // if YES then add that file to the form data
-        form.append('attachment', fs.createReadStream(filepath));
+        form.append('attachment', fs.createReadStream(filename));
       }
     }
 
