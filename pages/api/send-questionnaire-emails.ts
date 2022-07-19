@@ -108,7 +108,7 @@ const handler = nc<Request, NextApiResponse>()
     });
     const updatedYear: Year = { ...yearData, camps: updatedCamps };
     await year.updateYear(req.db, updatedYear);
-    console.log('HELLO');
+
     res.json({ success: true });
   });
 
