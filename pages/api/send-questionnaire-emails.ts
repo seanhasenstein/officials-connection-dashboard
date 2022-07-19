@@ -94,8 +94,8 @@ const handler = nc<Request, NextApiResponse>()
     }
 
     for (const attachment of attachmentsToDelete) {
-      fs.unlink(`./${attachment}`, () => {
-        console.log(`successfully deleted ./${attachment}`);
+      fs.unlink(`./tmp/${attachment}`, () => {
+        console.log(`successfully deleted ./tmp/${attachment}`);
       });
     }
 

@@ -44,7 +44,7 @@ export async function sendEmail({
         const filename = attachment.filename;
 
         // check to see if the file already exists
-        const fileExists = fs.existsSync(`./${filename}`);
+        const fileExists = fs.existsSync(`./tmp/${filename}`);
         // if NO then fetch and writeFileSync
         if (!fileExists) {
           const response = await fetch(attachment.url);
@@ -55,13 +55,13 @@ export async function sendEmail({
 
           const arrayBuffer = await response.arrayBuffer();
 
-          fs.writeFileSync(`./${filename}`, Buffer.from(arrayBuffer), {
+          fs.writeFileSync(`./tmp/${filename}`, Buffer.from(arrayBuffer), {
             encoding: null,
           });
         }
 
         // if YES then add that file to the form data
-        form.append('attachment', fs.createReadStream(`./${filename}`));
+        form.append('attachment', fs.createReadStream(`./tmp/${filename}`));
       }
     }
 
