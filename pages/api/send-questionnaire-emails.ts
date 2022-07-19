@@ -99,6 +99,10 @@ const handler = nc<Request, NextApiResponse>()
       });
     }
 
+    const tmp = fs.readdirSync('/tmp');
+    console.log('files');
+    console.log(tmp);
+
     const updatedCamps = yearData.camps.map(c => {
       if (c.campId === requestedCamp.campId) {
         return { ...c, questionnaireEmailSent: true };

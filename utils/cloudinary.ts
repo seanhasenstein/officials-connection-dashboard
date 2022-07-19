@@ -21,6 +21,7 @@ export async function getCloudinaryAttachments() {
       prefix: 'officials-connection/pdf',
       metadata: true,
       context: true,
+      max_results: 100,
     }
   );
 
