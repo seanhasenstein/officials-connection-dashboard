@@ -174,6 +174,16 @@ function generateHtml({
                       </p>
                       <p
                         style="
+                          margin: 0 0 24px;
+                          font-size: 15px;
+                          color: #1f2937;
+                          line-height: 1.5;
+                        "
+                      >
+                        We've had a few officials reach out saying they haven't received their game film emails so we are sending them all out again. Apologies if this is the first time you're seeing this (it might have gone to your spam folder the first time).
+                      </p>
+                      <p
+                        style="
                           margin: 0;
                           font-size: 15px;
                           color: #1f2937;
