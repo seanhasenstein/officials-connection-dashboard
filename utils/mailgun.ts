@@ -13,9 +13,9 @@ type SendEmailParams = {
   attachments?: { url: string; filename: string }[];
 };
 
-// const AUTHTOKEN = `Basic ${Buffer.from(
-//   `api:${process.env.MAILGUN_API_KEY}`
-// ).toString(`base64`)}`;
+const AUTHTOKEN = `Basic ${Buffer.from(
+  `api:${process.env.MAILGUN_API_KEY}`
+).toString(`base64`)}`;
 
 export async function sendEmail({
   to,
@@ -29,7 +29,7 @@ export async function sendEmail({
 }: SendEmailParams) {
   try {
     const form = new FormData();
-    // const endpoint = `https://api.mailgun.net/v3/${process.env.MAILGUN_DOMAIN}/messages`;
+    const endpoint = `https://api.mailgun.net/v3/${process.env.MAILGUN_DOMAIN}/messages`;
 
     form.append('to', to);
     form.append('from', from);
@@ -68,17 +68,17 @@ export async function sendEmail({
       }
     }
 
-    // const res = await fetch(endpoint, {
-    //   method: 'post',
-    //   body: form,
-    //   headers: {
-    //     Authorization: AUTHTOKEN,
-    //   },
-    // });
+    const res = await fetch(endpoint, {
+      method: 'post',
+      body: form,
+      headers: {
+        Authorization: AUTHTOKEN,
+      },
+    });
 
-    // const data = await res.json();
+    const data = await res.json();
 
-    // return data;
+    return data;
   } catch (error) {
     console.error(error);
   }

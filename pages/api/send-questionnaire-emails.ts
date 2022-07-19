@@ -8,6 +8,7 @@ import { withAuth } from '../../utils/withAuth';
 import { getCloudinaryAttachments } from '../../utils/cloudinary';
 import { sendEmail } from '../../utils/mailgun';
 import generateEmail from '../../emails/questionnaire';
+import { createIdNumber } from '../../utils/misc';
 
 interface Request extends IRequest {
   body: {
@@ -81,9 +82,9 @@ const handler = nc<Request, NextApiResponse>()
         });
 
         const result = await sendEmail({
-          to: registration.email,
+          to: 'seanhasenstein@gmail.com',
           from: 'WBYOC<wbyoc@officialsconnection.org>',
-          subject: `${req.body.subject}`,
+          subject: `${req.body.subject} [#${createIdNumber()}]`,
           html,
           text,
           attachments,
