@@ -28,6 +28,7 @@ export async function sendEmail({
   attachments,
 }: SendEmailParams) {
   try {
+    console.log('inside sendEmail function...');
     const form = new FormData();
     // const endpoint = `https://api.mailgun.net/v3/${process.env.MAILGUN_DOMAIN}/messages`;
 
