@@ -60,6 +60,7 @@ export async function sendEmail({
     if (replyTo) form.append('h:Reply-To', replyTo);
     if (attachments) {
       for (const attachment of attachments) {
+        const files: Record<string, Buffer> = {};
         const filename = attachment.filename;
         const filepath = `/tmp/${filename}`;
 
@@ -81,10 +82,11 @@ export async function sendEmail({
           });
 
           console.log('FILEPATH: ', filepath);
+          const attachmentBuffer = await appendAttachment(filepath);
+          files[filename] = attachmentBuffer;
         }
 
-        const attachmentBufferArray = await appendAttachment(filepath);
-        form.append('attachment', attachmentBufferArray, { filename });
+        form.append('attachment', files[filename], { filename });
       }
     }
 
