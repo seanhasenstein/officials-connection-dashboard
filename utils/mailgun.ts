@@ -64,7 +64,7 @@ export async function sendEmail({
         }
 
         // if YES then add that file to the form data
-        form.append('attachment', fs.createReadStream(filename));
+        // form.append('attachment', fs.createReadStream(filename));
       }
     }
 
