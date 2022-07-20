@@ -95,8 +95,8 @@ const handler = nc<Request, NextApiResponse>()
     }
 
     for (const attachment of attachmentsToDelete) {
-      fs.unlinkSync(`./${attachment}`);
-      console.log(`successfully deleted ./${attachment}`);
+      fs.unlinkSync(`/tmp/${attachment}`);
+      console.log(`successfully deleted /tmp/${attachment}`);
     }
 
     const tmp = fs.readdirSync('/tmp');

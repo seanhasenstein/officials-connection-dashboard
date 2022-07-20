@@ -61,7 +61,7 @@ export async function sendEmail({
     if (attachments) {
       for (const attachment of attachments) {
         const filename = attachment.filename;
-        const filepath = `./${filename}`;
+        const filepath = `/tmp/${filename}`;
 
         // check to see if the file already exists
         const fileExists = fs.existsSync(filepath);
