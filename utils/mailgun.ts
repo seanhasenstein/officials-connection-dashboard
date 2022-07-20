@@ -2,6 +2,25 @@ import fs from 'fs';
 import fetch from 'node-fetch';
 import FormData from 'form-data';
 
+function appendAttachment(filepath: string): Promise<Buffer> {
+  return new Promise((resolve, reject) => {
+    const readStream = fs.createReadStream(filepath);
+    const attachment: Buffer[] = [];
+
+    readStream.on('data', (chunk: Buffer) => {
+      attachment.push(chunk);
+    });
+
+    readStream.on('error', err => {
+      reject(err);
+    });
+
+    readStream.on('end', () => {
+      resolve(Buffer.concat(attachment));
+    });
+  });
+}
+
 type SendEmailParams = {
   to: string;
   from: string;
@@ -42,9 +61,10 @@ export async function sendEmail({
     if (attachments) {
       for (const attachment of attachments) {
         const filename = attachment.filename;
+        const filepath = `./${filename}`;
 
         // check to see if the file already exists
-        const fileExists = fs.existsSync(`/tmp/${filename}`);
+        const fileExists = fs.existsSync(filepath);
 
         // if NO then fetch and writeFileSync
         if (!fileExists) {
@@ -56,15 +76,15 @@ export async function sendEmail({
 
           const arrayBuffer = await response.arrayBuffer();
 
-          fs.writeFileSync(`/tmp/${filename}`, Buffer.from(arrayBuffer), {
+          fs.writeFileSync(filepath, Buffer.from(arrayBuffer), {
             encoding: null,
           });
 
-          console.log('FILEPATH: ', `/tmp/${filename}`);
+          console.log('FILEPATH: ', filepath);
         }
 
-        // if YES then add that file to the form data
-        // form.append('attachment', fs.createReadStream(filename));
+        const attachmentBufferArray = await appendAttachment(filepath);
+        form.append('attachment', attachmentBufferArray, { filename });
       }
     }
 

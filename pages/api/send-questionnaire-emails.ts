@@ -95,14 +95,12 @@ const handler = nc<Request, NextApiResponse>()
     }
 
     for (const attachment of attachmentsToDelete) {
-      fs.unlinkSync(`/tmp/${attachment}`);
-      console.log(`successfully deleted /tmp/${attachment}`);
+      fs.unlinkSync(`./${attachment}`);
+      console.log(`successfully deleted ./${attachment}`);
     }
 
     const tmp = fs.readdirSync('/tmp');
-    console.log('*****************');
     console.log(tmp);
-    console.log('*****************');
 
     const updatedCamps = yearData.camps.map(c => {
       if (c.campId === requestedCamp.campId) {
