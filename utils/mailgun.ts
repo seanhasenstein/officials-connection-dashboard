@@ -2,7 +2,7 @@ import fs from 'fs';
 import fetch from 'node-fetch';
 import FormData from 'form-data';
 
-function appendAttachment(filepath: string): Promise<Buffer> {
+function getReadStreamBuffer(filepath: string): Promise<Buffer> {
   return new Promise((resolve, reject) => {
     const readStream = fs.createReadStream(filepath);
     const attachment: Buffer[] = [];
@@ -30,6 +30,7 @@ type SendEmailParams = {
   bcc?: string;
   replyTo?: string;
   attachments?: { url: string; filename: string }[];
+  cachedFiles?: Record<string, Buffer>;
 };
 
 const AUTHTOKEN = `Basic ${Buffer.from(
@@ -45,6 +46,7 @@ export async function sendEmail({
   bcc,
   replyTo,
   attachments,
+  cachedFiles,
 }: SendEmailParams) {
   try {
     const form = new FormData();
@@ -59,8 +61,13 @@ export async function sendEmail({
     if (bcc) form.append('bcc', bcc);
     if (replyTo) form.append('h:Reply-To', replyTo);
     if (attachments) {
+      if (!cachedFiles) {
+        throw new Error(
+          'Must provide a cahcedFiles object for the buffered files'
+        );
+      }
+
       for (const attachment of attachments) {
-        const files: Record<string, Buffer> = {};
         const filename = attachment.filename;
         const filepath = `/tmp/${filename}`;
 
@@ -82,11 +89,13 @@ export async function sendEmail({
           });
 
           console.log('FILEPATH: ', filepath);
-          const attachmentBuffer = await appendAttachment(filepath);
-          files[filename] = attachmentBuffer;
+          const attachmentBuffer = await getReadStreamBuffer(filepath);
+          cachedFiles[filename] = attachmentBuffer;
         }
 
-        form.append('attachment', files[filename], { filename });
+        console.log('***FILES: ', cachedFiles);
+
+        form.append('attachment', cachedFiles[filename], { filename });
       }
     }
 
