@@ -1,7 +1,7 @@
 import React from 'react';
 import styled from 'styled-components';
 import { format } from 'date-fns';
-import { Note, Registration } from '../interfaces';
+import { Note, Registration } from '../types';
 import { createIdNumber } from '../utils/misc';
 import LoadingSpinner from './LoadingSpinner';
 

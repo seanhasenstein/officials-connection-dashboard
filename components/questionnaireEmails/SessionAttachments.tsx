@@ -1,11 +1,7 @@
 import React from 'react';
 import styled from 'styled-components';
 import { useQueryClient } from 'react-query';
-import {
-  CloudinaryAttachment,
-  SessionWithAttachment,
-  Year,
-} from '../../interfaces';
+import { CloudinaryAttachment, SessionWithAttachment, Year } from '../../types';
 import {
   cloudinaryUrl,
   getCloudinarySignature,

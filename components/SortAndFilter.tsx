@@ -1,12 +1,7 @@
 import React from 'react';
 import styled from 'styled-components';
 import useMenu from '../hooks/useMenu';
-import {
-  FilterOptions,
-  Registration,
-  SortOrder,
-  SortVariable,
-} from '../interfaces';
+import { FilterOptions, Registration, SortOrder, SortVariable } from '../types';
 import {
   formatSessionNameFromId,
   sortString,

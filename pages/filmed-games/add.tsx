@@ -3,7 +3,7 @@ import router from 'next/router';
 import styled from 'styled-components';
 import { useMutation, useQueryClient } from 'react-query';
 import { FormikHelpers } from 'formik';
-import { FilmedGame, Year } from '../../interfaces';
+import { FilmedGame, Year } from '../../types';
 import useYearQuery from '../../hooks/queries/useYearQuery';
 import { createIdNumber } from '../../utils/misc';
 import { initialValues } from '../../utils/filmedGame';

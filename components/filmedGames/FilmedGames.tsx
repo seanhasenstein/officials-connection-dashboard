@@ -7,7 +7,7 @@ import {
   Registration,
   Session,
   Year,
-} from '../../interfaces';
+} from '../../types';
 import ButtonSwitch from '../ButtonSwitch';
 import Camp from './Camp';
 

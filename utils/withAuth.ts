@@ -1,7 +1,7 @@
 import { NextApiResponse } from 'next';
 import { NextConnect } from 'next-connect';
 import { getSession } from 'next-auth/react';
-import { Request } from '../interfaces';
+import { Request } from '../types';
 
 export function withAuth(
   originalHandler: NextConnect<Request, NextApiResponse<any>>

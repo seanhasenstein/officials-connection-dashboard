@@ -2,7 +2,7 @@ import React from 'react';
 import { useRouter } from 'next/router';
 import { Formik, Form as FormikForm, Field, ErrorMessage } from 'formik';
 import styled from 'styled-components';
-import { RegistrationInput } from '../../interfaces';
+import { RegistrationInput } from '../../types';
 import { validationSchema } from '../../utils/registrationForm';
 import LoadingSpinner from '../LoadingSpinner';
 import { stateList } from '../../utils/misc';

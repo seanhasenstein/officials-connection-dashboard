@@ -5,7 +5,7 @@ import {
   RegistrationInput,
   Session,
   TemporaryDiscountName,
-} from '../../interfaces';
+} from '../../types';
 import { formatPhoneNumber } from '../../utils/misc';
 import { initialValues as emptyInitialValues } from '../../utils/registrationForm';
 import { registrationKeys } from '../queries';

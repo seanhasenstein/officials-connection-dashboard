@@ -3,7 +3,7 @@ import { useRouter } from 'next/router';
 import Link from 'next/link';
 import styled from 'styled-components';
 import { useMutation, useQueryClient } from 'react-query';
-import { FilmedGame, Registration, Session, Year } from '../../interfaces';
+import { FilmedGame, Registration, Session, Year } from '../../types';
 import {
   formatSessionName,
   formatSessionNameFromId,

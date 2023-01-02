@@ -1,6 +1,6 @@
 import { NextApiResponse } from 'next';
 import nc from 'next-connect';
-import { Registration, Request } from '../../interfaces';
+import { Registration, Request } from '../../types';
 import { withAuth } from '../../utils/withAuth';
 import { registration, year } from '../../db';
 import database from '../../middleware/db';

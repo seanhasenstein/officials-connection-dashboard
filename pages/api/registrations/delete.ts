@@ -2,7 +2,7 @@ import { NextApiResponse } from 'next';
 import nc from 'next-connect';
 import database from '../../../middleware/db';
 import { withAuth } from '../../../utils/withAuth';
-import { Request } from '../../../interfaces';
+import { Request } from '../../../types';
 import { registration } from '../../../db';
 
 const handler = nc<Request, NextApiResponse>()

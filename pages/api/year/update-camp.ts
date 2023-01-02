@@ -2,7 +2,7 @@ import { NextApiResponse } from 'next';
 import nc from 'next-connect';
 import { withAuth } from '../../../utils/withAuth';
 import database from '../../../middleware/db';
-import { Camp, Request, Year } from '../../../interfaces';
+import { Camp, Request, Year } from '../../../types';
 import { year } from '../../../db';
 
 const handler = nc<Request, NextApiResponse>()

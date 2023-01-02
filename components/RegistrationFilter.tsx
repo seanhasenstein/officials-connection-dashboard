@@ -1,6 +1,6 @@
 import React from 'react';
 import styled from 'styled-components';
-import { FilterOptions } from '../interfaces';
+import { FilterOptions } from '../types';
 import { formatSessionName } from '../utils/misc';
 import useEscapeKeydownClose from '../hooks/useEscapeKeydownClose';
 import useOutsideClick from '../hooks/useOutsideClick';

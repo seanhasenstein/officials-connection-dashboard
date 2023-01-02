@@ -1,5 +1,5 @@
 import cloudinary, { ResourceApiResponse } from 'cloudinary';
-import { CloudinaryAttachment } from '../interfaces';
+import { CloudinaryAttachment } from '../types';
 
 type CloudinaryAccumulator = {
   sessionsWithAttachments: Record<string, CloudinaryAttachment>;

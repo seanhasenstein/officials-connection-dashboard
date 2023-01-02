@@ -1,5 +1,5 @@
 import { Db } from 'mongodb';
-import { FilmedGame, Session, Year } from '../interfaces';
+import { FilmedGame, Session, Year } from '../types';
 
 export async function getYear(db: Db, year: string) {
   const result: Year | null = await db

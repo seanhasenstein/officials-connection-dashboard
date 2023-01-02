@@ -1,5 +1,5 @@
 import { useMutation, useQueryClient } from 'react-query';
-import { Note, Registration } from '../../interfaces';
+import { Note, Registration } from '../../types';
 import { registrationKeys } from '../queries';
 
 export default function useUpdateRegistrationNotes() {

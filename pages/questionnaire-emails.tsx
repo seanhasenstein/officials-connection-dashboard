@@ -5,7 +5,7 @@ import {
   CloudinaryAttachment,
   Registration,
   SessionWithAttachment,
-} from '../interfaces';
+} from '../types';
 import useYearQuery from '../hooks/queries/useYearQuery';
 import Layout from '../components/Layout';
 import SessionAttachments from '../components/questionnaireEmails/SessionAttachments';

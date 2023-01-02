@@ -1,4 +1,4 @@
-import { FilmedGame } from '../interfaces';
+import { FilmedGame } from '../types';
 
 type GameFilmEmailParams = {
   firstName: string;

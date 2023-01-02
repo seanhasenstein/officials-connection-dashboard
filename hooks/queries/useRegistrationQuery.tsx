@@ -1,5 +1,5 @@
 import { useQuery, useQueryClient } from 'react-query';
-import { Registration } from '../../interfaces';
+import { Registration } from '../../types';
 import { registrationKeys } from '.';
 
 async function fetchRegistration(id: string | undefined) {

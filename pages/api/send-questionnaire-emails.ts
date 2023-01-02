@@ -3,7 +3,7 @@ import { NextApiResponse } from 'next';
 import nc from 'next-connect';
 import database from '../../middleware/db';
 import { registration, year } from '../../db';
-import { Camp, Request as IRequest, Year } from '../../interfaces';
+import { Camp, Request as IRequest, Year } from '../../types';
 import { withAuth } from '../../utils/withAuth';
 import { getCloudinaryAttachments } from '../../utils/cloudinary';
 import { sendEmail } from '../../utils/mailgun';

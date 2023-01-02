@@ -8,7 +8,7 @@ import {
   TemporaryDiscountName,
   WiaaClass,
   DiscountName,
-} from '../interfaces';
+} from '../types';
 import {
   calculateTotals,
   checkForDefault,

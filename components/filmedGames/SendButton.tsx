@@ -1,7 +1,7 @@
 import React from 'react';
 import styled from 'styled-components';
 import { useMutation, useQueryClient } from 'react-query';
-import { HydratedSession, Year } from '../../interfaces';
+import { HydratedSession, Year } from '../../types';
 import { formatSessionName } from '../../utils/misc';
 
 type SendButtonProps = {

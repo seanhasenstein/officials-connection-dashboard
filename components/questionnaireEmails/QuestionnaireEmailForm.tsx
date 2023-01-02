@@ -3,12 +3,7 @@ import styled from 'styled-components';
 import { Formik, Form, Field, ErrorMessage } from 'formik';
 import * as Yup from 'yup';
 import { useMutation, useQueryClient } from 'react-query';
-import {
-  Camp,
-  Registration,
-  SessionWithAttachment,
-  Year,
-} from '../../interfaces';
+import { Camp, Registration, SessionWithAttachment, Year } from '../../types';
 
 const validationSchema = Yup.object().shape({
   subject: Yup.string().required('An email subject is required'),

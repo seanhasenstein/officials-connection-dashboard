@@ -1,5 +1,5 @@
 import * as Yup from 'yup';
-import { RegistrationInput } from '../interfaces';
+import { RegistrationInput } from '../types';
 import { removeNonDigits } from './misc';
 
 export const initialValues: RegistrationInput = {

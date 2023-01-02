@@ -2,7 +2,7 @@ import { NextApiResponse } from 'next';
 import nc from 'next-connect';
 import { createObjectCsvStringifier } from 'csv-writer';
 import { format, utcToZonedTime } from 'date-fns-tz';
-import { Registration, Request } from '../../interfaces';
+import { Registration, Request } from '../../types';
 import database from '../../middleware/db';
 import { year, registration } from '../../db';
 import {

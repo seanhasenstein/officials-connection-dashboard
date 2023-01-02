@@ -1,6 +1,6 @@
 import { NextApiResponse } from 'next';
 import { connectToDb } from '../db';
-import { Request } from '../interfaces';
+import { Request } from '../types';
 
 export default async function database(
   req: Request,

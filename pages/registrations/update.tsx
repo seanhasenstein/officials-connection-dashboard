@@ -1,6 +1,6 @@
 import React from 'react';
 import { useRouter } from 'next/router';
-import { RegistrationInput } from '../../interfaces';
+import { RegistrationInput } from '../../types';
 import useUpdateRegistration from '../../hooks/mutations/useUpdateRegistration';
 import useYearQuery from '../../hooks/queries/useYearQuery';
 import useAuthSession from '../../hooks/useAuthSession';

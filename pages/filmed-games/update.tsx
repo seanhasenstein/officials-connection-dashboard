@@ -5,7 +5,7 @@ import useYearQuery from '../../hooks/queries/useYearQuery';
 import FilmedGameForm from '../../components/FilmedGameForm';
 import Layout from '../../components/Layout';
 import { initialValues } from '../../utils/filmedGame';
-import { FilmedGame, Year } from '../../interfaces';
+import { FilmedGame, Year } from '../../types';
 import { FormikHelpers } from 'formik';
 
 export default function UpdateFilmedGame() {

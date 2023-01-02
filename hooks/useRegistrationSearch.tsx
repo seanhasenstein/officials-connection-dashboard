@@ -1,5 +1,5 @@
 import React from 'react';
-import { Registration } from '../interfaces';
+import { Registration } from '../types';
 
 export default function useRegistrationSearch(registrations: Registration[]) {
   const [search, setSearch] = React.useState('');

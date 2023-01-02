@@ -1,5 +1,5 @@
 import { Db, ObjectId } from 'mongodb';
-import { Registration, RegistrationForDb } from '../interfaces';
+import { Registration, RegistrationForDb } from '../types';
 
 export const getRegistration = async (db: Db, id: string) => {
   const result = await db

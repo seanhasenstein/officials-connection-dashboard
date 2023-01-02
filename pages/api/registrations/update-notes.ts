@@ -3,7 +3,7 @@ import nc from 'next-connect';
 import { withAuth } from '../../../utils/withAuth';
 import database from '../../../middleware/db';
 import { registration } from '../../../db';
-import { Registration, Request } from '../../../interfaces';
+import { Registration, Request } from '../../../types';
 
 const handler = nc<Request, NextApiResponse>()
   .use(database)

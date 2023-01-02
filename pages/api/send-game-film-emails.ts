@@ -2,7 +2,7 @@ import { NextApiResponse } from 'next';
 import nc from 'next-connect';
 import { withAuth } from '../../utils/withAuth';
 import database from '../../middleware/db';
-import { FilmedGame, Request as IRequest, Year } from '../../interfaces';
+import { FilmedGame, Request as IRequest, Year } from '../../types';
 import { registration, year } from '../../db';
 import generateEmail from '../../emails/gameFilm';
 import { sendEmail } from '../../utils/mailgun';

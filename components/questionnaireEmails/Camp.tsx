@@ -4,7 +4,7 @@ import {
   Camp as ICamp,
   Registration,
   SessionWithAttachment,
-} from '../../interfaces';
+} from '../../types';
 import { formatSessionName } from '../../utils/misc';
 import QuestionnaireEmailForm from './QuestionnaireEmailForm';
 

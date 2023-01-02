@@ -3,7 +3,7 @@ import { useRouter } from 'next/router';
 import Link from 'next/link';
 import styled from 'styled-components';
 import { format } from 'date-fns';
-import { Registration, Session } from '../../interfaces';
+import { Registration, Session } from '../../types';
 import useAuthSession from '../../hooks/useAuthSession';
 import useMenu from '../../hooks/useMenu';
 import useSessionRegistrationsQuery from '../../hooks/queries/useSessionRegistrationsQuery';

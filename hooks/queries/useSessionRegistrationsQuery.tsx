@@ -1,5 +1,5 @@
 import { useQuery, useQueryClient } from 'react-query';
-import { Registration, SessionsQuery } from '../../interfaces';
+import { Registration, SessionsQuery } from '../../types';
 import { registrationKeys } from '.';
 import { sessionReducer } from '../../utils/misc';
 

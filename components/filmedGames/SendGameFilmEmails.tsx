@@ -5,7 +5,7 @@ import {
   HydratedSession,
   Registration,
   Session,
-} from '../../interfaces';
+} from '../../types';
 import { hydrateSessions } from '../../utils/filmedGame';
 import SendButton from './SendButton';
 

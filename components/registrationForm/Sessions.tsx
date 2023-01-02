@@ -1,6 +1,6 @@
 import styled from 'styled-components';
 import { Field } from 'formik';
-import { Session } from '../../interfaces';
+import { Session } from '../../types';
 import { formatSessionName } from '../../utils/misc';
 
 type Props = {

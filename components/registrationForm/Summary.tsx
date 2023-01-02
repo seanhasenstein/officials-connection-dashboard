@@ -5,7 +5,7 @@ import {
   PaymentMethod,
   PaymentStatus,
   Session,
-} from '../../interfaces';
+} from '../../types';
 import { calculateTotal, formatToMoney } from '../../utils/misc';
 
 type Props = {

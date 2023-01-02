@@ -2,7 +2,7 @@ import React from 'react';
 import styled from 'styled-components';
 import useEscapeKeydownClose from '../hooks/useEscapeKeydownClose';
 import useOutsideClick from '../hooks/useOutsideClick';
-import { SortOrder, SortVariable } from '../interfaces';
+import { SortOrder, SortVariable } from '../types';
 
 type Props = {
   setOrder: React.Dispatch<React.SetStateAction<SortOrder>>;

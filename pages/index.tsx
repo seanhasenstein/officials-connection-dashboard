@@ -3,12 +3,7 @@ import { useRouter } from 'next/router';
 import Link from 'next/link';
 import styled from 'styled-components';
 import { format } from 'date-fns';
-import {
-  FilterOptions,
-  Registration,
-  SortOrder,
-  SortVariable,
-} from '../interfaces';
+import { FilterOptions, Registration, SortOrder, SortVariable } from '../types';
 import useAuthSession from '../hooks/useAuthSession';
 import useMenu from '../hooks/useMenu';
 import useNotification from '../hooks/useNotification';

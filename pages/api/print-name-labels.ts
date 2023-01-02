@@ -1,7 +1,7 @@
 import { NextApiResponse } from 'next';
 import nc from 'next-connect';
 import { createObjectCsvStringifier } from 'csv-writer';
-import { Request } from '../../interfaces';
+import { Request } from '../../types';
 import database from '../../middleware/db';
 import { year, registration } from '../../db';
 import { withAuth } from '../../utils/withAuth';

@@ -2,7 +2,7 @@ import { NextApiResponse } from 'next';
 import nc from 'next-connect';
 import { withAuth } from '../../../utils/withAuth';
 import database from '../../../middleware/db';
-import { RegistrationInput, Request } from '../../../interfaces';
+import { RegistrationInput, Request } from '../../../types';
 import { registration, year } from '../../../db';
 import { formatRegistrationForDb } from '../../../utils/registration';
 

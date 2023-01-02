@@ -1,10 +1,5 @@
 import * as crypto from 'crypto';
-import {
-  PaymentMethod,
-  Registration,
-  Session,
-  SessionsQuery,
-} from '../interfaces';
+import { PaymentMethod, Registration, Session, SessionsQuery } from '../types';
 
 export function getCampAbbreviation(camp: string) {
   return camp === 'Kaukauna' ? 'Kau' : camp === 'Plymouth' ? 'Ply' : '';

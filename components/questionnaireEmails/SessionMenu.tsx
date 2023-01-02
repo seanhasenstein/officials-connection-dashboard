@@ -3,7 +3,7 @@ import styled from 'styled-components';
 import { UseMutationResult } from 'react-query';
 import useEscapeKeydownClose from '../../hooks/useEscapeKeydownClose';
 import useOutsideClick from '../../hooks/useOutsideClick';
-import { CloudinaryAttachment, SessionWithAttachment } from '../../interfaces';
+import { CloudinaryAttachment, SessionWithAttachment } from '../../types';
 import { formatSessionName } from '../../utils/misc';
 
 type Props = {

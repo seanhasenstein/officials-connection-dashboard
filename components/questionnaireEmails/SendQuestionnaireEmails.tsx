@@ -6,7 +6,7 @@ import {
   Registration,
   SessionWithAttachment,
   Year,
-} from '../../interfaces';
+} from '../../types';
 import { formatSessionName } from '../../utils/misc';
 import SessionAttachments from './SessionAttachments';
 import QuestionnaireEmailForm from './QuestionnaireEmailForm';

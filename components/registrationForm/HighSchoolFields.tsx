@@ -1,6 +1,6 @@
 import React from 'react';
 import { Field } from 'formik';
-import { RegistrationInput, WiaaClass } from '../../interfaces';
+import { RegistrationInput, WiaaClass } from '../../types';
 
 type Props = {
   values: RegistrationInput;

@@ -1,5 +1,5 @@
 import { useMutation, useQueryClient } from 'react-query';
-import { RegistrationInput } from '../../interfaces';
+import { RegistrationInput } from '../../types';
 import { registrationKeys } from '../queries';
 
 export default function useAddRegistration() {

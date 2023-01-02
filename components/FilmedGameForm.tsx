@@ -6,7 +6,7 @@ import * as Yup from 'yup';
 import useRegistrationsQuery from '../hooks/queries/useRegistrationsQuery';
 import useYearQuery from '../hooks/queries/useYearQuery';
 import useOutsideClick from '../hooks/useOutsideClick';
-import { FilmedGame, Registration } from '../interfaces';
+import { FilmedGame, Registration } from '../types';
 import { formatSessionName } from '../utils/misc';
 
 type Props = {

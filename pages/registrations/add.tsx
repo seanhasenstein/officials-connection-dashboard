@@ -1,7 +1,7 @@
 import React from 'react';
 import { useRouter } from 'next/router';
 import styled from 'styled-components';
-import { RegistrationInput, Session } from '../../interfaces';
+import { RegistrationInput, Session } from '../../types';
 import { initialValues } from '../../utils/registrationForm';
 import useYearQuery from '../../hooks/queries/useYearQuery';
 import useAddRegistration from '../../hooks/mutations/useAddRegistration';

@@ -1,9 +1,4 @@
-import {
-  FilmedGame,
-  HydratedSession,
-  Registration,
-  Session,
-} from '../interfaces';
+import { FilmedGame, HydratedSession, Registration, Session } from '../types';
 
 export const initialValues = {
   id: '',

@@ -1,7 +1,7 @@
 import { NextApiResponse } from 'next';
 import nc from 'next-connect';
 import cloudinary from 'cloudinary';
-import { Request } from '../../interfaces';
+import { Request } from '../../types';
 import { withAuth } from '../../utils/withAuth';
 
 const handler = nc<Request, NextApiResponse>().get(async (req, res) => {

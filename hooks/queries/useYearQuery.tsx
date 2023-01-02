@@ -1,6 +1,6 @@
 import React from 'react';
 import { useQuery } from 'react-query';
-import { Session, Year } from '../../interfaces';
+import { Session, Year } from '../../types';
 
 async function fetchYear() {
   const response = await fetch('/api/year');
