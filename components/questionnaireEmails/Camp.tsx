@@ -70,8 +70,8 @@ export default function Camp(props: Props) {
                   </h4>
                   {props.emailsNeeded.map(r => (
                     <Link
-                      key={r._id}
-                      href={`registrations/${r._id}`}
+                      key={r.id}
+                      href={`registrations/${r.id}`}
                       className="item"
                     >
                       <div>

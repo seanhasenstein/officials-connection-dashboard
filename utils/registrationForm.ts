@@ -3,7 +3,7 @@ import { RegistrationInput } from '../types';
 import { removeNonDigits } from './misc';
 
 export const initialValues: RegistrationInput = {
-  registrationId: '',
+  id: '',
   firstName: '',
   lastName: '',
   email: '',

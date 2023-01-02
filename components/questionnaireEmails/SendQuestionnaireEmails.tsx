@@ -98,8 +98,8 @@ export default function SendQuestionnaireEmails(props: Props) {
                   )}
                 {cloudinaryQuery.data?.kaukaunaEmailsNeeded.map(r => (
                   <Link
-                    key={r._id}
-                    href={`registrations/${r._id}`}
+                    key={r.id}
+                    href={`registrations/${r.id}`}
                     className="item"
                   >
                     <div>
@@ -149,11 +149,11 @@ export default function SendQuestionnaireEmails(props: Props) {
                   )}
                 {cloudinaryQuery.data?.plymouthEmailsNeeded.map(r => (
                   <Link
-                    key={r._id}
-                    href={`registrations/${r._id}`}
+                    key={r.id}
+                    href={`registrations/${r.id}`}
                     className="item"
                   >
-                    {r.firstName} {r.lastName} <span>{r.registrationId}</span>
+                    {r.firstName} {r.lastName} <span>{r.id}</span>
                   </Link>
                 ))}
               </div>

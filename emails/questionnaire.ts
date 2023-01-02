@@ -1,5 +1,5 @@
 type QuestionnaireEmailParams = {
-  _id: string;
+  id: string;
   firstName: string;
   camp: string;
   nextYearsDates: string;
@@ -15,7 +15,7 @@ type QuestionnaireEmailParams = {
 //   <!DOCTYPE html>
 //   <html lang="en">
 //     <head>
-//       <title>2022 WBYOC Camp Wrap Up</title>
+//       <title>2023 WBYOC Camp Wrap Up</title>
 //       <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 //       <meta name="viewport" content="width=device-width, initial-scale=1" />
 //       <meta http-equiv="X-UA-Compatible" content="IE=edge" />
@@ -414,7 +414,7 @@ function generateHtml({
   <!DOCTYPE html>
   <html lang="en">
     <head>
-      <title>2022 WBYOC Camp Wrap Up</title>
+      <title>2023 WBYOC Camp Wrap Up</title>
       <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
       <meta name="viewport" content="width=device-width, initial-scale=1" />
       <meta http-equiv="X-UA-Compatible" content="IE=edge" />
@@ -806,7 +806,7 @@ function generateHtml({
 
 // function generateText({ _id, firstName }: QuestionnaireEmailParams) {
 //   return `
-//   Hi ${firstName},\n\nThanks again for taking the time out of your busy schedule to attend the 2022 WBYOC Kaukauna officials camp, to work on your craft as a basketball official. The comments I’ve received from campers have been extremely positive on the training and instruction that the WBYOC staff provided. I hope this was true for you as well. I would appreciate it if you could take a few minutes to complete the following questionnaire.\n\nhttps://officialsconnection.org/post-camp-questionnaire?camp=kaukauna&rid=${_id}\n\nYour feedback is taken seriously to make improvements that help us continue to be one of the top officials camps in the area.\n\nIncluded with this message is a listing of the officials from your camp session. This information is provided for your use only, to stay in touch with the officials that you met. Providing this list was a request a few years back from the questionnaire. The networking and camaraderie of WBYOC officials both during camp and after is really great to see. The clinicians contact info is included as well. If you have a rule or interpretation, a play situation, court coverage, mechanic question etc. please don’t hesitate to contact one of them or myself. We are willing to help not only at camp, but after camp and future years down the road.\n\nFinally, the tentative 2023 WBYOC Kaukauna camp dates are June 16th, 17th, and 18th. Look for registration information on our website at www.officialsconnection.org sometime around December. I hope to work with you again at camp next year.\n\nAny further questions or comments please don’t hesitate to reach out. Have a great rest of your summer and a great 2022–23 basketball season.\n\nSincerely,\n\nTom Rusch\nWBYOC Director\nrusch@lutheranhigh.com\n(920) 698-2400
+//   Hi ${firstName},\n\nThanks again for taking the time out of your busy schedule to attend the 2023 WBYOC Kaukauna officials camp, to work on your craft as a basketball official. The comments I’ve received from campers have been extremely positive on the training and instruction that the WBYOC staff provided. I hope this was true for you as well. I would appreciate it if you could take a few minutes to complete the following questionnaire.\n\nhttps://officialsconnection.org/post-camp-questionnaire?camp=kaukauna&rid=${_id}\n\nYour feedback is taken seriously to make improvements that help us continue to be one of the top officials camps in the area.\n\nIncluded with this message is a listing of the officials from your camp session. This information is provided for your use only, to stay in touch with the officials that you met. Providing this list was a request a few years back from the questionnaire. The networking and camaraderie of WBYOC officials both during camp and after is really great to see. The clinicians contact info is included as well. If you have a rule or interpretation, a play situation, court coverage, mechanic question etc. please don’t hesitate to contact one of them or myself. We are willing to help not only at camp, but after camp and future years down the road.\n\nFinally, the tentative 2023 WBYOC Kaukauna camp dates are June 16th, 17th, and 18th. Look for registration information on our website at www.officialsconnection.org sometime around December. I hope to work with you again at camp next year.\n\nAny further questions or comments please don’t hesitate to reach out. Have a great rest of your summer and a great 2023–24 basketball season.\n\nSincerely,\n\nTom Rusch\nWBYOC Director\nrusch@lutheranhigh.com\n(920) 698-2400
 //   `;
 // }
 
@@ -816,7 +816,7 @@ function generateText({
   nextYearsDates,
 }: QuestionnaireEmailParams) {
   return `
-  Hi ${firstName},\n\nThanks again for taking the time out of your busy schedule to attend the 2022 WBYOC ${camp} officials camp, to work on your craft as a basketball official. The comments I've received from campers have been extremely positive on the training and instruction. I hope this was true for you as well.\n\nIncluded with this message is a listing of the officials from your session. This information is provided for your use only, to stay in touch with the officials that you met. The networking and camaraderie of WBYOC officials both during camp and after is really great to see. The clinicians contact info is included as well. If you have a rule or interpretation, a play situation, court coverage, mechanic question etc. please don't hesitate to contact one of them or myself. We are willing to help not only at camp, but after camp and future years down the road.\n\nFinally, the tentative 2023 WBYOC ${camp} camp dates are ${nextYearsDates}. Look for registration information on our website at www.officialsconnection.org sometime around December. I hope to work with you again at camp next year.\n\nAny further questions or comments please don't hesitate to reach out. Have a great rest of your summer and a great 2022-23 basketball season.\n\nSincerely,\n\nTom Rusch\nWBYOC Director\nrusch@lutheranhigh.com\n(920) 698-2400
+  Hi ${firstName},\n\nThanks again for taking the time out of your busy schedule to attend the 2023 WBYOC ${camp} officials camp, to work on your craft as a basketball official. The comments I've received from campers have been extremely positive on the training and instruction. I hope this was true for you as well.\n\nIncluded with this message is a listing of the officials from your session. This information is provided for your use only, to stay in touch with the officials that you met. The networking and camaraderie of WBYOC officials both during camp and after is really great to see. The clinicians contact info is included as well. If you have a rule or interpretation, a play situation, court coverage, mechanic question etc. please don't hesitate to contact one of them or myself. We are willing to help not only at camp, but after camp and future years down the road.\n\nFinally, the tentative 2023 WBYOC ${camp} camp dates are ${nextYearsDates}. Look for registration information on our website at www.officialsconnection.org sometime around December. I hope to work with you again at camp next year.\n\nAny further questions or comments please don't hesitate to reach out. Have a great rest of your summer and a great 2023-24 basketball season.\n\nSincerely,\n\nTom Rusch\nWBYOC Director\nrusch@lutheranhigh.com\n(920) 698-2400
   `;
 }
 

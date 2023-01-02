@@ -8,9 +8,13 @@ import { Request } from '../../../types';
 const handler = nc<Request, NextApiResponse>()
   .use(database)
   .get(async (req, res) => {
-    const result = await registration.getRegistrations(req.db);
+    // TODO: make year dynamic
+    const result = await registration.getAllRegistrationsForYear(
+      req.db,
+      '2023'
+    );
 
-    const sortedResults = result.sort((a, b) => {
+    const sortedResults = result?.sort((a, b) => {
       if (a.lastName === b.lastName) return a.firstName < b.firstName ? -1 : 1;
       return a.lastName < b.lastName ? -1 : 1;
     });

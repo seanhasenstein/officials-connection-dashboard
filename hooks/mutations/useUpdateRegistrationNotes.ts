@@ -39,14 +39,14 @@ export default function useUpdateRegistrationNotes() {
           notes: data.updatedNotes,
         };
         queryClient.setQueryData(
-          registrationKeys.registration(data.registration._id),
+          registrationKeys.registration(data.registration.id),
           updatedRegistration
         );
         return data;
       },
       onError: (_, data) => {
         queryClient.setQueryData(
-          registrationKeys.registration(data.registration._id),
+          registrationKeys.registration(data.registration.id),
           data.registration
         );
       },

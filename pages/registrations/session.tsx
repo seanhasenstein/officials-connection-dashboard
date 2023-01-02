@@ -71,7 +71,7 @@ export default function RegistrationSession() {
                       </thead>
                       <tbody>
                         {registrations.attending.map((r: Registration) => (
-                          <tr key={r._id}>
+                          <tr key={r.id}>
                             <td className="lg-td">
                               {format(new Date(r.createdAt), 'P hh:mmaa')}
                             </td>
@@ -81,7 +81,7 @@ export default function RegistrationSession() {
                                   <div className="has-notes">*</div>
                                 ) : null}
                                 <div className="camper-name">
-                                  <Link href={`/registrations/${r._id}`}>
+                                  <Link href={`/registrations/${r.id}`}>
                                     {r.firstName} {r.lastName}
                                   </Link>
                                 </div>
@@ -146,7 +146,7 @@ export default function RegistrationSession() {
                               <div className="menu-container">
                                 <button
                                   type="button"
-                                  onClick={() => handleMenuButtonClick(r._id)}
+                                  onClick={() => handleMenuButtonClick(r.id)}
                                   className="menu-button"
                                 >
                                   <span className="sr-only">Menu</span>
@@ -165,15 +165,15 @@ export default function RegistrationSession() {
                                   </svg>
                                 </button>
                                 <Menu
-                                  open={r._id === activeMenuId && isOpen}
+                                  open={r.id === activeMenuId && isOpen}
                                   setOpen={setIsOpen}
                                 >
                                   <>
-                                    <Link href={`/registrations/${r._id}`}>
+                                    <Link href={`/registrations/${r.id}`}>
                                       View Registration
                                     </Link>
                                     <Link
-                                      href={`/registrations/update?rid=${r._id}`}
+                                      href={`/registrations/update?rid=${r.id}`}
                                     >
                                       Update Registration
                                     </Link>
@@ -213,14 +213,14 @@ export default function RegistrationSession() {
                       </thead>
                       <tbody>
                         {registrations.notAttending.map((r: Registration) => (
-                          <tr key={r._id}>
+                          <tr key={r.id}>
                             <td className="date">
                               {format(new Date(r.createdAt), 'P hh:mmaa')}
                             </td>
                             <td>
                               <div className="camper">
                                 <div className="camper-name">
-                                  <Link href={`/registrations/${r._id}`}>
+                                  <Link href={`/registrations/${r.id}`}>
                                     {r.firstName} {r.lastName}
                                   </Link>
                                 </div>
@@ -285,7 +285,7 @@ export default function RegistrationSession() {
                               <div className="menu-container">
                                 <button
                                   type="button"
-                                  onClick={() => handleMenuButtonClick(r._id)}
+                                  onClick={() => handleMenuButtonClick(r.id)}
                                   className="menu-button"
                                 >
                                   <span className="sr-only">Menu</span>
@@ -304,15 +304,15 @@ export default function RegistrationSession() {
                                   </svg>
                                 </button>
                                 <Menu
-                                  open={r._id === activeMenuId && isOpen}
+                                  open={r.id === activeMenuId && isOpen}
                                   setOpen={setIsOpen}
                                 >
                                   <>
-                                    <Link href={`/registrations/${r._id}`}>
+                                    <Link href={`/registrations/${r.id}`}>
                                       <a>View Registration</a>
                                     </Link>
                                     <Link
-                                      href={`/registrations/update?rid=${r._id}`}
+                                      href={`/registrations/update?rid=${r.id}`}
                                     >
                                       Update Registration
                                     </Link>

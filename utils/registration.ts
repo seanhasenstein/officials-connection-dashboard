@@ -83,8 +83,7 @@ export function formatRegistrationForDb(
   const timestamp = new Date().toISOString();
 
   const registrationForDb: RegistrationForDb = {
-    registrationId:
-      input.registrationId === '' ? createIdNumber() : input.registrationId,
+    id: input.id === '' ? createIdNumber() : input.id,
     firstName: input.firstName.trim(),
     lastName: input.lastName.trim(),
     email: input.email.toLowerCase().trim(),

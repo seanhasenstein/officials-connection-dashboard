@@ -10,11 +10,16 @@ const handler = nc<Request, NextApiResponse>()
   .use(database)
   .get(async (req, res) => {
     try {
-      const sessionsData = await year.getSessions(req.db, '2022');
-      const registrationData = await registration.getRegistrations(req.db);
+      // TODO: make year dynamic
+      const sessionsData = await year.getSessions(req.db, '2023');
+      // TODO: Make year dynamic
+      const registrationData = await registration.getAllRegistrationsForYear(
+        req.db,
+        '2023'
+      );
       const cloudinaryData = await getCloudinaryAttachments();
 
-      const sessionsWithAttachments = sessionsData.map(session => {
+      const sessionsWithAttachments = sessionsData?.map(session => {
         const attachment =
           cloudinaryData.sessionsWithAttachments[session.sessionId];
         return { ...session, attachment };
@@ -25,7 +30,7 @@ const handler = nc<Request, NextApiResponse>()
         plymouth: Registration[];
       };
 
-      const emailsNeeded = registrationData.reduce(
+      const emailsNeeded = registrationData?.reduce(
         (accumulator: EmailsAccumulator, currentRegistration) => {
           if (!currentRegistration.email || currentRegistration.email === '') {
             const attendingKaukauna = currentRegistration.sessions.some(
@@ -51,8 +56,8 @@ const handler = nc<Request, NextApiResponse>()
 
       res.json({
         attachments: cloudinaryData.cloudinaryAttachments,
-        kaukaunaEmailsNeeded: emailsNeeded.kaukauna,
-        plymouthEmailsNeeded: emailsNeeded.plymouth,
+        kaukaunaEmailsNeeded: emailsNeeded?.kaukauna,
+        plymouthEmailsNeeded: emailsNeeded?.plymouth,
         sessions: sessionsWithAttachments,
       });
     } catch (error) {

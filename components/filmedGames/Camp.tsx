@@ -76,7 +76,7 @@ export default function Camp(props: Props) {
     if (props.registrations) {
       const hydratedGames = props.activeGames.map(g => {
         const updatedOfficials = g.officials.map(o => {
-          const registration = props.registrations?.find(r => r._id === o._id);
+          const registration = props.registrations?.find(r => r.id === o._id);
           const isValid =
             registration?.sessions.some(
               s =>

@@ -80,6 +80,7 @@ export interface Year {
   year: string;
   camps: Camp[];
   filmedGames: FilmedGame[];
+  registrations: Registration[];
 }
 
 export interface Camp {
@@ -141,8 +142,7 @@ export interface RegistrationDiscount {
 }
 
 export interface Registration {
-  _id: string;
-  registrationId: string;
+  id: string;
   firstName: string;
   lastName: string;
   email: string;

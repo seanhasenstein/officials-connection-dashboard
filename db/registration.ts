@@ -1,56 +1,95 @@
-import { Db, ObjectId } from 'mongodb';
-import { Registration, RegistrationForDb } from '../types';
+import { Db } from 'mongodb';
+import { RegistrationForDb, Year } from '../types';
 
-export const getRegistration = async (db: Db, id: string) => {
-  const result = await db
-    .collection('registrations')
-    .findOne({ _id: new ObjectId(id) });
-
-  return result;
-};
-
-export const getRegistrations = async (
+export async function getRegistration(
   db: Db,
-  filter: Record<string, unknown> = {}
-) => {
-  const result: Registration[] = await db
-    .collection('registrations')
-    .aggregate<Registration>([
-      {
-        $match: { ...filter },
-      },
-    ])
-    .toArray();
-  const data = await result;
+  year: string,
+  registrationId: string
+) {
+  const fetchedYear = await db.collection<Year>('years').findOne({ year });
+  const registration = fetchedYear?.registrations.find(
+    r => r.id === registrationId
+  );
 
-  return data.map(r => ({ ...r, _id: r._id.toString() }));
-};
+  return registration || null;
+}
 
-export async function addRegistration(db: Db, input: RegistrationForDb) {
-  const result = await db.collection('registrations').insertOne(input);
-  return result.insertedId;
+export async function getAllRegistrationsForYear(db: Db, year: string) {
+  const fetchedYear = await db.collection<Year>('years').findOne({ year });
+
+  return fetchedYear?.registrations || null;
+}
+
+export async function getSessionRegistrations(
+  db: Db,
+  year: string,
+  sessionId: string
+) {
+  const fetchedYear = await db.collection<Year>('years').findOne({ year });
+  const sessionRegistrations = fetchedYear?.registrations.filter(r => {
+    return r.sessions.some(s => {
+      s.sessionId === sessionId && s.attending;
+    });
+  });
+
+  return sessionRegistrations || null;
+}
+
+export async function addRegistration(
+  db: Db,
+  year: string,
+  registrationInput: RegistrationForDb
+) {
+  const updatedYear = await db
+    .collection<Year>('years')
+    .findOneAndUpdate(
+      { year },
+      { $push: { registrations: registrationInput } }
+    );
+
+  const addedRegistration = updatedYear.value?.registrations.find(
+    r => r.id === registrationInput.id
+  );
+
+  return addedRegistration;
 }
 
 export async function updateRegistration(
   db: Db,
-  _id: string,
-  update: RegistrationForDb
+  year: string,
+  registrationUpdate: RegistrationForDb
 ) {
-  const result = await db
-    .collection('registrations')
+  const updatedYear = await db
+    .collection<Year>('years')
     .findOneAndUpdate(
-      { _id: new ObjectId(_id) },
-      { $set: update },
+      { year, 'registrations.id': registrationUpdate.id },
+      { $set: { 'registrations.$': registrationUpdate } },
       { returnDocument: 'after' }
     );
 
-  return result.value;
+  const updatedRegistration = updatedYear.value?.registrations.find(
+    r => r.id === registrationUpdate.id
+  );
+
+  return updatedRegistration || null;
 }
 
-export async function deleteRegistration(db: Db, id: string) {
-  const result = await db
-    .collection('registrations')
-    .deleteOne({ _id: new ObjectId(id) });
+export async function deleteRegistration(
+  db: Db,
+  year: string,
+  registrationId: string
+) {
+  const updatedYear = await db
+    .collection<Year>('years')
+    .findOneAndUpdate(
+      { year },
+      { $pull: { registrations: { id: registrationId } } },
+      { returnDocument: 'after' }
+    );
 
-  return result;
+  const deletedRegistration = updatedYear.value?.registrations.find(
+    r => r.id === registrationId
+  );
+
+  return deletedRegistration || null;
 }

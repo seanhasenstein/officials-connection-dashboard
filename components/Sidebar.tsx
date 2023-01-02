@@ -83,7 +83,8 @@ export default function Sidebar({ isOpen, setIsOpen }: Props) {
           </div>
         ) : (
           <>
-            <h4>2022 WBYOC Sessions</h4>
+            {/* TODO: make year dynamic */}
+            <h4>2023 WBYOC Sessions</h4>
             <button
               type="button"
               className="close-btn"

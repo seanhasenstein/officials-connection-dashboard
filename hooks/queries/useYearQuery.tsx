@@ -14,7 +14,8 @@ async function fetchYear() {
 }
 
 export default function useYearQuery() {
-  const yearQuery = useQuery<Year, Error>(['year', '2022'], fetchYear, {
+  // TODO: make year dynamic
+  const yearQuery = useQuery<Year, Error>(['year', '2023'], fetchYear, {
     staleTime: Infinity,
   });
 

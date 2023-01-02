@@ -145,13 +145,13 @@ export default function FilmedGameForm(props: Props) {
                     <hr />
                     {searchResults.map(sr => (
                       <button
-                        key={sr._id}
+                        key={sr.id}
                         type="button"
                         onClick={() => {
                           setFieldValue('officials', [
                             ...values.officials,
                             {
-                              _id: sr._id,
+                              id: sr.id,
                               name: `${sr.firstName} ${sr.lastName}`,
                             },
                           ]);
@@ -163,9 +163,7 @@ export default function FilmedGameForm(props: Props) {
                         <div className="inner">
                           <div>
                             {sr.firstName} {sr.lastName}{' '}
-                            <span className="light">
-                              [#{sr.registrationId}]
-                            </span>
+                            <span className="light">[#{sr.id}]</span>
                           </div>
                           <div className="reg-sessions">
                             {sr.sessions.map(s => (

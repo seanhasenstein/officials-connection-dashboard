@@ -9,7 +9,8 @@ const handler = nc<Request, NextApiResponse>()
   .use(database)
   .get(async (req, res) => {
     const id = Array.isArray(req.query.id) ? req.query.id[0] : req.query.id;
-    const result = await registration.getRegistration(req.db, id);
+    // TODO: make year dynamic
+    const result = await registration.getRegistration(req.db, '2023', id);
     res.send({ registration: result });
   });
 

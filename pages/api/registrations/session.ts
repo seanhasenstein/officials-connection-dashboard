@@ -4,19 +4,22 @@ import { withAuth } from '../../../utils/withAuth';
 import database from '../../../middleware/db';
 import { registration } from '../../../db';
 import { Request, Registration } from '../../../types';
+import { getUrlParam } from '../../../utils/misc';
 
 const handler = nc<Request, NextApiResponse>()
   .use(database)
   .get(async (req, res) => {
-    const result = await registration.getRegistrations(req.db, {
-      'sessions.sessionId': req.query.id,
-    });
-    const sortedResult = result.sort((a, b) => {
+    const result = await registration.getSessionRegistrations(
+      req.db,
+      '2023',
+      getUrlParam(req.query.id)
+    );
+    const sortedResult = result?.sort((a, b) => {
       if (a.lastName === b.lastName) return a.firstName < b.firstName ? -1 : 1;
       return a.lastName < b.lastName ? -1 : 1;
     });
 
-    const data = sortedResult.reduce(
+    const data = sortedResult?.reduce(
       (
         acc: { attending: Registration[]; notAttending: Registration[] },
         currReg: Registration

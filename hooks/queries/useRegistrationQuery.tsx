@@ -29,7 +29,7 @@ export default function useRegistrationQuery(registrationId: string) {
         );
 
         if (state) {
-          return state.find(r => r._id === registrationId);
+          return state.find(r => r.id === registrationId);
         }
       },
       initialDataUpdatedAt: () => {

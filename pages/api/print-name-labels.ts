@@ -9,11 +9,25 @@ import { withAuth } from '../../utils/withAuth';
 const handler = nc<Request, NextApiResponse>()
   .use(database)
   .get(async (req, res) => {
-    const sessions = await year.getSessions(req.db, '2022');
-    const registrations = await registration.getRegistrations(req.db);
+    // TODO: make year dynamic
+    const sessions = await year.getSessions(req.db, '2023');
 
-    const sessionIdsArray = sessions.map(s => s.sessionId);
-    const sessionsAccumulator = sessionIdsArray.reduce(
+    if (!sessions) {
+      throw new Error('Failed to find the server sessions');
+    }
+
+    // TODO: make year dynamic
+    const registrations = await registration.getAllRegistrationsForYear(
+      req.db,
+      '2023'
+    );
+
+    if (!registrations) {
+      throw new Error('Failed to find the server registrations');
+    }
+
+    const sessionIdsArray = sessions?.map(s => s.sessionId);
+    const sessionsAccumulator = sessionIdsArray?.reduce(
       (accumulator, currentId) => {
         return { ...accumulator, [currentId]: [] };
       },

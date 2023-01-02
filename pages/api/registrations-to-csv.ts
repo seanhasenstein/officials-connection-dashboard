@@ -15,14 +15,24 @@ import { withAuth } from '../../utils/withAuth';
 const handler = nc<Request, NextApiResponse>()
   .use(database)
   .get(async (req, res) => {
-    const allSessions = await year.getSessions(req.db, '2022');
+    // TODO: make year dynamic
+    const allSessions = await year.getSessions(req.db, '2023');
 
-    const allRegistrations: Registration[] =
-      await registration.getRegistrations(req.db);
+    if (!allSessions) {
+      throw new Error('Failed to find the server sessions');
+    }
 
-    const sessionIdsArray = allSessions.map(s => s.sessionId);
+    const allRegistrations =
+      // TODO: make year dynamic
+      await registration.getAllRegistrationsForYear(req.db, '2023');
 
-    const sessionsAccumulator = sessionIdsArray.reduce(
+    if (!allRegistrations) {
+      throw new Error('Failed to find the server registrations');
+    }
+
+    const sessionIdsArray = allSessions?.map(s => s.sessionId);
+
+    const sessionsAccumulator = sessionIdsArray?.reduce(
       (accumulator, currentId) => {
         return { ...accumulator, [currentId]: [] };
       },
@@ -63,7 +73,7 @@ const handler = nc<Request, NextApiResponse>()
 
         cr.sessions.forEach(s => {
           const registration = {
-            registrationId: cr.registrationId,
+            registrationId: cr.id,
             firstName: cr.firstName,
             lastName: cr.lastName,
             email: cr.email,
@@ -124,7 +134,10 @@ const handler = nc<Request, NextApiResponse>()
 
     const records = Object.keys(registrationsBySession).reduce(
       (acc: Record<string, any>[], currSessionId) => {
-        const sessionName = formatSessionNameFromId(allSessions, currSessionId);
+        const sessionName = formatSessionNameFromId(
+          allSessions || [],
+          currSessionId
+        );
         const sessionTitleRow = {
           registrationId: `${sessionName} [${registrationsBySession[currSessionId].length}]`,
         };

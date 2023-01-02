@@ -34,7 +34,7 @@ export function hydrateSessions(
       ].every(fgsbs => {
         const hasRequiredFields = fgsbs.camp && fgsbs.name && fgsbs.url;
         const allOfficialsAreValid = fgsbs.officials.every(official => {
-          const registration = registrations.find(r => r._id === official._id);
+          const registration = registrations.find(r => r.id === official._id);
           return (
             official.name &&
             registration?.email &&

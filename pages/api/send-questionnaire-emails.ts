@@ -3,7 +3,7 @@ import { NextApiResponse } from 'next';
 import nc from 'next-connect';
 import database from '../../middleware/db';
 import { registration, year } from '../../db';
-import { Camp, Request as IRequest, Year } from '../../types';
+import { Camp, Request as IRequest } from '../../types';
 import { withAuth } from '../../utils/withAuth';
 import { getCloudinaryAttachments } from '../../utils/cloudinary';
 import { sendEmail } from '../../utils/mailgun';
@@ -28,14 +28,24 @@ const handler = nc<Request, NextApiResponse>()
   .post(async (req, res) => {
     try {
       const requestedCamp = req.body.camp;
-      const yearData = await year.getYear(req.db, '2022');
-      const registrationsData = await registration.getRegistrations(req.db);
+      // TODO: make year dynamic
+      const yearData = await year.getYear(req.db, '2023');
+
+      if (!yearData) {
+        throw new Error('Failed to find the year');
+      }
+
+      // TODO: make year dynamic
+      const registrationsData = await registration.getAllRegistrationsForYear(
+        req.db,
+        '2023'
+      );
       const cloudinaryData = await getCloudinaryAttachments();
 
       const cachedFiles: Record<string, Buffer> = {};
       const attachmentsToDelete: string[] = [];
 
-      for (const registration of registrationsData) {
+      for (const registration of registrationsData || []) {
         if (
           registration.sessions.some(
             session =>
@@ -77,7 +87,7 @@ const handler = nc<Request, NextApiResponse>()
           );
 
           const { html, text } = generateEmail({
-            _id: registration._id,
+            id: registration.id,
             firstName: registration.firstName,
             camp: requestedCamp.location.city,
             nextYearsDates: req.body.nextYearsDates,
@@ -105,14 +115,14 @@ const handler = nc<Request, NextApiResponse>()
       const tmp = fs.readdirSync('/tmp');
       console.log(tmp);
 
-      const updatedCamps = yearData.camps.map(c => {
+      const updatedCamps = yearData?.camps.map(c => {
         if (c.campId === requestedCamp.campId) {
           return { ...c, questionnaireEmailSent: true };
         } else {
           return c;
         }
       });
-      const updatedYear: Year = { ...yearData, camps: updatedCamps };
+      const updatedYear = { ...yearData, camps: updatedCamps };
       await year.updateYear(req.db, updatedYear);
 
       res.json({ success: true });

@@ -18,7 +18,8 @@ export default function useDownloadNameLabels() {
     );
     nameLabelLinkRef.current?.setAttribute(
       'download',
-      `2022-wbyoc-name-labels-${createIdNumber()}.csv`
+      // TODO: make the year dynamic
+      `2023-wbyoc-name-labels-${createIdNumber()}.csv`
     );
     nameLabelLinkRef.current?.click();
   };

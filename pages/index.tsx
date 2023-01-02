@@ -130,7 +130,7 @@ export default function Home() {
                           </tr>
                         )}
                         {searchResults.map((r, i) => (
-                          <tr key={r._id}>
+                          <tr key={r.id}>
                             <td>{`${i + 1}.`}</td>
                             <td className="lg-td">
                               {format(new Date(r.createdAt), 'P hh:mmaa')}
@@ -141,7 +141,7 @@ export default function Home() {
                                   <div className="has-notes">*</div>
                                 ) : null}
                                 <div className="camper-name">
-                                  <Link href={`/registrations/${r._id}`}>
+                                  <Link href={`/registrations/${r.id}`}>
                                     {r.firstName} {r.lastName}
                                   </Link>
                                 </div>
@@ -208,7 +208,7 @@ export default function Home() {
                               <div className="menu-container">
                                 <button
                                   type="button"
-                                  onClick={() => handleMenuButtonClick(r._id)}
+                                  onClick={() => handleMenuButtonClick(r.id)}
                                   className="menu-button"
                                 >
                                   <span className="sr-only">Menu</span>
@@ -227,15 +227,15 @@ export default function Home() {
                                   </svg>
                                 </button>
                                 <Menu
-                                  open={r._id === activeMenuId && isOpen}
+                                  open={r.id === activeMenuId && isOpen}
                                   setOpen={setIsOpen}
                                 >
                                   <>
-                                    <Link href={`/registrations/${r._id}`}>
+                                    <Link href={`/registrations/${r.id}`}>
                                       View Registration
                                     </Link>
                                     <Link
-                                      href={`/registrations/update?rid=${r._id}`}
+                                      href={`/registrations/update?rid=${r.id}`}
                                     >
                                       Update Registration
                                     </Link>

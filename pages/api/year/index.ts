@@ -8,7 +8,8 @@ import { year } from '../../../db';
 const handler = nc<Request, NextApiResponse>()
   .use(database)
   .get(async (req, res) => {
-    const data = await year.getYear(req.db, '2022');
+    // TODO: make year dynamic
+    const data = await year.getYear(req.db, '2023');
     res.send({ year: data });
   });
 

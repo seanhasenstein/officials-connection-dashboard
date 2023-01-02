@@ -8,10 +8,11 @@ import { Registration, Request } from '../../../types';
 const handler = nc<Request, NextApiResponse>()
   .use(database)
   .post(async (req, res) => {
-    const { _id, ...updatedRegistration }: Registration = req.body;
+    const updatedRegistration: Registration = req.body;
     const result = await registration.updateRegistration(
       req.db,
-      _id,
+      // TODO: make year dynamic
+      '2023',
       updatedRegistration
     );
     res.send({ ...result });

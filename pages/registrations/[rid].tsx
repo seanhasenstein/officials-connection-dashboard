@@ -38,7 +38,7 @@ export default function Registration() {
   };
 
   const deleteCallback = () =>
-    deleteRegistration.mutate(`${registration?._id}`, {
+    deleteRegistration.mutate(`${registration?.id}`, {
       onSuccess: () => router.push('/?deleteRegistrationModal=true', '/'),
     });
 
@@ -79,7 +79,7 @@ export default function Registration() {
                     </p>
                     <div className="column">
                       <p className="details">
-                        Registration <span>#{registration.registrationId}</span>
+                        Registration <span>#{registration.id}</span>
                       </p>
                       <p className="details">
                         {format(
@@ -112,9 +112,7 @@ export default function Registration() {
                     </svg>
                   </button>
                   <Menu open={isMenuOpen} setOpen={setIsMenuOpen}>
-                    <Link
-                      href={`/registrations/update?rid=${registration._id}`}
-                    >
+                    <Link href={`/registrations/update?rid=${registration.id}`}>
                       Update Registration
                     </Link>
                     <button type="button" onClick={handleDeleteMenuClick}>
@@ -316,7 +314,7 @@ export default function Registration() {
             </div>
           )}
         </div>
-        {registration?._id && (
+        {registration?.id && (
           <DeleteModal
             showModal={showDeleteModal}
             setShowModal={setShowDeleteModal}

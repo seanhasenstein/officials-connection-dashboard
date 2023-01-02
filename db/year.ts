@@ -2,27 +2,15 @@ import { Db } from 'mongodb';
 import { FilmedGame, Session, Year } from '../types';
 
 export async function getYear(db: Db, year: string) {
-  const result: Year | null = await db
-    .collection<Year>('camps')
-    .findOne({ year });
-
-  if (!result) {
-    throw new Error('Failed to fetch the year.');
-  }
+  const result = await db.collection<Year>('years').findOne({ year });
 
   return result;
 }
 
 export async function getSessions(db: Db, year: string) {
-  const result: Year | null = await db
-    .collection<Year>('camps')
-    .findOne({ year });
+  const result = await db.collection<Year>('years').findOne({ year });
 
-  if (!result) {
-    throw new Error('Failed to fetch the year.');
-  }
-
-  const sessions = result.camps.reduce(
+  const sessions = result?.camps.reduce(
     (sessions: Session[], currentCamp) => [
       ...sessions,
       ...currentCamp.sessions,
@@ -32,10 +20,11 @@ export async function getSessions(db: Db, year: string) {
   return sessions;
 }
 
-export async function updateYear(db: Db, input: Year) {
-  const { _id, ...updatedYear } = input;
-  const result = await db.collection<Year>('camps').findOneAndUpdate(
-    { year: '2022' },
+export async function updateYear(db: Db, updatedYearInput: Year) {
+  const { _id, ...updatedYear } = updatedYearInput;
+  const result = await db.collection<Year>('years').findOneAndUpdate(
+    // TODO: make year dynamic
+    { year: '2023' },
     { $set: updatedYear },
     {
       returnDocument: 'after',
@@ -48,11 +37,10 @@ export async function updateFilmedGames(
   db: Db,
   updatedFilmedGames: FilmedGame[]
 ) {
-  const result = await db
-    .collection<Year>('camps')
-    .findOneAndUpdate(
-      { year: '2022' },
-      { $set: { filmedGames: updatedFilmedGames } }
-    );
+  const result = await db.collection<Year>('years').findOneAndUpdate(
+    // TODO: make year dynamic
+    { year: '2023' },
+    { $set: { filmedGames: updatedFilmedGames } }
+  );
   return result.value;
 }

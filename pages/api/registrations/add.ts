@@ -10,12 +10,22 @@ const handler = nc<Request, NextApiResponse>()
   .use(database)
   .post(async (req, res) => {
     const requestBody: RegistrationInput = req.body;
-    const serverSessions = await year.getSessions(req.db, '2022');
-    const registrationForDb = formatRegistrationForDb(
+    const serverSessions = await year.getSessions(req.db, '2023');
+
+    // TODO: Is this the correct way to handle this?
+    if (!serverSessions) {
+      throw new Error('Failed to fetch server sessions');
+    }
+
+    const dbFormattedRegistration = formatRegistrationForDb(
       requestBody,
       serverSessions
     );
-    const id = await registration.addRegistration(req.db, registrationForDb);
+    const id = await registration.addRegistration(
+      req.db,
+      '2023', // TODO: make this dynamic
+      dbFormattedRegistration
+    );
     res.json({ id });
   });
 

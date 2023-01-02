@@ -45,10 +45,9 @@ export default function UpdateRegistration() {
               onSubmit={(values: RegistrationInput) => {
                 setIsSubmitting(true);
                 updateRegistration.mutate(
-                  { _id: registrationQuery.data._id, formValues: values },
+                  { _id: registrationQuery.data.id, formValues: values },
                   {
-                    onSuccess: data =>
-                      router.push(`/registrations/${data._id}`),
+                    onSuccess: data => router.push(`/registrations/${data.id}`),
                   }
                 );
               }}

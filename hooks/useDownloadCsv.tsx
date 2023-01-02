@@ -18,7 +18,8 @@ export default function useDownloadToCsv() {
     );
     csvLinkRef.current?.setAttribute(
       'download',
-      `2022-wbyoc-registrations-${format(new Date(), 'MMddyyHHmmss')}.csv`
+      // TODO: make the year dynamic
+      `2023-wbyoc-registrations-${format(new Date(), 'MMddyyHHmmss')}.csv`
     );
     csvLinkRef.current?.click();
   };
