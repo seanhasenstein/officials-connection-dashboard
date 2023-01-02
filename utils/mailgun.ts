@@ -88,12 +88,9 @@ export async function sendEmail({
             encoding: null,
           });
 
-          console.log('FILEPATH: ', filepath);
           const attachmentBuffer = await getReadStreamBuffer(filepath);
           cachedFiles[filename] = attachmentBuffer;
         }
-
-        console.log('***FILES: ', cachedFiles);
 
         form.append('attachment', cachedFiles[filename], { filename });
       }
