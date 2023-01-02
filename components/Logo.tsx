@@ -4,11 +4,9 @@ import styled from 'styled-components';
 export default function Logo() {
   return (
     <LogoStyles>
-      <Link href="/">
-        <a className="logo">
-          <h1>Officials Connection</h1>
-          <h2>Wisconsin Basketball Yearbook Officials Camps</h2>
-        </a>
+      <Link href="/" className="logo">
+        <h1>Officials Connection</h1>
+        <h2>Wisconsin Basketball Yearbook Officials Camps</h2>
       </Link>
     </LogoStyles>
   );

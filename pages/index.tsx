@@ -142,9 +142,7 @@ export default function Home() {
                                 ) : null}
                                 <div className="camper-name">
                                   <Link href={`/registrations/${r._id}`}>
-                                    <a>
-                                      {r.firstName} {r.lastName}
-                                    </a>
+                                    {r.firstName} {r.lastName}
                                   </Link>
                                 </div>
                                 <div className="camper-detail">
@@ -234,12 +232,12 @@ export default function Home() {
                                 >
                                   <>
                                     <Link href={`/registrations/${r._id}`}>
-                                      <a>View Registration</a>
+                                      View Registration
                                     </Link>
                                     <Link
                                       href={`/registrations/update?rid=${r._id}`}
                                     >
-                                      <a>Update Registration</a>
+                                      Update Registration
                                     </Link>
                                   </>
                                 </Menu>

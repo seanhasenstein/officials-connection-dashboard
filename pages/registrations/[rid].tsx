@@ -115,7 +115,7 @@ export default function Registration() {
                     <Link
                       href={`/registrations/update?rid=${registration._id}`}
                     >
-                      <a>Update Registration</a>
+                      Update Registration
                     </Link>
                     <button type="button" onClick={handleDeleteMenuClick}>
                       Delete Registration

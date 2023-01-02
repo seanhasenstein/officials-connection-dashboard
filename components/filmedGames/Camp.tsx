@@ -182,9 +182,7 @@ export default function Camp(props: Props) {
                         />
                         <div>
                           <Link href={`/registrations/${o._id}`}>
-                            <a>
-                              <div className="official-name">{o.name}</div>
-                            </a>
+                            <div className="official-name">{o.name}</div>
                           </Link>
                           <div>
                             {o.sessions.map(s => (
@@ -232,8 +230,11 @@ export default function Camp(props: Props) {
                     )}
                   </div>
                   <div>
-                    <Link href={`/filmed-games/update?id=${game.id}`}>
-                      <a className="edit-link">Edit</a>
+                    <Link
+                      href={`/filmed-games/update?id=${game.id}`}
+                      className="edit-link"
+                    >
+                      Edit
                     </Link>
                   </div>
                 </div>

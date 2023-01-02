@@ -104,10 +104,8 @@ export default function Sidebar({ isOpen, setIsOpen }: Props) {
             {sidebarSessions?.map(s => (
               <div key={s.sessionId} className="sidebar-item">
                 <Link href={`/registrations/session?sid=${s.sessionId}`}>
-                  <a>
-                    {s.name}
-                    <span>{s.totalAttending}</span>
-                  </a>
+                  {s.name}
+                  <span>{s.totalAttending}</span>
                 </Link>
               </div>
             ))}

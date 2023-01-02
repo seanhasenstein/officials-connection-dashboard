@@ -35,9 +35,7 @@ export default function Layout({ children, title = '' }: Props) {
       <Sidebar isOpen={isOpen} setIsOpen={setIsOpen} />
       <div className="secondary-nav">
         <div className="container">
-          <Link href="/registrations/add">
-            <a>Add an offline registration</a>
-          </Link>
+          <Link href="/registrations/add">Add an offline registration</Link>
           <button type="button" onClick={handleDownloadToCsvClick}>
             Download registrations to csv
           </button>
@@ -50,9 +48,7 @@ export default function Layout({ children, title = '' }: Props) {
           <a ref={nameLabelLinkRef} className="sr-only">
             Download name labels
           </a>
-          <Link href="/filmed-games/add">
-            <a>Add filmed game</a>
-          </Link>
+          <Link href="/filmed-games/add">Add filmed game</Link>
           <button type="button" onClick={() => signOut()}>
             Sign out
           </button>
@@ -63,20 +59,12 @@ export default function Layout({ children, title = '' }: Props) {
           <Logo />
           <div className="primary-nav">
             <nav className="lg-nav">
-              <Link href="/">
-                <a>All Registrations</a>
-              </Link>
-              <Link href="/filmed-games">
-                <a>Filmed Games</a>
-              </Link>
-              <Link href="/questionnaire-emails">
-                <a>Questionnaire Emails</a>
-              </Link>
+              <Link href="/">All Registrations</Link>
+              <Link href="/filmed-games">Filmed Games</Link>
+              <Link href="/questionnaire-emails">Questionnaire Emails</Link>
             </nav>
             <nav className="sm-nav">
-              <Link href="/">
-                <a>All Registrations</a>
-              </Link>
+              <Link href="/">All Registrations</Link>
             </nav>
             <button
               type="button"

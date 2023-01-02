@@ -23,8 +23,8 @@ export default function Unauthorized() {
           </svg>
           <h3>Unauthorized</h3>
           <p>you must be logged in with a verified email address.</p>
-          <Link href="/login">
-            <a className="login-link">Go to login</a>
+          <Link href="/login" className="login-link">
+            Go to login
           </Link>
         </div>
       </UnauthorizedStyles>

@@ -46,8 +46,8 @@ export default function AuthenticationError() {
           There was a problem with the server configuration. Check the server
           logs for more information.
         </p>
-        <Link href="/login">
-          <a className="login-link">Go to login</a>
+        <Link href="/login" className="login-link">
+          Go to login
         </Link>
       </AuthErrorLayout>
     );
@@ -58,8 +58,8 @@ export default function AuthenticationError() {
       <AuthErrorLayout>
         <h3>Access Denied</h3>
         <p>You do not have permission to sign in.</p>
-        <Link href="/login">
-          <a className="login-link">Try logging in again</a>
+        <Link href="/login" className="login-link">
+          Try logging in again
         </Link>
       </AuthErrorLayout>
     );
@@ -73,8 +73,8 @@ export default function AuthenticationError() {
           The sign in link is no longer valid. It may have been used already or
           it may have expired.
         </p>
-        <Link href="/login">
-          <a className="login-link">Go to login</a>
+        <Link href="/login" className="login-link">
+          Go to login
         </Link>
       </AuthErrorLayout>
     );
@@ -83,8 +83,8 @@ export default function AuthenticationError() {
       <AuthErrorLayout>
         <h3>Authentication Error</h3>
         <p>An error occurred while trying to authenticate.</p>
-        <Link href="/login">
-          <a className="login-link">Go to login</a>
+        <Link href="/login" className="login-link">
+          Go to login
         </Link>
       </AuthErrorLayout>
     );
