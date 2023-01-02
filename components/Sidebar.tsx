@@ -134,6 +134,7 @@ const SidebarStyles = styled.div`
   .container {
     padding: 2.25rem 3rem 0;
     min-height: 100vh;
+    min-width: 23rem;
     position: fixed;
     top: 0;
     right: 0;

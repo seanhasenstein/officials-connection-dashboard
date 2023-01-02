@@ -69,7 +69,8 @@ export default function Layout({ children, title = '' }: Props) {
             <button
               type="button"
               className="sidebar-btn"
-              onClick={() => {
+              onClick={e => {
+                e.stopPropagation();
                 setIsOpen(true);
               }}
             >
