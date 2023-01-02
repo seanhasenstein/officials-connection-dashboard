@@ -27,7 +27,10 @@ export default function RegistrationSort({
     <RegistrationSortStyles isOpen={isOpen}>
       <button
         type="button"
-        onClick={() => handleMenuButtonClick('sort')}
+        onClick={e => {
+          e.stopPropagation();
+          handleMenuButtonClick('sort');
+        }}
         className="action-button"
       >
         <svg

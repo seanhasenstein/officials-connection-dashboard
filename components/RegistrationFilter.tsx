@@ -57,7 +57,10 @@ export default function RegistrationFilter({
     <RegistrationFilterStyles isOpen={isOpen}>
       <button
         type="button"
-        onClick={() => handleMenuButtonClick('filter')}
+        onClick={e => {
+          e.stopPropagation();
+          handleMenuButtonClick('filter');
+        }}
         className="action-button"
       >
         <svg
