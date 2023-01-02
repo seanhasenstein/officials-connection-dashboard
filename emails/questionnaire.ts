@@ -577,7 +577,7 @@ function generateHtml({
                             line-height: 1.5;
                           "
                         >
-                        Thanks again for taking the time out of your busy schedule to attend the ${camp} officials camp. The comments I've received have been extremely positive on the training and instruction that the WBYOC staff provided. I hope this was true for you as well.
+                        Thanks again for taking the time out of your busy schedule to attend the ${camp} officials camp. The comments I've received have been extremely positive on the training and instruction. I hope this was true for you as well.
                         </p>
                       </td>
                     </tr>
@@ -592,7 +592,7 @@ function generateHtml({
                             line-height: 1.5;
                           "
                         >
-                        Included with this message is a listing of the officials from your camp session. The networking and camaraderie of WBYOC officials during camp and after is really great to see. The clinicians contact info is also included. If you have a rule or interpretation, a play situation, court coverage, mechanic question etc. please don't hesitate to contact one of them or myself. We are willing to help not only at camp, but after camp and future years down the road.
+                        Included with this message is a listing of the officials from your session. The networking and camaraderie of WBYOC officials during camp and after is really great to see. The clinicians contact info is also included. If you have a rule or interpretation, a play situation, court coverage, mechanic question etc. please don't hesitate to contact one of them or myself. We are willing to help not only at camp, but after camp and future years down the road.
                         </p>
                       </td>
                     </tr>
@@ -816,7 +816,7 @@ function generateText({
   nextYearsDates,
 }: QuestionnaireEmailParams) {
   return `
-  Hi ${firstName},\n\nThanks again for taking the time out of your busy schedule to attend the 2022 WBYOC ${camp} officials camp, to work on your craft as a basketball official. The comments I've received from campers have been extremely positive on the training and instruction that the WBYOC staff provided. I hope this was true for you as well.\n\nIncluded with this message is a listing of the officials from your camp session. This information is provided for your use only, to stay in touch with the officials that you met. The networking and camaraderie of WBYOC officials both during camp and after is really great to see. The clinicians contact info is included as well. If you have a rule or interpretation, a play situation, court coverage, mechanic question etc. please don't hesitate to contact one of them or myself. We are willing to help not only at camp, but after camp and future years down the road.\n\nFinally, the tentative 2023 WBYOC ${camp} camp dates are ${nextYearsDates}. Look for registration information on our website at www.officialsconnection.org sometime around December. I hope to work with you again at camp next year.\n\nAny further questions or comments please don't hesitate to reach out. Have a great rest of your summer and a great 2022-23 basketball season.\n\nSincerely,\n\nTom Rusch\nWBYOC Director\nrusch@lutheranhigh.com\n(920) 698-2400
+  Hi ${firstName},\n\nThanks again for taking the time out of your busy schedule to attend the 2022 WBYOC ${camp} officials camp, to work on your craft as a basketball official. The comments I've received from campers have been extremely positive on the training and instruction. I hope this was true for you as well.\n\nIncluded with this message is a listing of the officials from your session. This information is provided for your use only, to stay in touch with the officials that you met. The networking and camaraderie of WBYOC officials both during camp and after is really great to see. The clinicians contact info is included as well. If you have a rule or interpretation, a play situation, court coverage, mechanic question etc. please don't hesitate to contact one of them or myself. We are willing to help not only at camp, but after camp and future years down the road.\n\nFinally, the tentative 2023 WBYOC ${camp} camp dates are ${nextYearsDates}. Look for registration information on our website at www.officialsconnection.org sometime around December. I hope to work with you again at camp next year.\n\nAny further questions or comments please don't hesitate to reach out. Have a great rest of your summer and a great 2022-23 basketball season.\n\nSincerely,\n\nTom Rusch\nWBYOC Director\nrusch@lutheranhigh.com\n(920) 698-2400
   `;
 }
 
