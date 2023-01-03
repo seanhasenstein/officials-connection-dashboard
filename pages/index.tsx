@@ -20,7 +20,9 @@ import SortAndFilter from '../components/SortAndFilter';
 export default function Home() {
   const [session, sessionLoading] = useAuthSession();
   const router = useRouter();
+  // TODO: look into this year query to only get year data that we want
   const { year } = useYearQuery();
+  // TODO: do we need these registrations if we get the year data?
   const { isLoading, error, data: registrations } = useRegistrationsQuery();
   const [sortOrder, setSortOrder] = React.useState<SortOrder>('descending');
   const [sortVariable, setSortVariable] = React.useState<SortVariable>('date');
@@ -49,209 +51,217 @@ export default function Home() {
           {isLoading && <RegistrationLoadingSpinner isLoading={isLoading} />}
           {error && <div>Error: {error.message}</div>}
           <>
-            {registrations && (
+            {year && year.registrations.length < 1 ? (
+              <div className="empty">
+                No one is currently registered for the {year.year} camps
+              </div>
+            ) : (
               <>
-                <div className="table-actions-row">
-                  <SortAndFilter
-                    regQueryData={registrations}
-                    sortOrder={sortOrder}
-                    setSortOrder={setSortOrder}
-                    sortVariable={sortVariable}
-                    setSortVariable={setSortVariable}
-                    filterOptions={filterOptions}
-                    setFilterOptions={setFilterOptions}
-                    setRegistrations={setSortFilterResults}
-                  />
-                  <div className="search">
-                    <div className="icon">
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        viewBox="0 0 20 20"
-                        fill="currentColor"
-                      >
-                        <path
-                          fillRule="evenodd"
-                          d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z"
-                          clipRule="evenodd"
+                {registrations && (
+                  <>
+                    <div className="table-actions-row">
+                      <SortAndFilter
+                        regQueryData={registrations}
+                        sortOrder={sortOrder}
+                        setSortOrder={setSortOrder}
+                        sortVariable={sortVariable}
+                        setSortVariable={setSortVariable}
+                        filterOptions={filterOptions}
+                        setFilterOptions={setFilterOptions}
+                        setRegistrations={setSortFilterResults}
+                      />
+                      <div className="search">
+                        <div className="icon">
+                          <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            viewBox="0 0 20 20"
+                            fill="currentColor"
+                          >
+                            <path
+                              fillRule="evenodd"
+                              d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z"
+                              clipRule="evenodd"
+                            />
+                          </svg>
+                        </div>
+                        <label htmlFor="search" className="sr-only">
+                          Search Registrations
+                        </label>
+                        <input
+                          type="text"
+                          placeholder="Search"
+                          name="search"
+                          id="search"
+                          value={search}
+                          onChange={handleSearchChange}
                         />
-                      </svg>
+                        <button
+                          type="button"
+                          onClick={() => setSearch('')}
+                          className="delete-search-button"
+                          tabIndex={search.length > 0 ? 0 : -1}
+                        >
+                          <span className="sr-only">Delete search text</span>
+                          <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            viewBox="0 0 20 20"
+                            fill="currentColor"
+                          >
+                            <path
+                              fillRule="evenodd"
+                              d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z"
+                              clipRule="evenodd"
+                            />
+                          </svg>
+                        </button>
+                      </div>
                     </div>
-                    <label htmlFor="search" className="sr-only">
-                      Search Registrations
-                    </label>
-                    <input
-                      type="text"
-                      placeholder="Search"
-                      name="search"
-                      id="search"
-                      value={search}
-                      onChange={handleSearchChange}
-                    />
-                    <button
-                      type="button"
-                      onClick={() => setSearch('')}
-                      className="delete-search-button"
-                      tabIndex={search.length > 0 ? 0 : -1}
-                    >
-                      <span className="sr-only">Delete search text</span>
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        viewBox="0 0 20 20"
-                        fill="currentColor"
-                      >
-                        <path
-                          fillRule="evenodd"
-                          d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z"
-                          clipRule="evenodd"
-                        />
-                      </svg>
-                    </button>
-                  </div>
-                </div>
-                {searchResults && (
-                  <div className="table-container">
-                    <table>
-                      <thead>
-                        <tr>
-                          <th />
-                          <th className="text-left lg-td">Date</th>
-                          <th className="text-left name-cell">Camper</th>
-                          <th className="text-left">Sessions</th>
-                          <th className="text-left lg-td">WIAA Information</th>
-                          <th className="text-left">Total</th>
-                          <th className="text-left">Status</th>
-                          <th className="text-center">Menu</th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        {searchResults.length === 0 && (
-                          <tr className="empty">
-                            <td>
-                              {year && year.registrations.length > 0
-                                ? 'No registrations match your filter.'
-                                : 'No one is currently registered for 2023.'}
-                            </td>
-                          </tr>
-                        )}
-                        {searchResults.map((r, i) => (
-                          <tr key={r.id}>
-                            <td>{`${i + 1}.`}</td>
-                            <td className="lg-td">
-                              {format(new Date(r.createdAt), 'P hh:mmaa')}
-                            </td>
-                            <td className="name-cell">
-                              <div className="camper">
-                                {r.notes.length > 0 ? (
-                                  <div className="has-notes">*</div>
-                                ) : null}
-                                <div className="camper-name">
-                                  <Link href={`/registrations/${r.id}`}>
-                                    {r.firstName} {r.lastName}
-                                  </Link>
-                                </div>
-                                <div className="camper-detail">
-                                  <a
-                                    href={`mailto:${r.email}`}
-                                    target="_blank"
-                                    rel="noreferrer"
-                                  >
-                                    {r.email}
-                                  </a>
-                                </div>
-                                <div className="camper-detail">
-                                  {r.address.city}
-                                  {r.address.city && r.address.state ? (
-                                    <>{', '}</>
-                                  ) : null}
-                                  {r.address.state}
-                                </div>
-                              </div>
-                            </td>
-                            <td>
-                              <div className="flex-col">
-                                {r.sessions.map(s => (
-                                  <div
-                                    key={s.sessionId}
-                                    className={
-                                      s.attending
-                                        ? 'attending'
-                                        : 'not-attending'
-                                    }
-                                  >
-                                    <Link
-                                      href={`/registrations/session?sid=${s.sessionId}`}
-                                    >
-                                      {formatSessionName(s)}
-                                    </Link>
+                    {searchResults && (
+                      <div className="table-container">
+                        <table>
+                          <thead>
+                            <tr>
+                              <th />
+                              <th className="text-left lg-td">Date</th>
+                              <th className="text-left name-cell">Camper</th>
+                              <th className="text-left">Sessions</th>
+                              <th className="text-left lg-td">
+                                WIAA Information
+                              </th>
+                              <th className="text-left">Total</th>
+                              <th className="text-left">Status</th>
+                              <th className="text-center">Menu</th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            {searchResults.length === 0 && (
+                              <tr>
+                                <td>No registrations match your filter.</td>
+                              </tr>
+                            )}
+                            {searchResults.map((r, i) => (
+                              <tr key={r.id}>
+                                <td>{`${i + 1}.`}</td>
+                                <td className="lg-td">
+                                  {format(new Date(r.createdAt), 'P hh:mmaa')}
+                                </td>
+                                <td className="name-cell">
+                                  <div className="camper">
+                                    {r.notes.length > 0 ? (
+                                      <div className="has-notes">*</div>
+                                    ) : null}
+                                    <div className="camper-name">
+                                      <Link href={`/registrations/${r.id}`}>
+                                        {r.firstName} {r.lastName}
+                                      </Link>
+                                    </div>
+                                    <div className="camper-detail">
+                                      <a
+                                        href={`mailto:${r.email}`}
+                                        target="_blank"
+                                        rel="noreferrer"
+                                      >
+                                        {r.email}
+                                      </a>
+                                    </div>
+                                    <div className="camper-detail">
+                                      {r.address.city}
+                                      {r.address.city && r.address.state ? (
+                                        <>{', '}</>
+                                      ) : null}
+                                      {r.address.state}
+                                    </div>
                                   </div>
-                                ))}
-                              </div>
-                            </td>
-                            <td className="lg-td">
-                              <div className="flex-col">
-                                <div>{r.wiaaClass}</div>
-                                <div>{r.wiaaNumber}</div>
-                              </div>
-                            </td>
-                            <td>{formatToMoney(r.total, true)}</td>
-                            <td className="status">
-                              {r.paymentStatus === 'paid' && (
-                                <span className="paid">Paid</span>
-                              )}
-                              {r.paymentStatus === 'fullyRefunded' && (
-                                <span className="refunded">Refunded</span>
-                              )}
-                              {r.paymentStatus === 'partiallyRefunded' && (
-                                <span className="refunded">Refunded</span>
-                              )}
-                              {r.paymentStatus === 'unpaid' && (
-                                <span className="unpaid">Unpaid</span>
-                              )}
-                            </td>
-                            <td>
-                              <div className="menu-container">
-                                <button
-                                  type="button"
-                                  onClick={() => handleMenuButtonClick(r.id)}
-                                  className="menu-button"
-                                >
-                                  <span className="sr-only">Menu</span>
-                                  <svg
-                                    xmlns="http://www.w3.org/2000/svg"
-                                    fill="none"
-                                    viewBox="0 0 24 24"
-                                    stroke="currentColor"
-                                  >
-                                    <path
-                                      strokeLinecap="round"
-                                      strokeLinejoin="round"
-                                      strokeWidth={2}
-                                      d="M12 5v.01M12 12v.01M12 19v.01M12 6a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2z"
-                                    />
-                                  </svg>
-                                </button>
-                                <Menu
-                                  open={r.id === activeMenuId && isOpen}
-                                  setOpen={setIsOpen}
-                                >
-                                  <>
-                                    <Link href={`/registrations/${r.id}`}>
-                                      View Registration
-                                    </Link>
-                                    <Link
-                                      href={`/registrations/update?rid=${r.id}`}
+                                </td>
+                                <td>
+                                  <div className="flex-col">
+                                    {r.sessions.map(s => (
+                                      <div
+                                        key={s.sessionId}
+                                        className={
+                                          s.attending
+                                            ? 'attending'
+                                            : 'not-attending'
+                                        }
+                                      >
+                                        <Link
+                                          href={`/registrations/session?sid=${s.sessionId}`}
+                                        >
+                                          {formatSessionName(s)}
+                                        </Link>
+                                      </div>
+                                    ))}
+                                  </div>
+                                </td>
+                                <td className="lg-td">
+                                  <div className="flex-col">
+                                    <div>{r.wiaaClass}</div>
+                                    <div>{r.wiaaNumber}</div>
+                                  </div>
+                                </td>
+                                <td>{formatToMoney(r.total, true)}</td>
+                                <td className="status">
+                                  {r.paymentStatus === 'paid' && (
+                                    <span className="paid">Paid</span>
+                                  )}
+                                  {r.paymentStatus === 'fullyRefunded' && (
+                                    <span className="refunded">Refunded</span>
+                                  )}
+                                  {r.paymentStatus === 'partiallyRefunded' && (
+                                    <span className="refunded">Refunded</span>
+                                  )}
+                                  {r.paymentStatus === 'unpaid' && (
+                                    <span className="unpaid">Unpaid</span>
+                                  )}
+                                </td>
+                                <td>
+                                  <div className="menu-container">
+                                    <button
+                                      type="button"
+                                      onClick={() =>
+                                        handleMenuButtonClick(r.id)
+                                      }
+                                      className="menu-button"
                                     >
-                                      Update Registration
-                                    </Link>
-                                  </>
-                                </Menu>
-                              </div>
-                            </td>
-                          </tr>
-                        ))}
-                      </tbody>
-                    </table>
-                  </div>
+                                      <span className="sr-only">Menu</span>
+                                      <svg
+                                        xmlns="http://www.w3.org/2000/svg"
+                                        fill="none"
+                                        viewBox="0 0 24 24"
+                                        stroke="currentColor"
+                                      >
+                                        <path
+                                          strokeLinecap="round"
+                                          strokeLinejoin="round"
+                                          strokeWidth={2}
+                                          d="M12 5v.01M12 12v.01M12 19v.01M12 6a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2z"
+                                        />
+                                      </svg>
+                                    </button>
+                                    <Menu
+                                      open={r.id === activeMenuId && isOpen}
+                                      setOpen={setIsOpen}
+                                    >
+                                      <>
+                                        <Link href={`/registrations/${r.id}`}>
+                                          View Registration
+                                        </Link>
+                                        <Link
+                                          href={`/registrations/update?rid=${r.id}`}
+                                        >
+                                          Update Registration
+                                        </Link>
+                                      </>
+                                    </Menu>
+                                  </div>
+                                </td>
+                              </tr>
+                            ))}
+                          </tbody>
+                        </table>
+                      </div>
+                    )}
+                  </>
                 )}
               </>
             )}
@@ -551,6 +561,18 @@ const HomeStyles = styled.div<{ showDeleteButton: boolean }>`
     .lg-td {
       display: none;
     }
+  }
+
+  .empty {
+    margin: 3rem 0 0;
+    padding: 1.25rem 0;
+    text-align: center;
+    font-size: 1.125rem;
+    font-weight: 500;
+    color: #4b5563;
+    background-color: #edf0f3;
+    border-top: 1px solid #dadde2;
+    border-bottom: 1px solid #dadde2;
   }
 `;
 
