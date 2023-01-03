@@ -5,7 +5,7 @@ import { Formik, Form, Field, ErrorMessage, FormikHelpers } from 'formik';
 import * as Yup from 'yup';
 import useRegistrationsQuery from '../hooks/queries/useRegistrationsQuery';
 import useYearQuery from '../hooks/queries/useYearQuery';
-import useOutsideClick from '../hooks/useOutsideClick';
+import useCloseOnOutsideClick from '../hooks/useCloseOnOutsideClick';
 import { FilmedGame, Registration } from '../types';
 import { formatSessionName } from '../utils/misc';
 
@@ -30,7 +30,11 @@ export default function FilmedGameForm(props: Props) {
   const [shouldRedirectOnSuccess, setShouldRedirectOnSuccess] =
     React.useState(true);
   const searchResultsRef = React.useRef<HTMLDivElement>(null);
-  useOutsideClick(hasSearchResults, setHasSearchResults, searchResultsRef);
+  useCloseOnOutsideClick(
+    hasSearchResults,
+    setHasSearchResults,
+    searchResultsRef
+  );
 
   React.useEffect(() => {
     if (registrationsQuery.data && searchInput.length > 2) {

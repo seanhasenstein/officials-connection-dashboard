@@ -3,7 +3,7 @@ import styled from 'styled-components';
 import { FilterOptions } from '../types';
 import { formatSessionName } from '../utils/misc';
 import useEscapeKeydownClose from '../hooks/useEscapeKeydownClose';
-import useOutsideClick from '../hooks/useOutsideClick';
+import useCloseOnOutsideClick from '../hooks/useCloseOnOutsideClick';
 import useYearQuery from '../hooks/queries/useYearQuery';
 
 type Props = {
@@ -33,7 +33,7 @@ export default function RegistrationFilter({
   const { sessions } = useYearQuery();
   const [active, setActive] = React.useState<Nav>('paymentStatus');
   const containerRef = React.useRef<HTMLDivElement>(null);
-  useOutsideClick(isOpen, setIsOpen, containerRef);
+  useCloseOnOutsideClick(isOpen, setIsOpen, containerRef);
   useEscapeKeydownClose(isOpen, setIsOpen);
 
   const handleNavClick = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -57,10 +57,7 @@ export default function RegistrationFilter({
     <RegistrationFilterStyles isOpen={isOpen}>
       <button
         type="button"
-        onClick={e => {
-          e.stopPropagation();
-          handleMenuButtonClick('filter');
-        }}
+        onClick={() => handleMenuButtonClick('filter')}
         className="action-button"
       >
         <svg

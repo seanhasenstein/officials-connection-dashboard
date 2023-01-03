@@ -69,10 +69,7 @@ export default function Layout({ children, title = '' }: Props) {
             <button
               type="button"
               className="sidebar-btn"
-              onClick={e => {
-                e.stopPropagation();
-                setIsOpen(true);
-              }}
+              onClick={() => setIsOpen(true)}
             >
               <svg
                 xmlns="http://www.w3.org/2000/svg"

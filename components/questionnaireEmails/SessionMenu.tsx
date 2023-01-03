@@ -2,7 +2,7 @@ import React from 'react';
 import styled from 'styled-components';
 import { UseMutationResult } from 'react-query';
 import useEscapeKeydownClose from '../../hooks/useEscapeKeydownClose';
-import useOutsideClick from '../../hooks/useOutsideClick';
+import useCloseOnOutsideClick from '../../hooks/useCloseOnOutsideClick';
 import { CloudinaryAttachment, SessionWithAttachment } from '../../types';
 import { formatSessionName } from '../../utils/misc';
 
@@ -21,7 +21,7 @@ type Props = {
 
 export default function SessionMenu(props: Props) {
   const menuRef = React.useRef<HTMLDivElement>(null);
-  useOutsideClick(props.show, props.setShow, menuRef);
+  useCloseOnOutsideClick(props.show, props.setShow, menuRef);
   useEscapeKeydownClose(props.show, props.setShow);
   const [value, setValue] = React.useState(() => {
     if (props.session.attachment) {

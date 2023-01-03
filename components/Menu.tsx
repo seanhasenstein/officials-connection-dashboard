@@ -1,6 +1,6 @@
 import React from 'react';
 import styled from 'styled-components';
-import useOutsideClick from '../hooks/useOutsideClick';
+import useCloseOnOutsideClick from '../hooks/useCloseOnOutsideClick';
 import useEscapeKeydownClose from '../hooks/useEscapeKeydownClose';
 
 type Props = {
@@ -12,7 +12,7 @@ type Props = {
 
 export default function Menu({ open, setOpen, children, className }: Props) {
   const menuRef = React.useRef<HTMLDivElement>(null);
-  useOutsideClick(open, setOpen, menuRef);
+  useCloseOnOutsideClick(open, setOpen, menuRef);
   useEscapeKeydownClose(open, setOpen);
 
   return (

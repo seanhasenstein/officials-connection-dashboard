@@ -212,10 +212,7 @@ export default function Home() {
                               <div className="menu-container">
                                 <button
                                   type="button"
-                                  onClick={e => {
-                                    e.stopPropagation();
-                                    handleMenuButtonClick(r.id);
-                                  }}
+                                  onClick={() => handleMenuButtonClick(r.id)}
                                   className="menu-button"
                                 >
                                   <span className="sr-only">Menu</span>

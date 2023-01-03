@@ -1,6 +1,6 @@
 import React from 'react';
 import styled from 'styled-components';
-import useOutsideClick from '../hooks/useOutsideClick';
+import useCloseOnOutsideClick from '../hooks/useCloseOnOutsideClick';
 import useEscapeKeydownClose from '../hooks/useEscapeKeydownClose';
 import useToggleScroll from '../hooks/useToggleScroll';
 import LoadingSpinner from './LoadingSpinner';
@@ -21,7 +21,7 @@ export default function DeleteModal({
   category,
 }: DeleteModalProps) {
   const modalRef = React.useRef<HTMLDivElement>(null);
-  useOutsideClick(showModal, setShowModal, modalRef);
+  useCloseOnOutsideClick(showModal, setShowModal, modalRef);
   useEscapeKeydownClose(showModal, setShowModal);
   useToggleScroll(showModal);
 

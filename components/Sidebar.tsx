@@ -3,7 +3,7 @@ import styled from 'styled-components';
 import Link from 'next/link';
 import { formatSessionName } from '../utils/misc';
 import useEscapeKeydownClose from '../hooks/useEscapeKeydownClose';
-import useOutsideClick from '../hooks/useOutsideClick';
+import useCloseOnOutsideClick from '../hooks/useCloseOnOutsideClick';
 import useRegistrationsQuery from '../hooks/queries/useRegistrationsQuery';
 import useYearQuery from '../hooks/queries/useYearQuery';
 
@@ -26,7 +26,7 @@ export default function Sidebar({ isOpen, setIsOpen }: Props) {
     data: registrations,
   } = useRegistrationsQuery();
   const { sessions, isLoading: yLoading, error: yError } = useYearQuery();
-  useOutsideClick(isOpen, setIsOpen, sidebarRef);
+  useCloseOnOutsideClick(isOpen, setIsOpen, sidebarRef);
   useEscapeKeydownClose(isOpen, setIsOpen);
   const [sidebarSessions, setSidebarSessions] =
     React.useState<SidebarSessions>();

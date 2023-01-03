@@ -1,7 +1,7 @@
 import React from 'react';
 import styled from 'styled-components';
 import useEscapeKeydownClose from '../hooks/useEscapeKeydownClose';
-import useOutsideClick from '../hooks/useOutsideClick';
+import useCloseOnOutsideClick from '../hooks/useCloseOnOutsideClick';
 import { SortOrder, SortVariable } from '../types';
 
 type Props = {
@@ -20,17 +20,14 @@ export default function RegistrationSort({
   handleMenuButtonClick,
 }: Props) {
   const containerRef = React.useRef<HTMLDivElement>(null);
-  useOutsideClick(isOpen, setIsOpen, containerRef);
+  useCloseOnOutsideClick(isOpen, setIsOpen, containerRef);
   useEscapeKeydownClose(isOpen, setIsOpen);
 
   return (
     <RegistrationSortStyles isOpen={isOpen}>
       <button
         type="button"
-        onClick={e => {
-          e.stopPropagation();
-          handleMenuButtonClick('sort');
-        }}
+        onClick={() => handleMenuButtonClick('sort')}
         className="action-button"
       >
         <svg
