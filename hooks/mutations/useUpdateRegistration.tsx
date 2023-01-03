@@ -81,16 +81,10 @@ export default function useUpdateRegistration(
   }, [registration, yearSessions]);
 
   const updateRegistration = useMutation(
-    async ({
-      _id,
-      formValues,
-    }: {
-      _id: string;
-      formValues: RegistrationInput;
-    }) => {
+    async (formValues: RegistrationInput) => {
       const response = await fetch(`/api/registrations/update`, {
         method: 'POST',
-        body: JSON.stringify({ formValues, _id }),
+        body: JSON.stringify({ formValues }),
         headers: {
           'Content-Type': 'application/json',
         },

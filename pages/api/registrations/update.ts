@@ -9,17 +9,17 @@ import { formatRegistrationForDb } from '../../../utils/registration';
 const handler = nc<Request, NextApiResponse>()
   .use(database)
   .post(async (req, res) => {
-    const requestBody: { _id: string; formValues: RegistrationInput } =
-      req.body;
+    const requestBody: { id: string; formValues: RegistrationInput } = req.body;
     // TODO: make year dynamic
     const serverSessions = await year.getSessions(req.db, '2023');
     const registrationForDb = formatRegistrationForDb(
       requestBody.formValues,
       serverSessions || []
     );
+    // TODO: make year dynamic
     const result = await registration.updateRegistration(
       req.db,
-      requestBody._id,
+      '2023',
       registrationForDb
     );
 

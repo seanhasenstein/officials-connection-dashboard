@@ -21,12 +21,12 @@ const handler = nc<Request, NextApiResponse>()
       requestBody,
       serverSessions
     );
-    const id = await registration.addRegistration(
+    const createdRegistration = await registration.addRegistration(
       req.db,
       '2023', // TODO: make this dynamic
       dbFormattedRegistration
     );
-    res.json({ id });
+    res.json({ id: createdRegistration?.id });
   });
 
 export default withAuth(handler);

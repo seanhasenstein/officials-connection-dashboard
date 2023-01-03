@@ -43,7 +43,9 @@ export default function AddRegistration() {
             onSubmit={(formValues: RegistrationInput) => {
               setIsSubmitting(true);
               addRegistration.mutate(formValues, {
-                onSuccess: id => router.push(`/registrations/${id}`),
+                onSuccess: id => {
+                  router.push(`/registrations/${id}`);
+                },
                 onError: () => setIsSubmitting(false),
               });
             }}

@@ -44,7 +44,8 @@ export async function addRegistration(
     .collection<Year>('years')
     .findOneAndUpdate(
       { year },
-      { $push: { registrations: registrationInput } }
+      { $push: { registrations: registrationInput } },
+      { returnDocument: 'after' }
     );
 
   const addedRegistration = updatedYear.value?.registrations.find(
@@ -59,13 +60,14 @@ export async function updateRegistration(
   year: string,
   registrationUpdate: RegistrationForDb
 ) {
-  const updatedYear = await db
-    .collection<Year>('years')
-    .findOneAndUpdate(
-      { year, 'registrations.id': registrationUpdate.id },
-      { $set: { 'registrations.$': registrationUpdate } },
-      { returnDocument: 'after' }
-    );
+  const updatedYear = await db.collection<Year>('years').findOneAndUpdate(
+    { year },
+    { $set: { 'registrations.$[registration]': registrationUpdate } },
+    {
+      arrayFilters: [{ 'registration.id': registrationUpdate.id }],
+      returnDocument: 'after',
+    }
+  );
 
   const updatedRegistration = updatedYear.value?.registrations.find(
     r => r.id === registrationUpdate.id
