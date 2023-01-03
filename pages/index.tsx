@@ -126,7 +126,11 @@ export default function Home() {
                       <tbody>
                         {searchResults.length === 0 && (
                           <tr className="empty">
-                            <td>No registrations match your filter.</td>
+                            <td>
+                              {year && year.registrations.length > 0
+                                ? 'No registrations match your filter.'
+                                : 'No one is currently registered for 2023.'}
+                            </td>
                           </tr>
                         )}
                         {searchResults.map((r, i) => (
@@ -208,7 +212,10 @@ export default function Home() {
                               <div className="menu-container">
                                 <button
                                   type="button"
-                                  onClick={() => handleMenuButtonClick(r.id)}
+                                  onClick={e => {
+                                    e.stopPropagation();
+                                    handleMenuButtonClick(r.id);
+                                  }}
                                   className="menu-button"
                                 >
                                   <span className="sr-only">Menu</span>
