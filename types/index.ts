@@ -114,7 +114,7 @@ export interface Session {
   levels: string | null;
   mechanics: number;
   price: number;
-  attending: boolean;
+  attending?: boolean;
   active?: boolean;
   isChecked?: boolean;
   filmedGamesEmailSent: boolean;

@@ -1,6 +1,25 @@
 import * as crypto from 'crypto';
 import { PaymentMethod, Registration, Session, SessionsQuery } from '../types';
 
+const ALPHA_NUM =
+  '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
+
+export function createId(prefix?: string | false, len = 14) {
+  const rnd = crypto.randomBytes(len);
+  const value = new Array(len);
+  const charsLength = ALPHA_NUM.length;
+
+  for (let i = 0; i < len; i++) {
+    value[i] = ALPHA_NUM[rnd[i] % charsLength];
+  }
+
+  const id = value.join('');
+
+  if (prefix) return `${prefix}_${id}`;
+
+  return id;
+}
+
 export function getCampAbbreviation(camp: string) {
   return camp === 'Kaukauna' ? 'Kau' : camp === 'Plymouth' ? 'Ply' : '';
 }

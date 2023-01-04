@@ -20,12 +20,12 @@ export async function getSessions(db: Db, year: string) {
   return sessions;
 }
 
-export async function updateYear(db: Db, updatedYearInput: Year) {
-  const { _id, ...updatedYear } = updatedYearInput;
+// TODO: Fix the any type for update
+export async function updateYear(db: Db, year: string, update: any) {
+  const { _id, ...updateInput } = update;
   const result = await db.collection<Year>('years').findOneAndUpdate(
-    // TODO: make year dynamic
-    { year: '2023' },
-    { $set: updatedYear },
+    { year },
+    { $set: updateInput },
     {
       returnDocument: 'after',
     }
