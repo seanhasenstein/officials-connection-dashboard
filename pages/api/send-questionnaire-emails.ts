@@ -123,7 +123,8 @@ const handler = nc<Request, NextApiResponse>()
         }
       });
       const updatedYear = { ...yearData, camps: updatedCamps };
-      await year.updateYear(req.db, updatedYear);
+      // TODO: Make year dynamic
+      await year.updateYear(req.db, '2023', updatedYear);
 
       res.json({ success: true });
     } catch (error) {

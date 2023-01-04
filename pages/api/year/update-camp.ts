@@ -24,7 +24,8 @@ const handler = nc<Request, NextApiResponse>()
       }
     });
     const updatedYear = { ...yearData, camps: updatedCamps || [] };
-    const result = await year.updateYear(req.db, updatedYear);
+    // TODO: Make year dynamic
+    const result = await year.updateYear(req.db, '2023', updatedYear);
     res.json(result);
   });
 
