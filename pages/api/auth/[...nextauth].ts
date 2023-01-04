@@ -40,7 +40,7 @@ export default NextAuth({
       const allowedEmailAccounts = [
         'wbyoc@officialsconnection.org',
         'seanhasenstein@gmail.com',
-        'rusch@lutheranhigh.com',
+        'tom.rusch25@gmail.com',
       ];
       if (
         context.user.email &&
