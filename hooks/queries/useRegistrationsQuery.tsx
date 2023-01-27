@@ -26,7 +26,7 @@ export default function useRegistrationsQuery() {
       initialDataUpdatedAt: () => {
         return queryClient.getQueryState(registrationKeys.all)?.dataUpdatedAt;
       },
-      staleTime: 1000 * 60 * 10,
+      staleTime: 300000, // 5min
     }
   );
 }

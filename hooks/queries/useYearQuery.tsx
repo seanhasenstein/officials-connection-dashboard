@@ -16,7 +16,7 @@ async function fetchYear() {
 export default function useYearQuery() {
   // TODO: make year dynamic
   const yearQuery = useQuery<Year, Error>(['year', '2023'], fetchYear, {
-    staleTime: Infinity,
+    staleTime: 300000, // 5min
   });
 
   const kaukaunaCamp = yearQuery.data?.camps.find(

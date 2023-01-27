@@ -44,7 +44,7 @@ export default function SendQuestionnaireEmails(props: Props) {
       };
     },
     {
-      staleTime: 1000 * 60 * 10, // 10 minutes
+      staleTime: 300000, // 5min
     }
   );
 

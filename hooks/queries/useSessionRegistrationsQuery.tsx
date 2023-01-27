@@ -25,7 +25,7 @@ export default function useSessionRegistrationsQuery(sessionId: string) {
     registrationKeys.session(sessionId),
     () => fetchSessions(sessionId),
     {
-      staleTime: 1000 * 60 * 10,
+      staleTime: 300000, // 5min
       initialData: () => {
         const state = queryClient.getQueryData<Registration[]>(
           registrationKeys.all

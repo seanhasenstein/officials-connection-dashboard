@@ -22,7 +22,7 @@ export default function useRegistrationQuery(registrationId: string) {
     registrationKeys.registration(registrationId),
     () => fetchRegistration(registrationId),
     {
-      staleTime: 1000 * 60 * 10,
+      staleTime: 300000, // 5min
       initialData: () => {
         const state = queryClient.getQueryData<Registration[]>(
           registrationKeys.all

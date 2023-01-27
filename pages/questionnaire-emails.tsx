@@ -40,7 +40,7 @@ export default function QuestionnaireEmails() {
       };
     },
     {
-      staleTime: 1000 * 60 * 10, // 10 minutes
+      staleTime: 300000, // 5min
     }
   );
 
