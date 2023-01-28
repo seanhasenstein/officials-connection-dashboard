@@ -23,11 +23,14 @@ export default function RegistrationSession() {
   const { getSession, year } = useYearQuery();
   const {
     isLoading,
+    isFetching,
     error,
     data: registrations,
   } = useSessionRegistrationsQuery(getUrlParam(router.query.sid));
   const { activeMenuId, isOpen, setIsOpen, handleMenuButtonClick } = useMenu();
   const [session, setSession] = React.useState<Session>();
+
+  const showLoadingSpinner = isLoading || isFetching;
 
   React.useEffect(() => {
     setSession(getSession(getUrlParam(router.query.sid)));
@@ -43,7 +46,9 @@ export default function RegistrationSession() {
           <h3>
             [<span>{session && formatSessionName(session)}</span>]
           </h3>
-          {isLoading && <SessionLoadingSpinner isLoading={isLoading} />}
+          {showLoadingSpinner ? (
+            <SessionLoadingSpinner isLoading={showLoadingSpinner} />
+          ) : null}
           {error instanceof Error && (
             <div>
               <>Error: {error}</>

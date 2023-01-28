@@ -23,7 +23,12 @@ export default function Home() {
   // TODO: look into this year query to only get year data that we want
   const { year } = useYearQuery();
   // TODO: do we need these registrations if we get the year data?
-  const { isLoading, error, data: registrations } = useRegistrationsQuery();
+  const {
+    isLoading,
+    isFetching,
+    error,
+    data: registrations,
+  } = useRegistrationsQuery();
   const [sortOrder, setSortOrder] = React.useState<SortOrder>('descending');
   const [sortVariable, setSortVariable] = React.useState<SortVariable>('date');
   const [filterOptions, setFilterOptions] = React.useState<FilterOptions>({
@@ -38,6 +43,8 @@ export default function Home() {
   const { isOpen, setIsOpen, activeMenuId, handleMenuButtonClick } = useMenu();
   const { showNotification, setShowNotification } = useNotification();
 
+  const showLoadingSpinner = isLoading || isFetching;
+
   if (sessionLoading || !session) return <div />;
 
   return (
@@ -48,7 +55,9 @@ export default function Home() {
           <h3>
             [<span>All Registrations</span>]
           </h3>
-          {isLoading && <RegistrationLoadingSpinner isLoading={isLoading} />}
+          {showLoadingSpinner ? (
+            <RegistrationLoadingSpinner isLoading={showLoadingSpinner} />
+          ) : null}
           {error && <div>Error: {error.message}</div>}
           <>
             {year && year.registrations.length < 1 ? (
