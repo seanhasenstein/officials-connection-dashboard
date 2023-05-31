@@ -136,9 +136,9 @@ export interface SessionsQuery {
 }
 
 export interface RegistrationDiscount {
-  active: boolean;
-  name: DiscountName;
+  active?: boolean;
   amount: number;
+  name: DiscountName;
 }
 
 export interface Registration {
@@ -163,7 +163,8 @@ export interface Registration {
     name: string;
     phone: string;
   };
-  discount: RegistrationDiscount;
+  discounts?: RegistrationDiscount[]; // TODO: temporarily optional
+  discount?: RegistrationDiscount; // TODO: temporarily included
   crewMembers: string[];
   subtotal: number;
   total: number;
@@ -179,9 +180,11 @@ export interface Registration {
 
 export type TemporaryDiscountName = 'default' | 'hscrew' | 'other' | 'skip';
 
-export interface RegistrationInput extends Omit<Registration, '_id'> {
-  temporaryDiscountName: TemporaryDiscountName;
-}
+// export interface RegistrationInput extends Omit<Registration, '_id'> {
+//   temporaryDiscountName: TemporaryDiscountName;
+// }
+
+export type RegistrationInput = Omit<Registration, '_id'>;
 
 export type RegistrationForDb = Omit<Registration, '_id'>;
 

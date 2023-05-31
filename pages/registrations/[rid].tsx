@@ -259,8 +259,8 @@ export default function Registration() {
                     )}
                     {registration.paymentMethod === 'card' && (
                       <div className="horizontal-item">
-                        <h3>Stripe Id</h3>
-                        <p>
+                        <h3>Stripe Id:</h3>
+                        <p className="stripe-id">
                           <a
                             href={`https://dashboard.stripe.com/payments/${registration.stripeId}`}
                             target="_blank"
@@ -281,16 +281,12 @@ export default function Registration() {
                         <p>{formatToMoney(registration.refundAmount, true)}</p>
                       </div>
                     )}
-                    <div className="horizontal-item">
-                      <h3>Discount:</h3>
-                      <p>{formatToMoney(registration.discount.amount, true)}</p>
-                    </div>
-                    {registration.discount.active && (
-                      <div className="horizontal-item">
-                        <h3>Discount:</h3>
-                        <p>{registration.discount.name}</p>
+                    {registration.discounts?.map(d => (
+                      <div key={d.name} className="horizontal-item">
+                        <h3>{d.name} Discount:</h3>
+                        <p>-{formatToMoney(d.amount, true)}</p>
                       </div>
-                    )}
+                    ))}
                     <div className="horizontal-item total">
                       <h3>Total:</h3>
                       <p>{formatToMoney(registration.total, true)}</p>
@@ -514,13 +510,17 @@ const RegistrationStyles = styled.div`
     }
 
     h3 {
-      width: 9rem;
+      width: 12rem;
       font-weight: 500;
       color: #6b7280;
     }
 
     p {
       color: #111827;
+
+      &.stripe-id {
+        font-size: 0.75rem;
+      }
 
       a {
         &:hover {

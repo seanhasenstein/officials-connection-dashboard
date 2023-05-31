@@ -49,7 +49,7 @@ const handler = nc<Request, NextApiResponse>()
       { id: 'wiaaClass', title: 'WIAA CLASS' },
       { id: 'wiaaNumber', title: 'WIAA NUMBER' },
       { id: 'associations', title: 'ASSOCIATIONS' },
-      { id: 'discount', title: 'DISCOUNT' },
+      { id: 'discounts', title: 'DISCOUNTS' },
       { id: 'crew1', title: 'CREW MEMBER 1' },
       { id: 'crew2', title: 'CREW MEMEBER 2' },
       { id: 'total', title: 'TOTAL' },
@@ -89,7 +89,10 @@ const handler = nc<Request, NextApiResponse>()
             wiaaClass: cr.wiaaClass,
             wiaaNumber: cr.wiaaNumber,
             associations: cr.associations,
-            discount: cr.discount.name,
+            discounts:
+              cr.discounts
+                ?.map(d => `${d.name} [${d.amount / 100}]`)
+                .join(', ') || '',
             crew1: cr.crewMembers[0] || '',
             crew2: cr.crewMembers[1] || '',
             total: formatToMoney(cr.total, true),
