@@ -2,12 +2,9 @@ import {
   PaymentMethod,
   PaymentStatus,
   RegistrationForDb,
-  RegistrationDiscount,
   RegistrationInput,
   Session,
-  TemporaryDiscountName,
   WiaaClass,
-  DiscountName,
 } from '../types';
 import {
   calculateTotals,
@@ -44,21 +41,6 @@ function verifySelectedSessions(
   return verifiedSessions;
 }
 
-function formatDiscountName(
-  discount: RegistrationDiscount,
-  temporaryDiscountName: TemporaryDiscountName
-) {
-  if (discount.active === false || temporaryDiscountName === 'default') {
-    return '';
-  }
-
-  if (temporaryDiscountName === 'hscrew') {
-    return 'HSCREW';
-  }
-
-  return discount.name.toUpperCase();
-}
-
 export function formatRegistrationForDb(
   input: RegistrationInput,
   serverSessions: Session[]
@@ -67,7 +49,7 @@ export function formatRegistrationForDb(
     paymentMethod,
     subtotal: inputSubtotal,
     refundAmount,
-    discount,
+    discounts = [],
   } = input;
   const selectedSessions = input.sessions.filter(session => session.isChecked);
   const verifiedSessions = verifySelectedSessions(
@@ -78,7 +60,7 @@ export function formatRegistrationForDb(
     paymentMethod,
     inputSubtotal,
     refundAmount,
-    discount.amount
+    discounts
   );
   const timestamp = new Date().toISOString();
 
@@ -104,14 +86,7 @@ export function formatRegistrationForDb(
       name: input.emergencyContact.name.trim(),
       phone: removeNonDigits(input.emergencyContact.phone),
     },
-    discount: {
-      active: input.discount.active,
-      name: formatDiscountName(
-        input.discount,
-        input.temporaryDiscountName
-      ) as DiscountName,
-      amount: input.discount.active ? input.discount.amount * 100 : 0,
-    },
+    discounts: input.discounts || [],
     crewMembers: input.crewMembers,
     subtotal,
     total,

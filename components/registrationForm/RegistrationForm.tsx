@@ -127,7 +127,8 @@ export default function RegistrationForm(props: Props) {
                 <label htmlFor="subtotal">Subtotal</label>
                 <Field type="number" id="subtotal" name="subtotal" />
               </div>
-              <div className="discount">
+              <div>TODO: add new discounts api integration</div>
+              {/* <div className="discount">
                 <div className="item row">
                   <p className="button-label">Include a discount</p>
                   <button
@@ -180,7 +181,7 @@ export default function RegistrationForm(props: Props) {
                     ) : null}
                   </>
                 )}
-              </div>
+              </div> */}
               <div className="item">
                 <label htmlFor="paymentMethod">Payment method</label>
                 <Field
@@ -229,7 +230,7 @@ export default function RegistrationForm(props: Props) {
               selectedSessions={values.sessions.filter(s => s.isChecked)}
               subtotal={values.subtotal}
               refundAmount={values.refundAmount}
-              discount={values.discount}
+              discounts={values.discounts || []}
               paymentMethod={values.paymentMethod}
               paymentStatus={values.paymentStatus}
               setFieldValue={setFieldValue}

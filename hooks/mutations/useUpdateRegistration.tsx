@@ -4,7 +4,7 @@ import {
   Registration,
   RegistrationInput,
   Session,
-  TemporaryDiscountName,
+  // TemporaryDiscountName,
 } from '../../types';
 import { formatPhoneNumber } from '../../utils/misc';
 import { initialValues as emptyInitialValues } from '../../utils/registrationForm';
@@ -35,11 +35,11 @@ export default function useUpdateRegistration(
         };
       });
 
-      const discount = {
-        active: data.discount.active,
-        name: data.discount.name,
-        amount: data.discount.amount / 100,
-      };
+      // const discount = {
+      //   active: data.discount.active,
+      //   name: data.discount.name,
+      //   amount: data.discount.amount / 100,
+      // };
       const subtotal = data.subtotal / 100;
       const refundAmount = data.refundAmount / 100;
       const phone = formatPhoneNumber(data.phone);
@@ -59,13 +59,13 @@ export default function useUpdateRegistration(
         ...data,
         phone,
         sessions: updatedSessions,
-        discount,
-        temporaryDiscountName:
-          discount.name === ''
-            ? 'default'
-            : discount.name === 'HSCREW'
-            ? 'hscrew'
-            : ('other' as TemporaryDiscountName),
+        discounts: data.discounts,
+        // temporaryDiscountName:
+        //   discount.name === ''
+        //     ? 'default'
+        //     : discount.name === 'HSCREW'
+        //     ? 'hscrew'
+        //     : ('other' as TemporaryDiscountName),
         crewMembers,
         emergencyContact: {
           name: data.emergencyContact.name,

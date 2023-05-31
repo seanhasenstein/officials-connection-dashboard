@@ -1,5 +1,11 @@
 import * as crypto from 'crypto';
-import { PaymentMethod, Registration, Session, SessionsQuery } from '../types';
+import {
+  PaymentMethod,
+  Registration,
+  RegistrationDiscount,
+  Session,
+  SessionsQuery,
+} from '../types';
 
 const ALPHA_NUM =
   '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
@@ -158,13 +164,13 @@ export function calculateTotal(
   paymentMethod: PaymentMethod,
   subtotal: number,
   refundAmount: number,
-  discountAmount: number
+  discountsAmount: number
 ) {
   if (paymentMethod === 'free') {
     return 0;
   }
 
-  const total = (subtotal - refundAmount - discountAmount) * 100;
+  const total = (subtotal - refundAmount - discountsAmount) * 100;
   return total < 0 ? 0 : total;
 }
 
@@ -172,9 +178,14 @@ export function calculateTotals(
   paymentMethod: PaymentMethod,
   subtotal: number,
   refundAmount: number,
-  discountAmount: number
+  discounts: RegistrationDiscount[]
 ) {
   const s = calculateSubtotal(paymentMethod, subtotal);
+
+  const discountAmount = discounts.reduce((acc, currDiscount) => {
+    return acc + currDiscount.amount;
+  }, 0);
+
   const t = calculateTotal(
     paymentMethod,
     subtotal,
