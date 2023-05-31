@@ -15,7 +15,7 @@ const handler = nc<CustomRequest, NextApiResponse>()
   .get(async (req, res) => {
     const allRegsQuery = await registration.getAllRegistrationsForYear(
       req.db,
-      '2023'
+      '2022'
     );
 
     if (!allRegsQuery) {
@@ -41,7 +41,7 @@ const handler = nc<CustomRequest, NextApiResponse>()
 
         await registration.updateRegistration(
           req.db,
-          '2023',
+          '2022',
           updatedRegistration
         );
       }
@@ -49,7 +49,7 @@ const handler = nc<CustomRequest, NextApiResponse>()
 
     const updatedRegsQuery = await registration.getAllRegistrationsForYear(
       req.db,
-      '2023'
+      '2022'
     );
 
     res.json({ updatedRegsQuery });
