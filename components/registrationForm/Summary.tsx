@@ -1,9 +1,9 @@
 import React from 'react';
 import styled from 'styled-components';
 import {
-  DiscountName,
   PaymentMethod,
   PaymentStatus,
+  RegistrationDiscount,
   Session,
 } from '../../types';
 import { calculateTotal, formatToMoney } from '../../utils/misc';
@@ -11,11 +11,7 @@ import { calculateTotal, formatToMoney } from '../../utils/misc';
 type Props = {
   selectedSessions: Session[];
   subtotal: number;
-  discount: {
-    active: boolean;
-    name: DiscountName;
-    amount: number;
-  };
+  discounts: RegistrationDiscount[];
   refundAmount: number;
   paymentMethod: PaymentMethod;
   paymentStatus: PaymentStatus;
@@ -26,33 +22,32 @@ type Props = {
   ) => void;
 };
 
-const resetDiscount = {
-  active: false,
-  name: undefined,
-  amount: 0,
-};
+// const resetDiscount = {
+//   active: false,
+//   name: undefined,
+//   amount: 0,
+// };
 
 export default function Summary(props: Props) {
   const [total, setTotal] = React.useState(0);
 
   React.useEffect(() => {
-    if (props.discount.active === false) {
-      props.setFieldValue('discount', resetDiscount);
-    }
+    // if (props.discount.active === false) {
+    //   props.setFieldValue('discount', resetDiscount);
+    // }
+
+    const discountsAmount = props.discounts.reduce(
+      (acc, discount) => acc + discount.amount,
+      0
+    );
 
     if (props.paymentStatus === 'fullyRefunded') {
-      props.setFieldValue(
-        'refundAmount',
-        props.subtotal - props.discount.amount
-      );
+      props.setFieldValue('refundAmount', props.subtotal - discountsAmount);
     }
 
     if (props.paymentStatus === 'partiallyRefunded' && total < 0) {
       props.setFieldValue('paymentStatus', 'fullyRefunded');
-      props.setFieldValue(
-        'refundAmount',
-        props.subtotal - props.discount.amount
-      );
+      props.setFieldValue('refundAmount', props.subtotal - discountsAmount);
     }
 
     if (
@@ -67,16 +62,10 @@ export default function Summary(props: Props) {
         props.paymentMethod,
         props.subtotal,
         props.refundAmount,
-        props.discount.amount
+        discountsAmount
       )
     );
-  }, [
-    props.discount.active,
-    props.discount.amount,
-    props.subtotal,
-    props.paymentStatus,
-    props.refundAmount,
-  ]);
+  }, [props.subtotal, props.paymentStatus, props.refundAmount]);
 
   return (
     <SummaryStyles>
@@ -106,12 +95,13 @@ export default function Summary(props: Props) {
               {formatToMoney(props.subtotal * 100, true)}
             </div>
           </div>
-          <div className="summary-item">
+          <div>TODO: add new discounts api</div>
+          {/* <div className="summary-item">
             <div className="label">Discount</div>
             <div className="value">
               {formatToMoney(props.discount.amount * 100, true)}
             </div>
-          </div>
+          </div> */}
           <div className="summary-item">
             <div className="label">Refund amount</div>
             <div className="value">
