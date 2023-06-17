@@ -1,18 +1,22 @@
 import { FilmedGame } from '../types';
 
-type GameFilmEmailParams = {
+interface PostSession {
+  registrationId: string;
+  sessionId: string;
   firstName: string;
   year: string;
   camp: 'Kaukauna' | 'Plymouth';
   filmedGames: FilmedGame[];
-};
+}
 
-function generateHtml({
+function generateHtmlEmail({
+  registrationId,
+  sessionId,
   firstName,
   year,
   camp,
   filmedGames,
-}: GameFilmEmailParams) {
+}: PostSession) {
   return `
   <!DOCTYPE html>
 <html lang="en">
@@ -161,7 +165,7 @@ function generateHtml({
                   </tr>
 
                   <tr>
-                    <td style="padding: 24px 0 28px 0">
+                    <td style="padding: 24px 0">
                       <p
                         style="
                           margin: 0 0 24px;
@@ -180,7 +184,7 @@ function generateHtml({
                           line-height: 1.5;
                         "
                       >
-                        We've had a few officials reach out saying they haven't received their game film emails so we are sending them all out again. Apologies if this is the first time you're seeing this (it might have gone to your spam folder the first time).
+                      Thanks for taking the time out of your busy schedule to attend the ${year} WBYOC ${camp} camp. The comments I've received have been extremely positive on the training and instruction that our staff provided. I hope this was true for you as well.
                       </p>
                       <p
                         style="
@@ -192,14 +196,13 @@ function generateHtml({
                       >
                         Here ${filmedGames.length > 1 ? 'are' : 'is'} the link${
     filmedGames.length > 1 ? 's' : ''
-  } to your filmed game${filmedGames.length > 1 ? 's' : ''} at the ${year}
-                        ${camp} Wisconsin Basketball Yearbook Officials Camp.
+  } to your filmed game${filmedGames.length > 1 ? 's' : ''}.
                       </p>
                     </td>
                   </tr>
 
                   <tr>
-                    <td style="padding: 0 0 32px">
+                    <td style="padding: 0 0 24px">
                       ${filmedGames
                         .map(
                           fg =>
@@ -230,8 +233,37 @@ function generateHtml({
                           line-height: 1.5;
                         "
                       >
-                        Thanks again for attending. We hope to see you next
-                        year.
+                      We'd appreciate if you could also take a few minutes to complete <a href="https://officialsconnection.org/questionnaire?camp=${camp.toLowerCase()}&rid=${registrationId}&sid=${sessionId}" style="color: #1d4ed8; text-decoration: underline;">this post camp questionnaire</a>. Your feedback helps us to make improvements to continue to be one of the top officials camps around.
+                      </p>
+                    </td>
+                  </tr>
+
+                  <tr>
+                    <td style="padding: 0 0 28px">
+                      <p
+                        style="
+                          margin: 0;
+                          font-size: 15px;
+                          color: #1f2937;
+                          line-height: 1.5;
+                        "
+                      >
+                        Have a great rest of your summer.
+                      </p>
+                    </td>
+                  </tr>
+
+                  <tr>
+                    <td style="padding: 0 0 28px">
+                      <p
+                        style="
+                          margin: 0;
+                          font-size: 15px;
+                          color: #1f2937;
+                          line-height: 1.5;
+                        "
+                      >
+                        Sincerely,
                       </p>
                     </td>
                   </tr>
@@ -371,27 +403,29 @@ function generateHtml({
   `;
 }
 
-function generateText({
+function generateTextEmail({
+  registrationId,
+  sessionId,
   firstName,
   year,
   camp,
   filmedGames,
-}: GameFilmEmailParams) {
+}: PostSession) {
   return `
-  Hi ${firstName},\nHere ${filmedGames.length > 1 ? 'are' : 'is'} the link${
-    filmedGames.length > 1 ? 's' : ''
-  } to your filmed game${
+  Hi ${firstName},\nThanks for taking the time out of your busy schedule to attend the ${year} WBYOC ${camp} camp. The comments I've received have been extremely positive on the training and instruction that the staff provided. I hope this was true for you as well.\n\nHere ${
+    filmedGames.length > 1 ? 'are' : 'is'
+  } the link${filmedGames.length > 1 ? 's' : ''} to your filmed game${
     filmedGames.length > 1 ? 's' : ''
   } at the ${year} ${camp} Wisconsin Basketball Yearbook Officials Camp.\n\n${filmedGames
     .map(fg => `${fg.url}\n\n`)
     .join(
       ''
-    )}\nThanks again for attending. We hope to see you next year.\n\nTom Rusch\nWBYOC Director\n
+    )}\n\nWe'd appreciate if you could take a few minutes to complete <a href="https://officialsconnection.org/questionnaire?camp=${camp.toLowerCase()}&rid=${registrationId}&sid=${sessionId}" style="color: #1d4ed8; text-decoration: underline;">this post camp questionnaire</a>. Your feedback helps us to continue to be one of the top officials camps around.\n\nHave a great rest of your summer.\n\nTom Rusch\nWBYOC Director\n
   `;
 }
 
-export default function generateEmail(params: GameFilmEmailParams) {
-  const html = generateHtml(params);
-  const text = generateText(params);
+export default function generateEmail(params: PostSession) {
+  const html = generateHtmlEmail(params);
+  const text = generateTextEmail(params);
   return { html, text };
 }

@@ -64,7 +64,7 @@ export interface FilmedGame {
   sessions: string[];
   name: string;
   url: string;
-  officials: { _id: string; name: string }[];
+  officials: { id: string; name: string }[];
   clinicians: string;
 }
 

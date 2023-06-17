@@ -3,8 +3,8 @@ import nc from 'next-connect';
 import { withAuth } from '../../utils/withAuth';
 import database from '../../middleware/db';
 import { FilmedGame, Request as IRequest } from '../../types';
-import { registration, year } from '../../db';
-import generateEmail from '../../emails/gameFilm';
+import { year } from '../../db';
+import generateEmail from '../../emails/postSession';
 import { sendEmail } from '../../utils/mailgun';
 import { formatSessionName } from '../../utils/misc';
 
@@ -37,19 +37,22 @@ const handler = nc<Request, NextApiResponse>()
     }
 
     // TODO: make year dynamic
-    const registrationsData = await registration.getAllRegistrationsForYear(
-      req.db,
-      '2023'
-    );
+    // const registrationsData = await registration.getAllRegistrationsForYear(
+    //   req.db,
+    //   '2023'
+    // );
+
     const filmedGamesBySessionAndOfficial = yearData?.filmedGames.reduce(
       (
         accumulator: { [registrationId: string]: FilmedGame[] },
         currentFilmedGame
       ) => {
+        // if this filmed game has an official attending the requested session...
         if (currentFilmedGame.sessions.includes(requestedSessionId)) {
+          // for each official on this filmed game, add the filmed game to the officials array
           currentFilmedGame.officials.forEach(official => {
-            accumulator[official._id] = [
-              ...(accumulator[official._id] || []),
+            accumulator[official.id] = [
+              ...(accumulator[official.id] || []),
               currentFilmedGame,
             ];
           });
@@ -60,7 +63,7 @@ const handler = nc<Request, NextApiResponse>()
     );
 
     for (const registrationId in filmedGamesBySessionAndOfficial) {
-      const registration = registrationsData?.find(
+      const registration = yearData?.registrations?.find(
         r => r.id === registrationId
       );
 
@@ -71,6 +74,8 @@ const handler = nc<Request, NextApiResponse>()
       ) {
         const filmedGames = filmedGamesBySessionAndOfficial[registrationId];
         const { html, text } = generateEmail({
+          registrationId: registration.id,
+          sessionId: requestedSessionId,
           firstName: registration.firstName,
           // TODO: make year dynamic
           year: '2023',
@@ -81,7 +86,9 @@ const handler = nc<Request, NextApiResponse>()
           to: registration.email,
           from: 'WBYOC<wbyoc@officialsconnection.org>',
           // TODO: make year dynamic
-          subject: `2023 WBYOC Game Film for ${formatSessionName(session)}`,
+          subject: `Thanks for attending the 2023 WBYOC - ${formatSessionName(
+            session
+          )}`,
           text,
           html,
         });
