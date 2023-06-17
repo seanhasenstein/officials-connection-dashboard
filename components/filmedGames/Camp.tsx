@@ -22,7 +22,7 @@ type Props = {
 
 interface HydratedGame extends Omit<FilmedGame, 'officials'> {
   hydratedOfficials: {
-    _id: string;
+    id: string;
     name: string;
     sessions: Session[];
     isValid: boolean;
@@ -39,7 +39,7 @@ export default function Camp(props: Props) {
       const updatedGames: FilmedGame[] = updatedHydratedGames.map(g => {
         const { hydratedOfficials, ...game } = g;
         const officials = hydratedOfficials.map(o => ({
-          _id: o._id,
+          id: o.id,
           name: o.name,
         }));
         return { ...game, officials };
@@ -76,7 +76,7 @@ export default function Camp(props: Props) {
     if (props.registrations) {
       const hydratedGames = props.activeGames.map(g => {
         const updatedOfficials = g.officials.map(o => {
-          const registration = props.registrations?.find(r => r.id === o._id);
+          const registration = props.registrations?.find(r => r.id === o.id);
           const isValid =
             registration?.sessions.some(
               s =>
@@ -176,12 +176,12 @@ export default function Camp(props: Props) {
                   <div>{game.clinicians}</div>
                   <div className="flex-col officials">
                     {game.hydratedOfficials.map(o => (
-                      <div key={o._id} className="official">
+                      <div key={o.id} className="official">
                         <span
                           className={`dot ${o.isValid ? 'valid' : 'invalid'}`}
                         />
                         <div>
-                          <Link href={`/registrations/${o._id}`}>
+                          <Link href={`/registrations/${o.id}`}>
                             <div className="official-name">{o.name}</div>
                           </Link>
                           <div>

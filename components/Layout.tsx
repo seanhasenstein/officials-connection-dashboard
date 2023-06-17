@@ -61,7 +61,6 @@ export default function Layout({ children, title = '' }: Props) {
             <nav className="lg-nav">
               <Link href="/">All Registrations</Link>
               <Link href="/filmed-games">Filmed Games</Link>
-              <Link href="/questionnaire-emails">Questionnaire Emails</Link>
             </nav>
             <nav className="sm-nav">
               <Link href="/">All Registrations</Link>

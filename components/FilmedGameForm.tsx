@@ -171,7 +171,7 @@ export default function FilmedGameForm(props: Props) {
                           </div>
                           <div className="reg-sessions">
                             {sr.sessions.map(s => (
-                              <div key={s.sessionId}>
+                              <div key={sr.id + s.sessionId}>
                                 {formatSessionName(s)}
                               </div>
                             ))}
@@ -184,14 +184,14 @@ export default function FilmedGameForm(props: Props) {
                 {values.officials.length > 0 ? (
                   <div className="selected-officials">
                     {values.officials.map(o => (
-                      <div key={o._id} className="official">
+                      <div key={o.id + o.name} className="official">
                         {o.name}
                         <button
                           type="button"
                           className="remove-button"
                           onClick={() => {
                             const filteredOfficials = values.officials.filter(
-                              v => v._id !== o._id
+                              v => v.id !== o.id
                             );
                             setFieldValue('officials', filteredOfficials);
                           }}
