@@ -165,7 +165,7 @@ function generateHtmlEmail({
                   </tr>
 
                   <tr>
-                    <td style="padding: 24px 0">
+                    <td style="padding: 24px 0 6px">
                       <p
                         style="
                           margin: 0 0 24px;
@@ -224,6 +224,21 @@ function generateHtmlEmail({
                   </tr>
 
                   <tr>
+                    <td style="padding: 0">
+                      <p
+                        style="
+                          margin: 0 0 24px;
+                          font-size: 15px;
+                          color: #1f2937;
+                          line-height: 1.5;
+                        "
+                      >
+                      The networking and camaraderie of WBYOC officials during camp and after is really great to see. Here is a <a href="https://officialsconnection.org/session-contact-info?c=${camp.toLowerCase()}&s=${sessionId}" target="_blank" rel="noopener" style="text-decoration: underline; color: #2563eb">link to contact info</a> for everyone that attended your session. The clinicians contact info is also included. If you have a rule or interpretation, a play situation, court coverage, mechanic question etc. please don't hesitate to contact one of them or myself. We are willing to help not only at camp, but after camp and future years down the road.
+                      </p>
+                    </td>
+                  </tr>
+
+                  <tr>
                     <td style="padding: 0 0 28px">
                       <p
                         style="
@@ -233,7 +248,7 @@ function generateHtmlEmail({
                           line-height: 1.5;
                         "
                       >
-                      We'd appreciate if you could also take a few minutes to complete <a href="https://officialsconnection.org/questionnaire?camp=${camp.toLowerCase()}&rid=${registrationId}&sid=${sessionId}" style="color: #1d4ed8; text-decoration: underline;">this post camp questionnaire</a>. Your feedback helps us to make improvements to continue to be one of the top officials camps around.
+                      Finally, we would appreciate if you could also take a few minutes to complete <a href="https://officialsconnection.org/questionnaire?camp=${camp.toLowerCase()}&rid=${registrationId}&sid=${sessionId}" style="color: #1d4ed8; text-decoration: underline;">this post camp questionnaire</a>. Your feedback helps us to make improvements to continue to be one of the top officials camps around.
                       </p>
                     </td>
                   </tr>
