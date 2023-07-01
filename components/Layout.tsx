@@ -35,6 +35,7 @@ export default function Layout({ children, title = '' }: Props) {
       <Sidebar isOpen={isOpen} setIsOpen={setIsOpen} />
       <div className="secondary-nav">
         <div className="container">
+          <Link href="/send-an-email">Send an email</Link>
           <Link href="/registrations/add">Add an offline registration</Link>
           <button type="button" onClick={handleDownloadToCsvClick}>
             Download registrations to csv
@@ -61,6 +62,7 @@ export default function Layout({ children, title = '' }: Props) {
             <nav className="lg-nav">
               <Link href="/">All Registrations</Link>
               <Link href="/filmed-games">Filmed Games</Link>
+              {/* <Link href="/clinicians">Clinicians</Link> */}
             </nav>
             <nav className="sm-nav">
               <Link href="/">All Registrations</Link>
