@@ -59,7 +59,7 @@ export default function UpdateFilmedGame() {
   };
 
   return (
-    <Layout title="Update Filmed Game">
+    <Layout>
       <UpdateFilmedGameStyles>
         <div className="container">
           <h2>Update filmed game</h2>

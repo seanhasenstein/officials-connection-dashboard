@@ -4,18 +4,14 @@ import GlobalStyles from '../styles/GlobalStyles';
 
 type Props = {
   children: React.ReactNode;
-  title?: string;
 };
 
-export default function BasicLayout({
-  children,
-  title = 'WBYOC Dashboard',
-}: Props) {
+export default function BasicLayout({ children }: Props) {
   return (
     <>
       <GlobalStyles />
       <Head>
-        <title>{title}</title>
+        <title>WBYOC Dashboard</title>
       </Head>
       {children}
     </>
