@@ -97,6 +97,7 @@ export interface Camp {
   };
   sessions: Session[];
   active: boolean;
+  clinicians: Clinician[];
   questionnaireEmailSent: boolean;
   createdAt: string;
   updatedAt: string;
@@ -120,6 +121,15 @@ export interface Session {
   filmedGamesEmailSent: boolean;
   createdAt?: string;
   updatedAt?: string;
+}
+
+export interface Clinician {
+  id: string;
+  firstName: string;
+  lastName: string;
+  email: string;
+  phone: string;
+  camp: 'Kaukauna Camp' | 'Plymouth Camp';
 }
 
 export interface SessionWithAttachment extends Session {

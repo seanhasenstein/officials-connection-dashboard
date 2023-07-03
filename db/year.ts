@@ -1,5 +1,5 @@
 import { Db } from 'mongodb';
-import { FilmedGame, Session, Year } from '../types';
+import { Clinician, FilmedGame, Session, Year } from '../types';
 
 export async function getYear(db: Db, year: string) {
   const result = await db.collection<Year>('years').findOne({ year });
@@ -44,3 +44,50 @@ export async function updateFilmedGames(
   );
   return result.value;
 }
+
+export const addClinician = async (
+  db: Db,
+  campName: 'Kaukauna Camp' | 'Plymouth Camp',
+  clinician: Clinician
+) => {
+  const result = await db.collection<Year>('years').findOneAndUpdate(
+    // TODO: make year dynamic
+    { year: '2023' },
+    { $push: { [`camps.$[camp].clinicians`]: clinician } },
+    { arrayFilters: [{ 'camp.name': campName }] }
+  );
+  return result.value;
+};
+
+export const updateClinician = async (
+  db: Db,
+  campName: 'Kaukauna Camp' | 'Plymouth Camp',
+  clinician: Clinician
+) => {
+  const result = await db.collection<Year>('years').findOneAndUpdate(
+    // TODO: make year dynamic
+    { year: '2023' },
+    { $set: { [`camps.$[camp].clinicians.$[clinician]`]: clinician } },
+    {
+      arrayFilters: [
+        { 'camp.name': campName },
+        { 'clinician.id': clinician.id },
+      ],
+    }
+  );
+  return result.value;
+};
+
+export const removeClinician = async (
+  db: Db,
+  campName: 'Kaukauna Camp' | 'Plymouth Camp',
+  clinicianId: string
+) => {
+  const result = await db.collection<Year>('years').findOneAndUpdate(
+    // TODO: make year dynamic
+    { year: '2023' },
+    { $pull: { [`camps.$[camp].clinicians`]: { id: clinicianId } } },
+    { arrayFilters: [{ 'camp.name': campName }] }
+  );
+  return result.value;
+};
