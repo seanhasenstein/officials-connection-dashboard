@@ -22,7 +22,7 @@ export default function SendAnEmail() {
   if (sessionLoading || !session) return <div />;
 
   return (
-    <Layout title="Send an email">
+    <Layout>
       <SendAnEmailComponent>
         <div className="container">
           <h3>Send a an email</h3>

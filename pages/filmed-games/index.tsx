@@ -11,7 +11,7 @@ export default function FilmedGamesPage() {
   const yearQuery = useYearQuery();
 
   return (
-    <Layout title="Filmed games">
+    <Layout>
       <FilmedGamePageStyles>
         <div className="container">
           {yearQuery.isLoading ? (

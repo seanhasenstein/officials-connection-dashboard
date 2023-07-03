@@ -12,10 +12,9 @@ import Logo from './Logo';
 
 type Props = {
   children: React.ReactNode;
-  title?: string;
 };
 
-export default function Layout({ children, title = '' }: Props) {
+export default function Layout({ children }: Props) {
   const router = useRouter();
   const { handleDownloadToCsvClick, csvLinkRef } = useDownloadToCsv();
   const { handleDownloadNameLabelsClick, nameLabelLinkRef } =
@@ -30,7 +29,7 @@ export default function Layout({ children, title = '' }: Props) {
     <LayoutStyles>
       <GlobalStyles />
       <Head>
-        <title>{title === '' ? '' : `${title} | `}WBYOC Dashboard</title>
+        <title>WBYOC Dashboard</title>
       </Head>
       <Sidebar isOpen={isOpen} setIsOpen={setIsOpen} />
       <div className="secondary-nav">

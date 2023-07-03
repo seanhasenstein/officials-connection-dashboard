@@ -1,12 +1,15 @@
 import styled from 'styled-components';
 
 export default styled.div`
-  position: relative;
   padding: 3.5rem 3.25rem;
   min-height: calc(100vh - 151px);
   background-color: #f3f4f6;
 
   .container {
+    position: relative;
+    margin: 0 auto;
+    max-width: 90rem;
+    width: 100%;
     display: flex;
     flex-direction: column;
     gap: 3rem 0;
@@ -19,7 +22,7 @@ export default styled.div`
     width: 2rem;
     position: absolute;
     right: 1.5rem;
-    top: 1.5rem;
+    top: -1.625rem;
     display: flex;
     justify-content: center;
     align-items: center;

@@ -3,7 +3,7 @@ import CliniciansContent from 'components/content/CliniciansContent';
 
 export default function Clinicians() {
   return (
-    <Layout title="Clinicians">
+    <Layout>
       <CliniciansContent />
     </Layout>
   );
