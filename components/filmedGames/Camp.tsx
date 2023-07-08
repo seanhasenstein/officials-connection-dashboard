@@ -1,14 +1,9 @@
 import React from 'react';
-import { useRouter } from 'next/router';
 import Link from 'next/link';
 import styled from 'styled-components';
 import { useMutation, useQueryClient } from 'react-query';
 import { FilmedGame, Registration, Session, Year } from '../../types';
-import {
-  formatSessionName,
-  formatSessionNameFromId,
-  getUrlParam,
-} from '../../utils/misc';
+import { formatSessionName, formatSessionNameFromId } from '../../utils/misc';
 import useDragNDrop from '../../hooks/useDragNDrop';
 
 type Props = {
@@ -30,7 +25,6 @@ interface HydratedGame extends Omit<FilmedGame, 'officials'> {
 }
 
 export default function Camp(props: Props) {
-  const router = useRouter();
   const queryClient = useQueryClient();
   const [games, setGames] = React.useState<HydratedGame[]>([]);
 
@@ -94,14 +88,6 @@ export default function Camp(props: Props) {
       setGames(hydratedGames);
     }
   }, [props.activeGames, props.registrations]);
-
-  React.useEffect(() => {
-    if (router.isReady) {
-      const query = getUrlParam(router.query.active);
-      const tab = query === 'plymouth' ? 'plymouth' : 'kaukauna';
-      props.setActiveTab(tab);
-    }
-  }, [props.activeTab, router.isReady]);
 
   return (
     <CampStyles>
