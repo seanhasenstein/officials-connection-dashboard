@@ -38,9 +38,26 @@ const handler = nc<ExtendedRequest, NextApiResponse>()
 
     const questionnaires = yearData.questionnaires.filter(q => q.camp === c);
 
+    const questionnairesWithOfficials = questionnaires.map(q => {
+      const registration = yearData.registrations.find(
+        r => r.id.toString() === q.id
+      );
+
+      if (!registration) {
+        return { ...q, official: `Not Found - ID: ${q.id}` };
+      }
+
+      return {
+        ...q,
+        official: `${registration.firstName} ${registration.lastName}`,
+      };
+    });
+
     // CSV headers
     const csvStringifier = createObjectCsvStringifier({
       header: [
+        // OFFICIAL
+        { id: 'official', title: 'Name' },
         // OVERALL EXPERIENCE
         { id: 'registration', title: 'Online Registration' },
         { id: 'checkin', title: 'Check-in Process' },
@@ -81,8 +98,10 @@ const handler = nc<ExtendedRequest, NextApiResponse>()
     });
 
     // CSV records
-    const records = questionnaires.map(q => {
+    const records = questionnairesWithOfficials.map(q => {
       return {
+        // OFFICIAL
+        official: q.official,
         // OVERALL EXPERIENCE
         registration: options[q.overall.registration],
         checkin: options[q.overall.checkin],
@@ -117,6 +136,7 @@ const handler = nc<ExtendedRequest, NextApiResponse>()
     });
 
     const headerCategoriesRow = {
+      official: 'OFFICIAL',
       registration: 'OVERALL',
       checkin: '',
       facility: '',
