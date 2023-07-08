@@ -214,8 +214,18 @@ type QuestionnaireOptions =
   | 'not_applicable';
 
 export interface Questionnaire {
-  id: string; // registration id
+  id: string;
   camp: string;
+  official: {
+    registrationId: string;
+    name: string;
+    email: string;
+    phone: string;
+    session: {
+      id: string;
+      name: string;
+    };
+  };
   overall: {
     registration: QuestionnaireOptions;
     checkin: QuestionnaireOptions;
