@@ -81,6 +81,7 @@ export interface Year {
   camps: Camp[];
   filmedGames: FilmedGame[];
   registrations: Registration[];
+  questionnaires: Questionnaire[];
 }
 
 export interface Camp {
@@ -202,4 +203,49 @@ export interface Request extends NextApiRequest {
   db: Db;
   dbClient: MongoClient;
   query: { [key: string]: string | string[] };
+}
+
+type QuestionnaireOptions =
+  | 'exceeded_expectations'
+  | 'above_expectations'
+  | 'met_expectations'
+  | 'below_expectations'
+  | 'did_not_meet_expectations'
+  | 'not_applicable';
+
+export interface Questionnaire {
+  camp: string;
+  overall: {
+    registration: QuestionnaireOptions;
+    checkin: QuestionnaireOptions;
+    facility: QuestionnaireOptions;
+    classroom: QuestionnaireOptions;
+    clinicians: QuestionnaireOptions;
+    competition: QuestionnaireOptions;
+    film: QuestionnaireOptions;
+    communication: QuestionnaireOptions;
+    meals: QuestionnaireOptions;
+    comments: string;
+    improvements: string;
+  };
+  classroom: {
+    materials: QuestionnaireOptions;
+    interpersonal: QuestionnaireOptions;
+    knowledge: QuestionnaireOptions;
+    organization: QuestionnaireOptions;
+    relevance: QuestionnaireOptions;
+    favorite: string;
+    comments: string;
+    topics: string;
+  };
+  oncourt: {
+    evaluations: QuestionnaireOptions;
+    interpersonal: QuestionnaireOptions;
+    receptiveness: QuestionnaireOptions;
+    reinforcement: QuestionnaireOptions;
+    raise: QuestionnaireOptions;
+    clinician: string;
+    comments: string;
+  };
+  testimonial: string;
 }
