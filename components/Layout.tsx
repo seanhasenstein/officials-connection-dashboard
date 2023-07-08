@@ -1,14 +1,18 @@
 import React from 'react';
 import Head from 'next/head';
+import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { signOut } from 'next-auth/react';
-import Link from 'next/link';
 import styled from 'styled-components';
-import GlobalStyles from '../styles/GlobalStyles';
+
 import useDownloadToCsv from '../hooks/useDownloadCsv';
 import useDownloadNameLabels from '../hooks/useDownloadNameLabels';
+import useDownloadQuestionnaires from 'hooks/useDownloadQuestionnaires';
+
 import Sidebar from './Sidebar';
 import Logo from './Logo';
+
+import GlobalStyles from '../styles/GlobalStyles';
 
 type Props = {
   children: React.ReactNode;
@@ -19,6 +23,8 @@ export default function Layout({ children }: Props) {
   const { handleDownloadToCsvClick, csvLinkRef } = useDownloadToCsv();
   const { handleDownloadNameLabelsClick, nameLabelLinkRef } =
     useDownloadNameLabels();
+  const { handleDownloadQuestionnairesClick, questionnaireRef } =
+    useDownloadQuestionnaires();
   const [isOpen, setIsOpen] = React.useState(false);
 
   React.useEffect(() => {
@@ -46,6 +52,24 @@ export default function Layout({ children }: Props) {
           </a>
           <a ref={nameLabelLinkRef} className="sr-only">
             Download name labels
+          </a>
+          <button
+            type="button"
+            onClick={() => handleDownloadQuestionnairesClick('kaukauna')}
+          >
+            Download Kau questionnaires
+          </button>
+          <a ref={questionnaireRef} className="sr-only">
+            Download Kau questionnaires
+          </a>
+          <button
+            type="button"
+            onClick={() => handleDownloadQuestionnairesClick('plymouth')}
+          >
+            Download Ply questionnaires
+          </button>
+          <a ref={questionnaireRef} className="sr-only">
+            Download Ply questionnaires
           </a>
           <Link href="/filmed-games/add">Add filmed game</Link>
           <Link href="/send-an-email">Send an email</Link>
