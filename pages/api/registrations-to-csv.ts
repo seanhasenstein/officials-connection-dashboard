@@ -45,7 +45,8 @@ const handler = nc<Request, NextApiResponse>()
       { id: 'lastName', title: 'LAST NAME' },
       { id: 'email', title: 'EMAIL' },
       { id: 'phone', title: 'PHONE' },
-      { id: 'location', title: 'CITY/STATE' },
+      { id: 'city', title: 'CITY' },
+      { id: 'state', title: 'STATE' },
       { id: 'wiaaClass', title: 'WIAA CLASS' },
       { id: 'wiaaNumber', title: 'WIAA NUMBER' },
       { id: 'associations', title: 'ASSOCIATIONS' },
@@ -78,14 +79,8 @@ const handler = nc<Request, NextApiResponse>()
             lastName: cr.lastName,
             email: cr.email,
             phone: formatPhoneNumber(cr.phone),
-            location:
-              cr.address.city && cr.address.state
-                ? `${cr.address.city}, ${cr.address.state}`
-                : cr.address.city
-                ? cr.address.city
-                : cr.address.state
-                ? cr.address.state
-                : '',
+            city: cr.address.city,
+            state: cr.address.state,
             wiaaClass: cr.wiaaClass,
             wiaaNumber: cr.wiaaNumber,
             associations: cr.associations,
