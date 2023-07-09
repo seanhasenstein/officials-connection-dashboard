@@ -2,13 +2,21 @@ import React from 'react';
 import { useRouter } from 'next/router';
 import { Formik, Form as FormikForm, Field, ErrorMessage } from 'formik';
 import styled from 'styled-components';
+
 import { RegistrationInput } from '../../types';
+
 import { validationSchema } from '../../utils/registrationForm';
-import LoadingSpinner from '../LoadingSpinner';
 import { stateList } from '../../utils/misc';
+import {
+  formatPhoneNumberOnChange,
+  formatZipcodeOnChange,
+} from 'utils/inputFormat';
+
+import LoadingSpinner from '../LoadingSpinner';
 import Sessions from './Sessions';
 import HighSchoolFields from './HighSchoolFields';
 import Summary from './Summary';
+import CustomTextInput from 'components/CustomTextInput';
 
 type Props = {
   initialValues: RegistrationInput;
@@ -19,6 +27,10 @@ type Props = {
 
 export default function RegistrationForm(props: Props) {
   const router = useRouter();
+
+  const phoneRef = React.useRef<HTMLInputElement>(null);
+  const zipRef = React.useRef<HTMLInputElement>(null);
+  const emergencyPhoneRef = React.useRef<HTMLInputElement>(null);
 
   return (
     <FormStyles>
@@ -46,11 +58,19 @@ export default function RegistrationForm(props: Props) {
                 <Field id="email" name="email" />
                 <ErrorMessage name="email" component="div" className="error" />
               </div>
-              <div className="item">
-                <label htmlFor="phone">Phone number</label>
-                <Field id="phone" name="phone" />
-                <ErrorMessage name="phone" component="div" className="error" />
-              </div>
+              <CustomTextInput
+                ref={phoneRef}
+                name="phone"
+                id="phone"
+                label="Cell Phone"
+                onInput={e => {
+                  if (phoneRef.current) {
+                    phoneRef.current.value = formatPhoneNumberOnChange(
+                      e.target.value
+                    );
+                  }
+                }}
+              />
               <h4>Address</h4>
               <div className="item">
                 <label htmlFor="street">Street</label>
@@ -77,10 +97,19 @@ export default function RegistrationForm(props: Props) {
                   </Field>
                 </div>
               </div>
-              <div className="item">
-                <label htmlFor="zipcode">Zipcode</label>
-                <Field id="zipcode" name="address.zipcode" />
-              </div>
+              <CustomTextInput
+                ref={zipRef}
+                name="address.zipcode"
+                id="address.zipcode"
+                label="Zip Code"
+                onInput={e => {
+                  if (zipRef.current) {
+                    zipRef.current.value = formatZipcodeOnChange(
+                      e.target.value
+                    );
+                  }
+                }}
+              />
             </div>
 
             {props.yearIsLoading ? (
@@ -109,15 +138,19 @@ export default function RegistrationForm(props: Props) {
                   <label htmlFor="ecName">Name</label>
                   <Field id="ecName" name="emergencyContact.name" />
                 </div>
-                <div className="item">
-                  <label htmlFor="ecPhone">Phone number</label>
-                  <Field id="ecPhone" name="emergencyContact.phone" />
-                  <ErrorMessage
-                    name="emergencyContact.phone"
-                    component="div"
-                    className="error"
-                  />
-                </div>
+                <CustomTextInput
+                  ref={emergencyPhoneRef}
+                  name="emergencyContact.phone"
+                  id="emergencyContact.phone"
+                  label="Phone"
+                  onInput={e => {
+                    if (emergencyPhoneRef.current) {
+                      emergencyPhoneRef.current.value =
+                        formatPhoneNumberOnChange(e.target.value);
+                    }
+                  }}
+                  customContainerClass="custom-emergency-phone"
+                />
               </div>
             </div>
 
@@ -463,6 +496,10 @@ const FormStyles = styled.div`
     font-size: 0.8125rem;
     font-weight: 500;
     color: #be123c;
+  }
+
+  .custom-emergency-phone {
+    margin-top: 0;
   }
 `;
 

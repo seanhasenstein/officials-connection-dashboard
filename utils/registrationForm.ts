@@ -44,6 +44,9 @@ export const validationSchema = Yup.object().shape({
       new RegExp(/^\d{10}$/),
       'A valid 10 digit phone number is required'
     ),
+  address: Yup.object().shape({
+    zipcode: Yup.string().matches(/^[0-9]{5}$/, 'Enter a valid Zip Code'),
+  }),
   emergencyContact: Yup.object().shape({
     phone: Yup.string()
       .transform(value => removeNonDigits(value))

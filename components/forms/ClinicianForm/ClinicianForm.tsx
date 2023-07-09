@@ -6,9 +6,12 @@ import { Clinician } from 'types';
 
 import { FormValues, validationSchema } from './utils';
 import { createId, formatPhoneNumber } from 'utils/misc';
+import { formatPhoneNumberOnChange } from 'utils/inputFormat';
+
+import DeleteClinician from 'components/DeleteClinician';
+import CustomTextInput from 'components/CustomTextInput';
 
 import ClinicianFormComponent from './styles';
-import DeleteClinician from 'components/DeleteClinician';
 
 type Props = {
   initialValues: FormValues;
@@ -21,6 +24,8 @@ export default function ClinicianForm(props: Props) {
   const [mutationStatus, setMutationStatus] = React.useState<
     'idle' | 'error' | 'success'
   >('idle');
+
+  const phoneRef = React.useRef<HTMLInputElement>(null);
 
   const queryClient = useQueryClient();
 
@@ -157,11 +162,19 @@ export default function ClinicianForm(props: Props) {
                 <Field type="email" name="email" id="email" />
                 <ErrorMessage name="email" component="div" className="error" />
               </div>
-              <div className="form-item">
-                <label htmlFor="phone">Phone</label>
-                <Field name="phone" id="phone" />
-                <ErrorMessage name="phone" component="div" className="error" />
-              </div>
+              <CustomTextInput
+                ref={phoneRef}
+                name="phone"
+                id="phone"
+                label="Cell Phone"
+                onInput={e => {
+                  if (phoneRef.current) {
+                    phoneRef.current.value = formatPhoneNumberOnChange(
+                      e.target.value
+                    );
+                  }
+                }}
+              />
               <div className="actions">
                 <button
                   type="submit"
