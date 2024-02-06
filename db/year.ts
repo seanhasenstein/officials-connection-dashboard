@@ -39,7 +39,7 @@ export async function updateFilmedGames(
 ) {
   const result = await db.collection<Year>('years').findOneAndUpdate(
     // TODO: make year dynamic
-    { year: '2023' },
+    { year: '2024' },
     { $set: { filmedGames: updatedFilmedGames } }
   );
   return result.value;
@@ -52,7 +52,7 @@ export const addClinician = async (
 ) => {
   const result = await db.collection<Year>('years').findOneAndUpdate(
     // TODO: make year dynamic
-    { year: '2023' },
+    { year: '2024' },
     { $push: { [`camps.$[camp].clinicians`]: clinician } },
     { arrayFilters: [{ 'camp.name': campName }] }
   );
@@ -66,7 +66,7 @@ export const updateClinician = async (
 ) => {
   const result = await db.collection<Year>('years').findOneAndUpdate(
     // TODO: make year dynamic
-    { year: '2023' },
+    { year: '2024' },
     { $set: { [`camps.$[camp].clinicians.$[clinician]`]: clinician } },
     {
       arrayFilters: [
@@ -85,7 +85,7 @@ export const removeClinician = async (
 ) => {
   const result = await db.collection<Year>('years').findOneAndUpdate(
     // TODO: make year dynamic
-    { year: '2023' },
+    { year: '2024' },
     { $pull: { [`camps.$[camp].clinicians`]: { id: clinicianId } } },
     { arrayFilters: [{ 'camp.name': campName }] }
   );

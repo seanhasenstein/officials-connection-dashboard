@@ -30,7 +30,7 @@ const handler = nc<ExtendedRequest, NextApiResponse>()
     // c: 'kaukauna' | 'plymouth';
     const { c } = req.query;
 
-    const yearData = await year.getYear(req.db, '2023');
+    const yearData = await year.getYear(req.db, '2024');
 
     if (!yearData) {
       throw new Error('Failed to find the year');

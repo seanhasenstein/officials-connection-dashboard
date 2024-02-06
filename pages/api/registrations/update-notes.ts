@@ -12,7 +12,7 @@ const handler = nc<Request, NextApiResponse>()
     const result = await registration.updateRegistration(
       req.db,
       // TODO: make year dynamic
-      '2023',
+      '2024',
       updatedRegistration
     );
     res.send({ ...result });

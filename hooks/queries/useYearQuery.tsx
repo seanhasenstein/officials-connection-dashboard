@@ -15,7 +15,7 @@ async function fetchYear() {
 
 export default function useYearQuery() {
   // TODO: make year dynamic
-  const yearQuery = useQuery<Year, Error>(['year', '2023'], fetchYear, {
+  const yearQuery = useQuery<Year, Error>(['year', '2024'], fetchYear, {
     staleTime: 300000, // 5min
   });
 
@@ -48,6 +48,7 @@ export default function useYearQuery() {
     isSuccess: yearQuery.isSuccess,
     error: yearQuery.error,
     year: yearQuery.data,
+    registrations: yearQuery.data?.registrations,
     kaukaunaCamp,
     plymouthCamp,
     sessions,

@@ -9,7 +9,7 @@ const handler = nc<Request, NextApiResponse>()
   .use(database)
   .get(async (req, res) => {
     // TODO: make year dynamic
-    const data = await year.getYear(req.db, '2023');
+    const data = await year.getYear(req.db, '2024');
     res.send({ year: data });
   });
 

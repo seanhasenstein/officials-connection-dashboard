@@ -10,7 +10,7 @@ const handler = nc<Request, NextApiResponse>()
   .post(async (req, res) => {
     const campRequest: Camp = req.body;
     // TODO: make year dynamic
-    const yearData = await year.getYear(req.db, '2023');
+    const yearData = await year.getYear(req.db, '2024');
 
     if (!yearData) {
       throw new Error('Failed to find the year');
@@ -25,7 +25,7 @@ const handler = nc<Request, NextApiResponse>()
     });
     const updatedYear = { ...yearData, camps: updatedCamps || [] };
     // TODO: Make year dynamic
-    const result = await year.updateYear(req.db, '2023', updatedYear);
+    const result = await year.updateYear(req.db, '2024', updatedYear);
     res.json(result);
   });
 

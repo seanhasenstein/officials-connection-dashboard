@@ -10,7 +10,7 @@ const handler = nc<Request, NextApiResponse>()
   .use(database)
   .post(async (req, res) => {
     const requestBody: RegistrationInput = req.body;
-    const serverSessions = await year.getSessions(req.db, '2023');
+    const serverSessions = await year.getSessions(req.db, '2024');
 
     // TODO: Is this the correct way to handle this?
     if (!serverSessions) {
@@ -23,7 +23,7 @@ const handler = nc<Request, NextApiResponse>()
     );
     const createdRegistration = await registration.addRegistration(
       req.db,
-      '2023', // TODO: make this dynamic
+      '2024', // TODO: make this dynamic
       dbFormattedRegistration
     );
     res.json({ id: createdRegistration?.id });

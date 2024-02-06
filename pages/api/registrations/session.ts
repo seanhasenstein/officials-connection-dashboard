@@ -11,7 +11,7 @@ const handler = nc<Request, NextApiResponse>()
   .get(async (req, res) => {
     const result = await registration.getSessionRegistrations(
       req.db,
-      '2023',
+      '2024',
       getUrlParam(req.query.id)
     );
     const sortedResult = result?.sort((a, b) => {

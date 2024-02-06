@@ -21,7 +21,7 @@ function generateHtmlEmail({
   <!DOCTYPE html>
 <html lang="en">
   <head>
-    <title>2023 WBYOC Game Film</title>
+    <title>2024 WBYOC Game Film</title>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
@@ -384,7 +384,7 @@ function generateHtmlEmail({
                           line-height: 1.5;
                         "
                       >
-                        &copy; 2023 Officials Connection.
+                        &copy; 2024 Officials Connection.
                       </p>
                     </td>
                   </tr>
