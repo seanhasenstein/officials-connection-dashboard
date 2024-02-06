@@ -23,7 +23,7 @@ export default function useDownloadQuestionnaires() {
     questionnaireRef.current?.setAttribute(
       'download',
       // TODO: make the year dynamic
-      `2023-wbyoc-${camp}-questionnaires-${format(
+      `2024-wbyoc-${camp}-questionnaires-${format(
         new Date(),
         'MMddyyHHmmss'
       )}.csv`

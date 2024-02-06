@@ -11,7 +11,7 @@ const handler = nc<Request, NextApiResponse>()
     // TODO: make year dynamic
     const result = await registration.getAllRegistrationsForYear(
       req.db,
-      '2023'
+      '2024'
     );
 
     const sortedResults = result?.sort((a, b) => {

@@ -19,7 +19,7 @@ const handler = nc<Request, NextApiResponse>()
   .use(database)
   .post(async (req, res) => {
     // TODO: make year dynamic
-    const yearData = await year.getYear(req.db, '2023');
+    const yearData = await year.getYear(req.db, '2024');
 
     if (!yearData) {
       throw new Error('Failed to find the year');
@@ -39,7 +39,7 @@ const handler = nc<Request, NextApiResponse>()
     // TODO: make year dynamic
     // const registrationsData = await registration.getAllRegistrationsForYear(
     //   req.db,
-    //   '2023'
+    //   '2024'
     // );
 
     const filmedGamesBySessionAndOfficial = yearData?.filmedGames.reduce(
@@ -78,7 +78,7 @@ const handler = nc<Request, NextApiResponse>()
           sessionId: requestedSessionId,
           firstName: registration.firstName,
           // TODO: make year dynamic
-          year: '2023',
+          year: '2024',
           camp,
           filmedGames,
         });
@@ -86,7 +86,7 @@ const handler = nc<Request, NextApiResponse>()
           to: registration.email,
           from: 'WBYOC<wbyoc@officialsconnection.org>',
           // TODO: make year dynamic
-          subject: `Thanks for attending the 2023 WBYOC - ${formatSessionName(
+          subject: `Thanks for attending the 2024 WBYOC - ${formatSessionName(
             session
           )}`,
           text,
@@ -114,7 +114,7 @@ const handler = nc<Request, NextApiResponse>()
     });
     const updatedYear = { ...yearData, camps: updatedCamps || [] };
     // TODO: Make year dynamic
-    const result = await year.updateYear(req.db, '2023', updatedYear);
+    const result = await year.updateYear(req.db, '2024', updatedYear);
 
     res.send({ year: result });
   });

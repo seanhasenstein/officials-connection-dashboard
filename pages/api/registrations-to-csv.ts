@@ -16,7 +16,7 @@ const handler = nc<Request, NextApiResponse>()
   .use(database)
   .get(async (req, res) => {
     // TODO: make year dynamic
-    const allSessions = await year.getSessions(req.db, '2023');
+    const allSessions = await year.getSessions(req.db, '2024');
 
     if (!allSessions) {
       throw new Error('Failed to find the server sessions');
@@ -24,7 +24,7 @@ const handler = nc<Request, NextApiResponse>()
 
     const allRegistrations =
       // TODO: make year dynamic
-      await registration.getAllRegistrationsForYear(req.db, '2023');
+      await registration.getAllRegistrationsForYear(req.db, '2024');
 
     if (!allRegistrations) {
       throw new Error('Failed to find the server registrations');

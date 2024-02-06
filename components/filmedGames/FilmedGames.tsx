@@ -58,7 +58,7 @@ export default function FilmedGames(props: Props) {
       <div className="box">
         <div className="header-row">
           {/* TODO: make year dynamic */}
-          <h2>2023 filmed games</h2>
+          <h2>2024 filmed games</h2>
           <button
             type="button"
             onClick={() => setOpen(!open)}

@@ -10,7 +10,7 @@ const handler = nc<Request, NextApiResponse>()
   .post(async (req, res) => {
     const id = req.body;
     // TODO: make year dynamic
-    await registration.deleteRegistration(req.db, '2023', id);
+    await registration.deleteRegistration(req.db, '2024', id);
     res.json({ success: true });
   });
 

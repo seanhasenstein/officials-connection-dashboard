@@ -11,11 +11,11 @@ const handler = nc<Request, NextApiResponse>()
   .get(async (req, res) => {
     try {
       // TODO: make year dynamic
-      const sessionsData = await year.getSessions(req.db, '2023');
+      const sessionsData = await year.getSessions(req.db, '2024');
       // TODO: Make year dynamic
       const registrationData = await registration.getAllRegistrationsForYear(
         req.db,
-        '2023'
+        '2024'
       );
       const cloudinaryData = await getCloudinaryAttachments();
 

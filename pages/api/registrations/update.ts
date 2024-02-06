@@ -11,7 +11,7 @@ const handler = nc<Request, NextApiResponse>()
   .post(async (req, res) => {
     const requestBody: { id: string; formValues: RegistrationInput } = req.body;
     // TODO: make year dynamic
-    const serverSessions = await year.getSessions(req.db, '2023');
+    const serverSessions = await year.getSessions(req.db, '2024');
     const registrationForDb = formatRegistrationForDb(
       requestBody.formValues,
       serverSessions || []
@@ -19,7 +19,7 @@ const handler = nc<Request, NextApiResponse>()
     // TODO: make year dynamic
     const result = await registration.updateRegistration(
       req.db,
-      '2023',
+      '2024',
       registrationForDb
     );
 
