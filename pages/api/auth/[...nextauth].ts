@@ -6,11 +6,7 @@ import { mongoClientPromise } from '../../../db/connect';
 import { html, text } from '../../../emails/login';
 import { createIdNumber } from '../../../utils/misc';
 
-if (!process.env.NEXTAUTH_SECRET) {
-  throw new Error('Must provide NEXTAUTH_SECRET in .env.local');
-}
-
-export default NextAuth({
+export const authOptions = {
   providers: [
     EmailProvider({
       server: process.env.NEXTAUTH_EMAIL_SERVER,
@@ -36,16 +32,13 @@ export default NextAuth({
   adapter: MongoDBAdapter(mongoClientPromise),
   secret: process.env.NEXTAUTH_SECRET,
   callbacks: {
-    async signIn(context) {
+    async signIn({ user }: any) {
       const allowedEmailAccounts = [
         'wbyoc@officialsconnection.org',
         'seanhasenstein@gmail.com',
         'tom.rusch25@gmail.com',
       ];
-      if (
-        context.user.email &&
-        allowedEmailAccounts.includes(context.user.email)
-      ) {
+      if (user.email && allowedEmailAccounts.includes(user.email)) {
         return true;
       } else {
         return '/unauthorized';
@@ -61,4 +54,6 @@ export default NextAuth({
     maxAge: 30 * 24 * 60 * 60, // 30 days
     updateAge: 24 * 60 * 60, // 24 hours
   },
-});
+};
+
+export default NextAuth(authOptions);
