@@ -1,6 +1,7 @@
 import fs from 'fs';
 import fetch from 'node-fetch';
 import FormData from 'form-data';
+import { mailgunAuthToken } from 'constants/mailgun';
 
 function getReadStreamBuffer(filepath: string): Promise<Buffer> {
   return new Promise((resolve, reject) => {
@@ -32,10 +33,6 @@ type SendEmailParams = {
   attachments?: { url: string; filename: string }[];
   cachedFiles?: Record<string, Buffer>;
 };
-
-const AUTHTOKEN = `Basic ${Buffer.from(
-  `api:${process.env.MAILGUN_API_KEY}`
-).toString(`base64`)}`;
 
 export async function sendEmail({
   to,
@@ -100,7 +97,7 @@ export async function sendEmail({
       method: 'post',
       body: form,
       headers: {
-        Authorization: AUTHTOKEN,
+        Authorization: mailgunAuthToken,
       },
     });
 

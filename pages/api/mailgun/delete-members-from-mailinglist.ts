@@ -3,10 +3,7 @@ import { NextApiRequest, NextApiResponse } from 'next';
 import nc from 'next-connect';
 import fetch from 'node-fetch';
 import { withAuth } from '../../../utils/withAuth';
-
-const AUTHTOKEN = `Basic ${Buffer.from(
-  `api:${process.env.MAILGUN_API_KEY}`
-).toString(`base64`)}`;
+import { mailgunAuthToken } from 'constants/mailgun';
 
 const handler = nc<NextApiRequest, NextApiResponse>().get(async (req, res) => {
   try {
@@ -25,7 +22,7 @@ const handler = nc<NextApiRequest, NextApiResponse>().get(async (req, res) => {
         {
           method: 'DELETE',
           headers: {
-            Authorization: AUTHTOKEN,
+            Authorization: mailgunAuthToken,
           },
         }
       );
