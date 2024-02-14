@@ -106,6 +106,20 @@ export default function Registration() {
                     </svg>
                   </button>
                   <Menu open={isMenuOpen} setOpen={setIsMenuOpen}>
+                    <a
+                      href={`https://officialsconnection.org/registration-confirmation?id=${registration.id}`}
+                      target="_blank"
+                      rel="noreferrer"
+                    >
+                      Confirmation page
+                    </a>
+                    <a
+                      href={`https://dashboard.stripe.com/payments/${registration.stripeId}`}
+                      target="_blank"
+                      rel="noreferrer"
+                    >
+                      Stripe dashboard
+                    </a>
                     <Link href={`/registrations/update?rid=${registration.id}`}>
                       Update Registration
                     </Link>
@@ -251,9 +265,9 @@ export default function Registration() {
                         <p>{registration.checkNumber}</p>
                       </div>
                     )}
-                    {registration.paymentMethod === 'card' && (
+                    {/* {registration.paymentMethod === 'card' && (
                       <div className="horizontal-item">
-                        <h3>Stripe Id:</h3>
+                        <h3>Stripe:</h3>
                         <p className="stripe-id">
                           <a
                             href={`https://dashboard.stripe.com/payments/${registration.stripeId}`}
@@ -264,7 +278,7 @@ export default function Registration() {
                           </a>
                         </p>
                       </div>
-                    )}
+                    )} */}
                     <div className="horizontal-item">
                       <h3>Subtotal:</h3>
                       <p>{formatToMoney(registration.subtotal, true)}</p>
