@@ -196,7 +196,12 @@ const handler = nc<Request, NextApiResponse>()
       await csvWriter.writeRecords(records);
 
       const csvFile = fs.readFileSync(filename);
-      const timestamp = format(new Date(), "PP 'at' p");
+
+      const timestampZonedDate = utcToZonedTime(new Date(), 'America/Chicago');
+      const timestamp = format(timestampZonedDate, "PP 'at' p", {
+        timeZone: 'America/Chicago',
+      });
+
       const result = await sendEmail({
         to: email,
         from: 'WBYOC Registrations<no-reply@officialsconnection.org>',
