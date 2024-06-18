@@ -72,7 +72,7 @@ export default function Layout({ children }: Props) {
             Download Ply questionnaires
           </a>
           <Link href="/filmed-games/add">Add filmed game</Link>
-          <Link href="/send-an-email">Send an email</Link>
+          <Link href="/send-an-email">Send marketing email</Link>
           <button type="button" onClick={() => signOut()}>
             Sign out
           </button>
@@ -86,6 +86,7 @@ export default function Layout({ children }: Props) {
               <Link href="/">All Registrations</Link>
               <Link href="/filmed-games">Filmed Games</Link>
               <Link href="/clinicians">Clinicians</Link>
+              <Link href="/send-post-camp-email">Send post camp email</Link>
             </nav>
             <nav className="sm-nav">
               <Link href="/">All Registrations</Link>
