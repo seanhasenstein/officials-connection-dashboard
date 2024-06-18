@@ -163,7 +163,7 @@ input[type='radio'] {
   width: 1.125rem;
   height: 1.125rem;
   border-radius: 100%;
-  color: #4F46E5;
+  color: #18181b;
 }
 
 input[type='radio']:checked {

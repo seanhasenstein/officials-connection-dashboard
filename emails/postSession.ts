@@ -186,7 +186,9 @@ function generateHtmlEmail({
                       >
                       Thanks for taking the time out of your busy schedule to attend the ${year} WBYOC ${camp} camp. The comments I've received have been extremely positive on the training and instruction that our staff provided. I hope this was true for you as well.
                       </p>
-                      <p
+                      ${
+                        filmedGames.length > 0
+                          ? `<p
                         style="
                           margin: 0;
                           font-size: 15px;
@@ -195,13 +197,19 @@ function generateHtmlEmail({
                         "
                       >
                         Here ${filmedGames.length > 1 ? 'are' : 'is'} the link${
-    filmedGames.length > 1 ? 's' : ''
-  } to your filmed game${filmedGames.length > 1 ? 's' : ''}.
-                      </p>
+                              filmedGames.length > 1 ? 's' : ''
+                            } to your filmed game${
+                              filmedGames.length > 1 ? 's' : ''
+                            }.
+                      </p>`
+                          : ''
+                      }
                     </td>
                   </tr>
 
-                  <tr>
+                  ${
+                    filmedGames.length > 0
+                      ? `<tr>
                     <td style="padding: 0 0 24px">
                       ${filmedGames
                         .map(
@@ -221,7 +229,9 @@ function generateHtmlEmail({
                         )
                         .join('')}
                     </td>
-                  </tr>
+                  </tr>`
+                      : ''
+                  }
 
                   <tr>
                     <td style="padding: 0">
