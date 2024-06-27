@@ -41,13 +41,7 @@ const handler = nc<Request, NextApiResponse>()
         cr.sessions.forEach(s => {
           if (s.attending) {
             const nameObj = { firstName: cr.firstName, lastName: cr.lastName };
-            acc[s.sessionId] = [
-              ...acc[s.sessionId],
-              nameObj,
-              nameObj,
-              nameObj,
-              nameObj,
-            ];
+            acc[s.sessionId] = [...acc[s.sessionId], nameObj];
             acc[s.sessionId].sort((a: NameObj, b: NameObj) => {
               if (a.lastName === b.lastName) {
                 if (a.firstName > b.firstName) {
