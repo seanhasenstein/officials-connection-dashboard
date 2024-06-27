@@ -5,6 +5,7 @@ import { Request } from '../../types';
 import database from '../../middleware/db';
 import { year, registration } from '../../db';
 import { withAuth } from '../../utils/withAuth';
+import { formatSessionName } from 'utils/misc';
 
 const handler = nc<Request, NextApiResponse>()
   .use(database)
@@ -34,15 +35,27 @@ const handler = nc<Request, NextApiResponse>()
       {}
     );
 
-    type NameObj = { firstName: string; lastName: string };
+    type RegObjType = {
+      firstName: string;
+      lastName: string;
+      city: string;
+      wiaaNumber: string;
+      sessionName: string;
+    };
 
     const namesBySession = registrations.reduce(
-      (acc: Record<string, NameObj[]>, cr) => {
+      (acc: Record<string, RegObjType[]>, cr) => {
         cr.sessions.forEach(s => {
           if (s.attending) {
-            const nameObj = { firstName: cr.firstName, lastName: cr.lastName };
-            acc[s.sessionId] = [...acc[s.sessionId], nameObj];
-            acc[s.sessionId].sort((a: NameObj, b: NameObj) => {
+            const regObj = {
+              firstName: cr.firstName,
+              lastName: cr.lastName,
+              city: cr.address.city,
+              wiaaNumber: cr.wiaaNumber,
+              sessionName: formatSessionName(s),
+            };
+            acc[s.sessionId] = [...acc[s.sessionId], regObj, regObj];
+            acc[s.sessionId].sort((a: RegObjType, b: RegObjType) => {
               if (a.lastName === b.lastName) {
                 if (a.firstName > b.firstName) {
                   return 1;
@@ -68,18 +81,30 @@ const handler = nc<Request, NextApiResponse>()
     );
 
     const combinedArray = Object.keys(namesBySession).reduce(
-      (acc: NameObj[], currSessionId) => {
+      (acc: RegObjType[], currSessionId) => {
         return [...acc, ...namesBySession[currSessionId]];
       },
       []
     );
 
-    const records = combinedArray.map(nameObj => ({
-      name: `${nameObj.firstName} ${nameObj.lastName}`,
+    const records = combinedArray.map(regObj => ({
+      name: `${regObj.firstName} ${regObj.lastName}`,
+      blankOne: '',
+      city: regObj.city,
+      blankTwo: '',
+      wiaaNumber: regObj.wiaaNumber,
+      sessionName: regObj.sessionName,
     }));
 
     const csvStringifier = createObjectCsvStringifier({
-      header: [{ id: 'name', title: '' }],
+      header: [
+        { id: 'name', title: '' },
+        { id: 'blankOne', title: '' },
+        { id: 'city', title: '' },
+        { id: 'blankTwo', title: '' },
+        { id: 'wiaaNumber', title: '' },
+        { id: 'sessionName', title: '' },
+      ],
     });
     const csv = csvStringifier.stringifyRecords(records);
 

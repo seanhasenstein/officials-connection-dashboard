@@ -13,6 +13,7 @@ import Sidebar from './Sidebar';
 import Logo from './Logo';
 
 import GlobalStyles from '../styles/GlobalStyles';
+import useDownloadWiaaBySession from 'hooks/useDownloadWiaaBySession';
 
 type Props = {
   children: React.ReactNode;
@@ -25,6 +26,8 @@ export default function Layout({ children }: Props) {
     useDownloadNameLabels();
   const { handleDownloadQuestionnairesClick, questionnaireRef } =
     useDownloadQuestionnaires();
+  const { handleDownloadWiaaBySession, wiaaSessionRef } =
+    useDownloadWiaaBySession();
   const [isOpen, setIsOpen] = React.useState(false);
 
   React.useEffect(() => {
@@ -42,34 +45,42 @@ export default function Layout({ children }: Props) {
         <div className="container">
           <Link href="/registrations/add">Add an offline registration</Link>
           <button type="button" onClick={handleDownloadToCsvClick}>
-            Download registrations to csv
+            Registrations to csv
           </button>
           <button type="button" onClick={handleDownloadNameLabelsClick}>
-            Download name labels
+            Name labels
           </button>
+          <button>
+            <button type="button" onClick={handleDownloadWiaaBySession}>
+              WIAA form by session
+            </button>
+          </button>
+          <a ref={wiaaSessionRef} className="sr-only">
+            WIAA form by session
+          </a>
           <a ref={csvLinkRef} className="sr-only">
             Download registrations
           </a>
           <a ref={nameLabelLinkRef} className="sr-only">
-            Download name labels
+            Name labels
           </a>
           <button
             type="button"
             onClick={() => handleDownloadQuestionnairesClick('kaukauna')}
           >
-            Download Kau questionnaires
+            Kau questionnaires
           </button>
           <a ref={questionnaireRef} className="sr-only">
-            Download Kau questionnaires
+            Kau questionnaires
           </a>
           <button
             type="button"
             onClick={() => handleDownloadQuestionnairesClick('plymouth')}
           >
-            Download Ply questionnaires
+            Ply questionnaires
           </button>
           <a ref={questionnaireRef} className="sr-only">
-            Download Ply questionnaires
+            Ply questionnaires
           </a>
           <Link href="/filmed-games/add">Add filmed game</Link>
           <Link href="/send-an-email">Send marketing email</Link>
