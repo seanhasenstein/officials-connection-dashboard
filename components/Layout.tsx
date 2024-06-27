@@ -50,10 +50,8 @@ export default function Layout({ children }: Props) {
           <button type="button" onClick={handleDownloadNameLabelsClick}>
             Name labels
           </button>
-          <button>
-            <button type="button" onClick={handleDownloadWiaaBySession}>
-              WIAA form by session
-            </button>
+          <button type="button" onClick={handleDownloadWiaaBySession}>
+            WIAA form by session
           </button>
           <a ref={wiaaSessionRef} className="sr-only">
             WIAA form by session
