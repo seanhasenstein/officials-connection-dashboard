@@ -104,6 +104,54 @@ export default function FilmedGameForm(props: Props) {
                         name="sessions"
                         id={s.sessionId}
                         value={s.sessionId}
+                        onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                          if (e.target.checked) {
+                            setFieldValue('sessions', [
+                              ...values.sessions,
+                              s.sessionId,
+                            ]);
+
+                            if (kaukaunaCamp) {
+                              const session = kaukaunaCamp.sessions.find(
+                                ks => ks.sessionId === s.sessionId
+                              );
+                              if (session) {
+                                setFieldValue('camp', 'kaukauna');
+                              }
+                            }
+                          } else {
+                            setFieldValue(
+                              'sessions',
+                              values.sessions.filter(v => v !== s.sessionId)
+                            );
+                            if (values.sessions.length === 0) {
+                              setFieldValue('camp', '');
+                            } else {
+                              const firstSessionThatIsntThisOne =
+                                values.sessions.find(v => v !== s.sessionId);
+                              const kaukaunaSession =
+                                kaukaunaCamp?.sessions.find(
+                                  ks =>
+                                    ks.sessionId === firstSessionThatIsntThisOne
+                                );
+                              if (kaukaunaSession) {
+                                setFieldValue('camp', 'kaukauna');
+                              } else {
+                                const plymouthSession =
+                                  plymouthCamp?.sessions.find(
+                                    ps =>
+                                      ps.sessionId ===
+                                      firstSessionThatIsntThisOne
+                                  );
+                                if (plymouthSession) {
+                                  setFieldValue('camp', 'plymouth');
+                                } else {
+                                  setFieldValue('camp', '');
+                                }
+                              }
+                            }
+                          }
+                        }}
                       />
                       {formatSessionName(s)}
                     </label>
@@ -121,6 +169,54 @@ export default function FilmedGameForm(props: Props) {
                         name="sessions"
                         id={s.sessionId}
                         value={s.sessionId}
+                        onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                          if (e.target.checked) {
+                            setFieldValue('sessions', [
+                              ...values.sessions,
+                              s.sessionId,
+                            ]);
+
+                            if (plymouthCamp) {
+                              const session = plymouthCamp.sessions.find(
+                                ps => ps.sessionId === s.sessionId
+                              );
+                              if (session) {
+                                setFieldValue('camp', 'plymouth');
+                              }
+                            }
+                          } else {
+                            setFieldValue(
+                              'sessions',
+                              values.sessions.filter(v => v !== s.sessionId)
+                            );
+                            if (values.sessions.length === 0) {
+                              setFieldValue('camp', '');
+                            } else {
+                              const firstSessionThatIsntThisOne =
+                                values.sessions.find(v => v !== s.sessionId);
+                              const kaukaunaSession =
+                                kaukaunaCamp?.sessions.find(
+                                  ks =>
+                                    ks.sessionId === firstSessionThatIsntThisOne
+                                );
+                              if (kaukaunaSession) {
+                                setFieldValue('camp', 'kaukauna');
+                              } else {
+                                const plymouthSession =
+                                  plymouthCamp?.sessions.find(
+                                    ps =>
+                                      ps.sessionId ===
+                                      firstSessionThatIsntThisOne
+                                  );
+                                if (plymouthSession) {
+                                  setFieldValue('camp', 'plymouth');
+                                } else {
+                                  setFieldValue('camp', '');
+                                }
+                              }
+                            }
+                          }
+                        }}
                       />
                       {formatSessionName(s)}
                     </label>
