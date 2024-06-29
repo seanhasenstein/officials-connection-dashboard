@@ -2,9 +2,15 @@ import React from 'react';
 import Link from 'next/link';
 import styled from 'styled-components';
 import { useMutation, useQueryClient } from 'react-query';
-import { FilmedGame, Registration, Session, Year } from '../../types';
-import { formatSessionName, formatSessionNameFromId } from '../../utils/misc';
+
+import DeleteFilmedGameModal from 'components/modals/DeleteFilmedGameModal';
+
 import useDragNDrop from '../../hooks/useDragNDrop';
+import useYearQuery from 'hooks/queries/useYearQuery';
+
+import { formatSessionName, formatSessionNameFromId } from '../../utils/misc';
+
+import { FilmedGame, Registration, Session, Year } from '../../types';
 
 type Props = {
   registrations: Registration[] | undefined;
@@ -15,7 +21,7 @@ type Props = {
   setActiveTab: React.Dispatch<React.SetStateAction<'kaukauna' | 'plymouth'>>;
 };
 
-interface HydratedGame extends Omit<FilmedGame, 'officials'> {
+export interface HydratedGame extends Omit<FilmedGame, 'officials'> {
   hydratedOfficials: {
     id: string;
     name: string;
@@ -27,6 +33,11 @@ interface HydratedGame extends Omit<FilmedGame, 'officials'> {
 export default function Camp(props: Props) {
   const queryClient = useQueryClient();
   const [games, setGames] = React.useState<HydratedGame[]>([]);
+  const [selectedDeleteGame, setSelectedDeleteGame] =
+    React.useState<HydratedGame>();
+  const [isDeleteModalVisible, setIsDeleteModalVisible] = React.useState(false);
+
+  const { year } = useYearQuery();
 
   const updateGames = useMutation(
     async (updatedHydratedGames: HydratedGame[]) => {
@@ -112,6 +123,7 @@ export default function Camp(props: Props) {
           <div>Officials</div>
           <div>URL</div>
           <div>Edit</div>
+          <div />
         </div>
         <div className="grid-body">
           {games.length > 0 ? (
@@ -223,6 +235,31 @@ export default function Camp(props: Props) {
                       Edit
                     </Link>
                   </div>
+                  <div>
+                    <button
+                      type="button"
+                      className="delete-game-button"
+                      onClick={() => {
+                        setSelectedDeleteGame(game);
+                        setIsDeleteModalVisible(true);
+                      }}
+                    >
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        strokeWidth={1.5}
+                        stroke="currentColor"
+                        className="trash-icon"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          d="m14.74 9-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 0 1-2.244 2.077H8.084a2.25 2.25 0 0 1-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 0 0-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 0 1 3.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 0 0-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 0 0-7.5 0"
+                        />
+                      </svg>
+                    </button>
+                  </div>
                 </div>
               ))}
             </>
@@ -231,6 +268,14 @@ export default function Camp(props: Props) {
           )}
         </div>
       </div>
+      {selectedDeleteGame && year && (
+        <DeleteFilmedGameModal
+          year={year}
+          game={selectedDeleteGame}
+          isVisible={isDeleteModalVisible}
+          setIsVisible={setIsDeleteModalVisible}
+        />
+      )}
     </CampStyles>
   );
 }
@@ -239,7 +284,7 @@ const CampStyles = styled.div`
   .grid-header,
   .grid-item {
     display: grid;
-    grid-template-columns: 3rem 1fr 1fr 0.75fr 0.75fr 3rem 3.5rem;
+    grid-template-columns: 3rem 1fr 1fr 0.75fr 0.75fr 3rem 3.5rem 2rem;
 
     > div:last-of-type {
       text-align: right;
@@ -377,6 +422,22 @@ const CampStyles = styled.div`
   .edit-link {
     color: #0441ac;
     font-weight: 500;
+  }
+
+  .delete-game-button {
+    padding: 0;
+    border: none;
+    background-color: transparent;
+    .trash-icon {
+      height: 1rem;
+      width: 1rem;
+      color: #6b7280;
+      cursor: pointer;
+      transition: color 0.3s ease;
+      &:hover {
+        color: #b91c1c;
+      }
+    }
   }
 
   .empty {
