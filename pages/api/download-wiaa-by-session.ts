@@ -54,7 +54,8 @@ const handler = nc<Request, NextApiResponse>()
               wiaaNumber: cr.wiaaNumber,
               sessionName: formatSessionName(s),
             };
-            acc[s.sessionId] = [...acc[s.sessionId], regObj, regObj];
+            // acc[s.sessionId] = [...acc[s.sessionId], regObj, regObj];
+            acc[s.sessionId] = [...acc[s.sessionId], regObj];
             acc[s.sessionId].sort((a: RegObjType, b: RegObjType) => {
               if (a.lastName === b.lastName) {
                 if (a.firstName > b.firstName) {
