@@ -1,17 +1,18 @@
-import { NextApiRequest, NextApiResponse } from 'next';
+import { NextApiResponse } from 'next';
 import nc from 'next-connect';
 
 import { withAuth } from '../../utils/withAuth';
 import database from '../../middleware/db';
 import { year } from '../../db';
 import { mailgunAuthToken } from '../../constants/mailgun';
+import { Request } from 'types';
 
-const handler = nc<NextApiRequest, NextApiResponse>()
+const handler = nc<Request, NextApiResponse>()
   .use(database)
   .get(async (req, res) => {
     const mailingList = '2024-hs-marketing@mg.officialsconnection.org';
 
-    const fetchedYear = await year.getYear(req.body, '2024');
+    const fetchedYear = await year.getYear(req.db, '2024');
 
     const allRegistrations = fetchedYear?.registrations || [];
 
