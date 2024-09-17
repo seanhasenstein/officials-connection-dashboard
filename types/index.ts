@@ -130,7 +130,7 @@ export interface Clinician {
   lastName: string;
   email: string;
   phone: string;
-  camp: 'Kaukauna Camp' | 'Plymouth Camp';
+  camp: 'Kaukauna Camp' | 'Plymouth Camp' | 'UW-Stevens Point Camp';
 }
 
 export interface SessionWithAttachment extends Session {

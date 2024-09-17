@@ -27,7 +27,13 @@ export function createId(prefix?: string | false, len = 14) {
 }
 
 export function getCampAbbreviation(camp: string) {
-  return camp === 'Kaukauna' ? 'Kau' : camp === 'Plymouth' ? 'Ply' : '';
+  return camp === 'Kaukauna'
+    ? 'Kau'
+    : camp === 'Plymouth'
+    ? 'Ply'
+    : camp === 'UW-Stevens Point'
+    ? 'UWSP'
+    : '';
 }
 
 export function getUrlParam(param: string | string[] | undefined) {

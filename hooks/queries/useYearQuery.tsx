@@ -25,6 +25,9 @@ export default function useYearQuery() {
   const plymouthCamp = yearQuery.data?.camps.find(
     c => c.name === 'Plymouth Camp'
   );
+  const stevensPointCamp = yearQuery.data?.camps.find(
+    c => c.name === 'UW-Stevens Point Camp'
+  );
 
   const sessions = React.useMemo(
     () =>
@@ -51,6 +54,7 @@ export default function useYearQuery() {
     registrations: yearQuery.data?.registrations,
     kaukaunaCamp,
     plymouthCamp,
+    stevensPointCamp,
     sessions,
     getSession,
   };
