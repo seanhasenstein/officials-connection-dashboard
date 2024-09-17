@@ -1,11 +1,13 @@
 import React from 'react';
 import { useMutation, useQueryClient } from 'react-query';
 
+import { Camps } from 'types';
+
 import DeleteClinicianComponent from './styles';
 
 type Props = {
   id: string;
-  camp: 'Kaukauna Camp' | 'Plymouth Camp';
+  camp: Camps;
   modalIsOpen: boolean;
   closeModal: () => void;
 };
@@ -22,7 +24,7 @@ export default function DeleteClinician({
   const queryClient = useQueryClient();
 
   const deleteClinician = useMutation(
-    async (values: { id: string; camp: 'Kaukauna Camp' | 'Plymouth Camp' }) => {
+    async (values: { id: string; camp: Camps }) => {
       const response = await fetch('/api/clinician/delete', {
         method: 'POST',
         body: JSON.stringify(values),

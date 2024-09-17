@@ -1,14 +1,17 @@
 import { NextApiResponse, NextApiRequest } from 'next';
 import nc from 'next-connect';
+import { Db } from 'mongodb';
+
 import { withAuth } from '../../../utils/withAuth';
 import database from '../../../middleware/db';
 import { year } from '../../../db';
-import { Db } from 'mongodb';
+
+import { Camps } from 'types';
 
 interface Request extends NextApiRequest {
   db: Db;
   body: {
-    camp: 'Kaukauna Camp' | 'Plymouth Camp';
+    camp: Camps;
     id: string;
   };
 }

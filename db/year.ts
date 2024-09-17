@@ -1,5 +1,5 @@
 import { Db } from 'mongodb';
-import { Clinician, FilmedGame, Session, Year } from '../types';
+import { Camps, Clinician, FilmedGame, Session, Year } from '../types';
 
 export async function getYear(db: Db, year: string) {
   const result = await db.collection<Year>('years').findOne({ year });
@@ -47,7 +47,7 @@ export async function updateFilmedGames(
 
 export const addClinician = async (
   db: Db,
-  campName: 'Kaukauna Camp' | 'Plymouth Camp',
+  campName: Camps,
   clinician: Clinician
 ) => {
   const result = await db.collection<Year>('years').findOneAndUpdate(
@@ -61,7 +61,7 @@ export const addClinician = async (
 
 export const updateClinician = async (
   db: Db,
-  campName: 'Kaukauna Camp' | 'Plymouth Camp',
+  campName: Camps,
   clinician: Clinician
 ) => {
   const result = await db.collection<Year>('years').findOneAndUpdate(
@@ -80,7 +80,7 @@ export const updateClinician = async (
 
 export const removeClinician = async (
   db: Db,
-  campName: 'Kaukauna Camp' | 'Plymouth Camp',
+  campName: Camps,
   clinicianId: string
 ) => {
   const result = await db.collection<Year>('years').findOneAndUpdate(
