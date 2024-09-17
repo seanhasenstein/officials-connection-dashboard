@@ -2,9 +2,11 @@ import * as Yup from 'yup';
 
 import { removeNonDigits } from '../../../utils/misc';
 
+import { Camps } from 'types';
+
 export interface FormValues {
   id: string;
-  camp: 'Kaukauna Camp' | 'Plymouth Camp';
+  camp: Camps;
   firstName: string;
   lastName: string;
   email: string;

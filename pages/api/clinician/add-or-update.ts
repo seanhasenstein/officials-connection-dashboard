@@ -8,11 +8,13 @@ import { year } from '../../../db';
 import { withAuth } from '../../../utils/withAuth';
 import { createId, removeNonDigits } from '../../../utils/misc';
 
+import { Camps } from 'types';
+
 interface Request extends NextApiRequest {
   db: Db;
   body: {
     mode: 'add' | 'update';
-    camp: 'Kaukauna Camp' | 'Plymouth Camp';
+    camp: Camps;
     id: string;
     firstName: string;
     lastName: string;

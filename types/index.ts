@@ -1,6 +1,8 @@
 import { NextApiRequest } from 'next';
 import { Db, MongoClient } from 'mongodb';
 
+export type Camps = 'Kaukauna Camp' | 'Plymouth Camp' | 'UW-Stevens Point Camp';
+
 export type ActiveOption = 'filter' | 'sort' | undefined;
 
 export type FilterOptions = {
@@ -130,7 +132,7 @@ export interface Clinician {
   lastName: string;
   email: string;
   phone: string;
-  camp: 'Kaukauna Camp' | 'Plymouth Camp' | 'UW-Stevens Point Camp';
+  camp: Camps;
 }
 
 export interface SessionWithAttachment extends Session {
