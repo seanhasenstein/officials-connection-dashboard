@@ -5,7 +5,7 @@ interface PostSession {
   sessionId: string;
   firstName: string;
   year: string;
-  camp: 'Kaukauna' | 'Plymouth';
+  camp: 'Kaukauna' | 'Plymouth' | 'UW-Stevens Point';
   filmedGames: FilmedGame[];
 }
 
