@@ -53,7 +53,7 @@ export default function SendGameFilmEmails(props: Props) {
         <div className="column box">
           <h3>UW-Stevens Point Game Film Emails</h3>
           {hydratedSessions
-            ?.filter(s => s.camp.name === 'stevensPoint')
+            ?.filter(s => s.camp.name === 'UW-Stevens Point')
             .map(s => (
               <SendButton
                 key={s.sessionId}
