@@ -42,12 +42,24 @@ export default function SendGameFilmEmails(props: Props) {
               <SendButton key={s.sessionId} camp="Kaukauna" session={s} />
             ))}
         </div>
-        <div className="column box">
+        {/* <div className="column box">
           <h3>Plymouth Game Film Emails</h3>
           {hydratedSessions
             ?.filter(s => s.camp.name.toLowerCase() === 'plymouth')
             .map(s => (
               <SendButton key={s.sessionId} camp="Plymouth" session={s} />
+            ))}
+        </div> */}
+        <div className="column box">
+          <h3>UW-Stevens Point Game Film Emails</h3>
+          {hydratedSessions
+            ?.filter(s => s.camp.name.toLowerCase() === 'stevensPoint')
+            .map(s => (
+              <SendButton
+                key={s.sessionId}
+                camp="UW-Stevens Point"
+                session={s}
+              />
             ))}
         </div>
       </div>

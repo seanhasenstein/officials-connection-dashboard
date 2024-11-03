@@ -16,6 +16,7 @@ type Props = {
   isSuccess: boolean;
   kaukaunaCamp: ICamp | undefined;
   plymouthCamp: ICamp | undefined;
+  stevensPointCamp: ICamp | undefined;
   registrations: Registration[];
   sessions: Session[];
 };
@@ -23,13 +24,16 @@ type Props = {
 export default function FilmedGames(props: Props) {
   const router = useRouter();
   const [open, setOpen] = React.useState(true);
-  const [activeTab, setActiveTab] = React.useState<'kaukauna' | 'plymouth'>(
-    'plymouth'
+  const [activeTab, setActiveTab] = React.useState<'kaukauna' | 'stevensPoint'>(
+    'stevensPoint'
   );
   const [kaukaunaFilmedGames, setKaukaunaFilmedGames] = React.useState<
     FilmedGame[]
   >([]);
-  const [plymouthFilmedGames, setPlymouthFilmedGames] = React.useState<
+  // const [plymouthFilmedGames, setPlymouthFilmedGames] = React.useState<
+  //   FilmedGame[]
+  // >([]);
+  const [stevensPointFilmedGames, setStevensPointFilmedGames] = React.useState<
     FilmedGame[]
   >([]);
 
@@ -40,9 +44,16 @@ export default function FilmedGames(props: Props) {
           props.year?.filmedGames.filter(g => g.camp === 'kaukauna') || []
         );
       }
-      if (props.plymouthCamp) {
-        setPlymouthFilmedGames(
-          props.year?.filmedGames.filter(g => g.camp === 'plymouth') || []
+      // if (props.plymouthCamp) {
+      //   setPlymouthFilmedGames(
+      //     props.year?.filmedGames.filter(g => g.camp === 'plymouth') || []
+      //   );
+      // }
+      if (props.stevensPointCamp) {
+        setStevensPointFilmedGames(
+          props.year?.filmedGames.filter(
+            g => g.camp === 'UW-Stevens Point Camp'
+          ) || []
         );
       }
     }
@@ -50,6 +61,7 @@ export default function FilmedGames(props: Props) {
     props.isSuccess,
     props.kaukaunaCamp,
     props.plymouthCamp,
+    props.stevensPointCamp,
     props.year?.filmedGames,
   ]);
 
@@ -72,11 +84,11 @@ export default function FilmedGames(props: Props) {
         {open ? (
           <div>
             <div className="tab-buttons">
-              <ButtonSwitch<'kaukauna', 'plymouth'>
+              <ButtonSwitch<'kaukauna', 'stevensPoint'>
                 active={activeTab}
                 setActive={setActiveTab}
                 optionA="kaukauna"
-                optionB="plymouth"
+                optionB="stevensPoint"
                 handleClick={option =>
                   router.push(`/filmed-games?active=${option}`)
                 }
@@ -90,15 +102,15 @@ export default function FilmedGames(props: Props) {
                   registrations={props.registrations}
                   sessions={props.sessions || []}
                   activeGames={kaukaunaFilmedGames}
-                  inactiveGames={plymouthFilmedGames}
+                  inactiveGames={stevensPointFilmedGames}
                 />
-              ) : activeTab === 'plymouth' ? (
+              ) : activeTab === 'stevensPoint' ? (
                 <Camp
                   activeTab={activeTab}
                   setActiveTab={setActiveTab}
                   registrations={props.registrations}
                   sessions={props.sessions || []}
-                  activeGames={plymouthFilmedGames}
+                  activeGames={stevensPointFilmedGames}
                   inactiveGames={kaukaunaFilmedGames}
                 />
               ) : null}

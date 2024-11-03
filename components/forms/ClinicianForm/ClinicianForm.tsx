@@ -84,7 +84,7 @@ export default function ClinicianForm(props: Props) {
       <Formik
         initialValues={{
           id: id ?? createId(),
-          camp: camp ?? 'Kaukauna Camp',
+          camp: camp ?? 'UW-Stevens Point Camp',
           firstName: firstName ?? '',
           lastName: lastName ?? '',
           email: email ?? '',
@@ -104,6 +104,22 @@ export default function ClinicianForm(props: Props) {
                 role="group"
                 aria-labelledby="camp"
               >
+                <label
+                  htmlFor="stevensPoint"
+                  className={`
+                    ${values.camp === 'UW-Stevens Point Camp' ? 'active' : ''}
+                      ${props.mode === 'update' ? 'disabled' : ''}
+                  `}
+                >
+                  <Field
+                    type="radio"
+                    name="camp"
+                    id="stevensPoint"
+                    value="UW-Stevens Point Camp"
+                    disabled={props.mode === 'update'}
+                  />
+                  UW-Stevens Point Camp
+                </label>
                 <label
                   htmlFor="kaukauna"
                   className={`

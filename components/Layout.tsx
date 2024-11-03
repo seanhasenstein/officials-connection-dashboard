@@ -71,7 +71,7 @@ export default function Layout({ children }: Props) {
           <a ref={questionnaireRef} className="sr-only">
             Kau questionnaires
           </a>
-          <button
+          {/* <button
             type="button"
             onClick={() => handleDownloadQuestionnairesClick('plymouth')}
           >
@@ -79,6 +79,15 @@ export default function Layout({ children }: Props) {
           </button>
           <a ref={questionnaireRef} className="sr-only">
             Ply questionnaires
+          </a> */}
+          <button
+            type="button"
+            onClick={() => handleDownloadQuestionnairesClick('stevensPoint')}
+          >
+            UWSP questionnaires
+          </button>
+          <a ref={questionnaireRef} className="sr-only">
+            UWSP questionnaires
           </a>
           <Link href="/filmed-games/add">Add filmed game</Link>
           <Link href="/send-an-email">Send marketing email</Link>

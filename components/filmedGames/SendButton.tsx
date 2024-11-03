@@ -5,7 +5,7 @@ import { HydratedSession, Year } from '../../types';
 import { formatSessionName } from '../../utils/misc';
 
 type SendButtonProps = {
-  camp: 'Kaukauna' | 'Plymouth';
+  camp: 'Kaukauna' | 'Plymouth' | 'UW-Stevens Point';
   session: HydratedSession;
 };
 
@@ -18,7 +18,7 @@ export default function SendButton(props: SendButtonProps) {
       camp,
       sessionId,
     }: {
-      camp: 'Kaukauna' | 'Plymouth';
+      camp: 'Kaukauna' | 'Plymouth' | 'UW-Stevens Point';
       sessionId: string;
     }) => {
       const response = await fetch('/api/send-game-film-emails', {

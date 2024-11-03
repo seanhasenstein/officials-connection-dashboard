@@ -23,7 +23,7 @@ type Props = {
 export default function FilmedGameForm(props: Props) {
   const router = useRouter();
   const registrationsQuery = useRegistrationsQuery();
-  const { kaukaunaCamp, plymouthCamp } = useYearQuery();
+  const { kaukaunaCamp, plymouthCamp, stevensPointCamp } = useYearQuery();
   const [searchInput, setSearchInput] = React.useState('');
   const [searchResults, setSearchResults] = React.useState<Registration[]>([]);
   const [hasSearchResults, setHasSearchResults] = React.useState(false);
@@ -86,12 +86,97 @@ export default function FilmedGameForm(props: Props) {
                 <option value="">Select camp</option>
                 <option value="kaukauna">Kaukauna</option>
                 <option value="plymouth">Plymouth</option>
+                <option value="stevensPoint">UW-Stevens Point</option>
               </Field>
               <ErrorMessage component="div" name="camp" className="error" />
             </div>
             <div className="item">
               <h3>Sessions</h3>
               <div className="sessions">
+                <div
+                  role="group"
+                  aria-labelledby="checkbox-group"
+                  className="checkbox-group"
+                >
+                  {stevensPointCamp?.sessions.map(s => (
+                    <label key={s.sessionId} htmlFor={s.sessionId}>
+                      <Field
+                        type="checkbox"
+                        name="sessions"
+                        id={s.sessionId}
+                        value={s.sessionId}
+                        onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                          if (e.target.checked) {
+                            setFieldValue('sessions', [
+                              ...values.sessions,
+                              s.sessionId,
+                            ]);
+
+                            if (stevensPointCamp) {
+                              const session = stevensPointCamp.sessions.find(
+                                ks => ks.sessionId === s.sessionId
+                              );
+                              if (session) {
+                                setFieldValue('camp', 'stevensPoint');
+                              }
+                            }
+                          } else {
+                            setFieldValue(
+                              'sessions',
+                              values.sessions.filter(v => v !== s.sessionId)
+                            );
+                            if (values.sessions.length === 0) {
+                              setFieldValue('camp', '');
+                            } else {
+                              const firstSessionThatIsntThisOne =
+                                values.sessions.find(v => v !== s.sessionId);
+                              const stevensPointSession =
+                                stevensPointCamp?.sessions.find(
+                                  ks =>
+                                    ks.sessionId === firstSessionThatIsntThisOne
+                                );
+                              const kaukaunaSession =
+                                kaukaunaCamp?.sessions.find(
+                                  ks =>
+                                    ks.sessionId === firstSessionThatIsntThisOne
+                                );
+                              if (stevensPointSession) {
+                                setFieldValue('camp', 'stevensPoint');
+                              } else if (kaukaunaSession) {
+                                const kaukaunaSession =
+                                  kaukaunaCamp?.sessions.find(
+                                    ps =>
+                                      ps.sessionId ===
+                                      firstSessionThatIsntThisOne
+                                  );
+                                if (kaukaunaSession) {
+                                  setFieldValue('camp', 'kaukauna');
+                                } else {
+                                  setFieldValue('camp', '');
+                                }
+                              } else {
+                                const plymouthSession =
+                                  plymouthCamp?.sessions.find(
+                                    ps =>
+                                      ps.sessionId ===
+                                      firstSessionThatIsntThisOne
+                                  );
+                                if (plymouthSession) {
+                                  setFieldValue('camp', 'plymouth');
+                                } else {
+                                  setFieldValue('camp', '');
+                                }
+                              }
+                            }
+                          }
+                        }}
+                      />
+                      {formatSessionName(s)}
+                    </label>
+                  ))}
+                </div>
+                {/* ****************************** */}
+                {/* TODO: make this components logic dynamic based on camps */}
                 <div
                   role="group"
                   aria-labelledby="checkbox-group"

@@ -23,6 +23,7 @@ export default function FilmedGamesPage() {
                 isSuccess={yearQuery.isSuccess}
                 kaukaunaCamp={yearQuery.kaukaunaCamp}
                 plymouthCamp={yearQuery.plymouthCamp}
+                stevensPointCamp={yearQuery.stevensPointCamp}
                 registrations={registrations || []}
                 sessions={yearQuery.sessions || []}
               />
