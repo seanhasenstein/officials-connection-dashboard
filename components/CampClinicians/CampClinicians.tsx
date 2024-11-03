@@ -5,7 +5,7 @@ import { formatPhoneNumber } from 'utils/misc';
 import CliniciansComponent from './styles';
 
 type Props = {
-  camp: 'Kaukauna' | 'Plymouth';
+  camp: 'Kaukauna' | 'Plymouth' | 'UW-Stevens Point';
   clinicians: Clinician[];
   setShowModal: React.Dispatch<React.SetStateAction<boolean>>;
   setMode: () => void;

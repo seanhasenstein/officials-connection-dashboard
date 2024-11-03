@@ -17,8 +17,10 @@ type Props = {
   sessions: Session[];
   activeGames: FilmedGame[];
   inactiveGames: FilmedGame[];
-  activeTab: 'kaukauna' | 'plymouth';
-  setActiveTab: React.Dispatch<React.SetStateAction<'kaukauna' | 'plymouth'>>;
+  activeTab: 'kaukauna' | 'stevensPoint';
+  setActiveTab: React.Dispatch<
+    React.SetStateAction<'kaukauna' | 'stevensPoint'>
+  >;
 };
 
 export interface HydratedGame extends Omit<FilmedGame, 'officials'> {

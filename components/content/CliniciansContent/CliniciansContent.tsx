@@ -25,7 +25,7 @@ export default function CliniciansContent() {
     React.useState<Clinician>(blankClinician);
 
   const yearQuery = useYearQuery();
-  const { isLoading, isError, kaukaunaCamp, plymouthCamp } = yearQuery;
+  const { isLoading, isError, kaukaunaCamp, stevensPointCamp } = yearQuery;
 
   if (isLoading) {
     return <div />;
@@ -64,19 +64,26 @@ export default function CliniciansContent() {
             </svg>
           </button>
           <CampClinicians
+            camp="UW-Stevens Point"
+            clinicians={stevensPointCamp?.clinicians || []}
+            setShowModal={setShowModal}
+            setMode={() => setMode('update')}
+            setModalClinician={setModalClinician}
+          />
+          <CampClinicians
             camp="Kaukauna"
             clinicians={kaukaunaCamp?.clinicians || []}
             setShowModal={setShowModal}
             setMode={() => setMode('update')}
             setModalClinician={setModalClinician}
           />
-          <CampClinicians
+          {/* <CampClinicians
             camp="Plymouth"
             clinicians={plymouthCamp?.clinicians || []}
             setShowModal={setShowModal}
             setMode={() => setMode('update')}
             setModalClinician={setModalClinician}
-          />
+          /> */}
         </div>
       </CliniciansComponent>
       <CliniciansModal
