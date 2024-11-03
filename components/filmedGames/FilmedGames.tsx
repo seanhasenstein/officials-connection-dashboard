@@ -51,9 +51,7 @@ export default function FilmedGames(props: Props) {
       // }
       if (props.stevensPointCamp) {
         setStevensPointFilmedGames(
-          props.year?.filmedGames.filter(
-            g => g.camp === 'UW-Stevens Point Camp'
-          ) || []
+          props.year?.filmedGames.filter(g => g.camp === 'stevensPoint') || []
         );
       }
     }
