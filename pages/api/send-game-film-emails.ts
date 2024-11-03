@@ -10,7 +10,7 @@ import { formatSessionName } from '../../utils/misc';
 
 interface Request extends IRequest {
   body: {
-    camp: 'Kaukauna' | 'Plymouth';
+    camp: 'Kaukauna' | 'Plymouth' | 'UW-Stevens Point';
     sessionId: string;
   };
 }
@@ -26,7 +26,7 @@ const handler = nc<Request, NextApiResponse>()
     }
 
     const requestedSessionId = req.body.sessionId;
-    const camp: 'Kaukauna' | 'Plymouth' = req.body.camp;
+    const camp: 'Kaukauna' | 'Plymouth' | 'UW-Stevens Point' = req.body.camp;
     const session = yearData?.camps
       .find(c => c.name.includes(camp))
       ?.sessions.find(s => s.sessionId === requestedSessionId);
