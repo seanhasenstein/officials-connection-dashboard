@@ -27,7 +27,7 @@ const options = {
 const handler = nc<ExtendedRequest, NextApiResponse>()
   .use(database)
   .get(async (req, res) => {
-    // c: 'kaukauna' | 'plymouth' | 'stevensPoint';
+    // c: 'kaukauna' | 'plymouth' | 'uw-stevens point';
     const { c } = req.query;
 
     const yearData = await year.getYear(req.db, '2024');
