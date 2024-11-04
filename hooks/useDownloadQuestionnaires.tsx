@@ -5,7 +5,7 @@ export default function useDownloadQuestionnaires() {
   const questionnaireRef = React.useRef<HTMLAnchorElement>(null);
 
   const handleDownloadQuestionnairesClick = async (
-    camp: 'kaukauna' | 'plymouth' | 'stevensPoint'
+    camp: 'kaukauna' | 'plymouth' | 'uw-stevens point'
   ) => {
     const response = await fetch(`/api/questionnaires-to-csv?c=${camp}`);
 

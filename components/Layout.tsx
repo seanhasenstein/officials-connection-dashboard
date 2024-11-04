@@ -82,7 +82,9 @@ export default function Layout({ children }: Props) {
           </a> */}
           <button
             type="button"
-            onClick={() => handleDownloadQuestionnairesClick('stevensPoint')}
+            onClick={() =>
+              handleDownloadQuestionnairesClick('uw-stevens point')
+            }
           >
             UWSP questionnaires
           </button>
