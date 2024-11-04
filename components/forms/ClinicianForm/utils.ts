@@ -15,7 +15,7 @@ export interface FormValues {
 
 export const validationSchema = Yup.object({
   camp: Yup.string()
-    .oneOf(['Kaukauna Camp', 'Plymouth Camp'])
+    .oneOf(['Kaukauna Camp', 'Plymouth Camp', 'UW-Stevens Point Camp'])
     .required('Camp is required'),
   firstName: Yup.string().required('First name is required'),
   lastName: Yup.string().required('Last name is required'),
