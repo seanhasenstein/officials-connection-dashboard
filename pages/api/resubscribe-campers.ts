@@ -7,6 +7,13 @@ import { year } from '../../db';
 import { mailgunAuthToken } from '../../constants/mailgun';
 import { Request } from 'types';
 
+export const config = {
+  cache: {
+    maxAge: 60,
+    swr: true,
+  },
+};
+
 const handler = nc<Request, NextApiResponse>()
   .use(database)
   .get(async (req, res) => {
