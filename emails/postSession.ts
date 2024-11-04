@@ -445,7 +445,9 @@ function generateTextEmail({
     .map(fg => `${fg.url}\n\n`)
     .join(
       ''
-    )}\n\nWe'd appreciate if you could take a few minutes to complete <a href="https://officialsconnection.org/questionnaire?camp=${camp.toLowerCase()}&rid=${registrationId}&sid=${sessionId}" style="color: #1d4ed8; text-decoration: underline;">this post camp questionnaire</a>. Your feedback helps us to continue to be one of the top officials camps around.\n\nHave a great rest of your summer.\n\nTom Rusch\nWBYOC Director\n
+    )}\n\nWe'd appreciate if you could take a few minutes to complete <a href="https://officialsconnection.org/questionnaire?camp=${
+    camp === 'UW-Stevens Point' ? 'stevensPoint' : camp.toLowerCase()
+  }&rid=${registrationId}&sid=${sessionId}" style="color: #1d4ed8; text-decoration: underline;">this post camp questionnaire</a>. Your feedback helps us to continue to be one of the top officials camps around.\n\nHave a great rest of your summer.\n\nTom Rusch\nWBYOC Director\n
   `;
 }
 
