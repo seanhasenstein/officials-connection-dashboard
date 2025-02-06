@@ -1,25 +1,28 @@
 import { NextApiResponse } from 'next';
 import nc from 'next-connect';
 import { createObjectCsvStringifier } from 'csv-writer';
-import { Request } from '../../types';
+
 import database from '../../middleware/db';
 import { year, registration } from '../../db';
+
 import { withAuth } from '../../utils/withAuth';
+
+import { currentYearString } from 'constants/currentYear';
+
+import { Request } from '../../types';
 
 const handler = nc<Request, NextApiResponse>()
   .use(database)
   .get(async (req, res) => {
-    // TODO: make year dynamic
-    const sessions = await year.getSessions(req.db, '2024');
+    const sessions = await year.getSessions(req.db, currentYearString);
 
     if (!sessions) {
       throw new Error('Failed to find the server sessions');
     }
 
-    // TODO: make year dynamic
     const registrations = await registration.getAllRegistrationsForYear(
       req.db,
-      '2024'
+      currentYearString
     );
 
     if (!registrations) {

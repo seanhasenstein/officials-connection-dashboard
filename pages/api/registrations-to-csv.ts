@@ -2,9 +2,10 @@ import { NextApiResponse } from 'next';
 import nc from 'next-connect';
 import { createObjectCsvStringifier } from 'csv-writer';
 import { format, utcToZonedTime } from 'date-fns-tz';
-import { Registration, Request } from '../../types';
+
 import database from '../../middleware/db';
 import { year, registration } from '../../db';
+
 import {
   formatPhoneNumber,
   formatSessionNameFromId,
@@ -12,19 +13,23 @@ import {
 } from '../../utils/misc';
 import { withAuth } from '../../utils/withAuth';
 
+import { currentYearString } from 'constants/currentYear';
+
+import { Registration, Request } from '../../types';
+
 const handler = nc<Request, NextApiResponse>()
   .use(database)
   .get(async (req, res) => {
-    // TODO: make year dynamic
-    const allSessions = await year.getSessions(req.db, '2024');
+    const allSessions = await year.getSessions(req.db, currentYearString);
 
     if (!allSessions) {
       throw new Error('Failed to find the server sessions');
     }
 
-    const allRegistrations =
-      // TODO: make year dynamic
-      await registration.getAllRegistrationsForYear(req.db, '2024');
+    const allRegistrations = await registration.getAllRegistrationsForYear(
+      req.db,
+      currentYearString
+    );
 
     if (!allRegistrations) {
       throw new Error('Failed to find the server registrations');

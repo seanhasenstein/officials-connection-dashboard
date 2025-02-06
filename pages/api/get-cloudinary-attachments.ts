@@ -1,21 +1,24 @@
 import { NextApiResponse } from 'next';
 import nc from 'next-connect';
-import { Registration, Request } from '../../types';
-import { withAuth } from '../../utils/withAuth';
+
 import { registration, year } from '../../db';
 import database from '../../middleware/db';
+
+import { withAuth } from '../../utils/withAuth';
 import { getCloudinaryAttachments } from '../../utils/cloudinary';
+
+import { currentYearString } from 'constants/currentYear';
+
+import { Registration, Request } from '../../types';
 
 const handler = nc<Request, NextApiResponse>()
   .use(database)
   .get(async (req, res) => {
     try {
-      // TODO: make year dynamic
-      const sessionsData = await year.getSessions(req.db, '2024');
-      // TODO: Make year dynamic
+      const sessionsData = await year.getSessions(req.db, currentYearString);
       const registrationData = await registration.getAllRegistrationsForYear(
         req.db,
-        '2024'
+        currentYearString
       );
       const cloudinaryData = await getCloudinaryAttachments();
 

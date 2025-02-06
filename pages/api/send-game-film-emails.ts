@@ -1,12 +1,19 @@
 import { NextApiResponse } from 'next';
 import nc from 'next-connect';
+
 import { withAuth } from '../../utils/withAuth';
+
 import database from '../../middleware/db';
-import { FilmedGame, Request as IRequest } from '../../types';
 import { year } from '../../db';
+
 import generateEmail from '../../emails/postSession';
+
 import { sendEmail } from '../../utils/mailgun';
 import { formatSessionName } from '../../utils/misc';
+
+import { currentYearString } from 'constants/currentYear';
+
+import { FilmedGame, Request as IRequest } from '../../types';
 
 interface Request extends IRequest {
   body: {
@@ -18,8 +25,7 @@ interface Request extends IRequest {
 const handler = nc<Request, NextApiResponse>()
   .use(database)
   .post(async (req, res) => {
-    // TODO: make year dynamic
-    const yearData = await year.getYear(req.db, '2024');
+    const yearData = await year.getYear(req.db, currentYearString);
 
     if (!yearData) {
       throw new Error('Failed to find the year');
@@ -36,10 +42,9 @@ const handler = nc<Request, NextApiResponse>()
       return;
     }
 
-    // TODO: make year dynamic
     // const registrationsData = await registration.getAllRegistrationsForYear(
     //   req.db,
-    //   '2024'
+    //   currentYearString
     // );
 
     const filmedGamesBySessionAndOfficial = yearData?.filmedGames.reduce(
@@ -77,16 +82,14 @@ const handler = nc<Request, NextApiResponse>()
           registrationId: registration.id,
           sessionId: requestedSessionId,
           firstName: registration.firstName,
-          // TODO: make year dynamic
-          year: '2024',
+          year: currentYearString,
           camp,
           filmedGames,
         });
         const result = await sendEmail({
           to: registration.email,
           from: 'WBYOC<wbyoc@officialsconnection.org>',
-          // TODO: make year dynamic
-          subject: `Thanks for attending the 2024 WBYOC - ${formatSessionName(
+          subject: `Thanks for attending the ${currentYearString} WBYOC - ${formatSessionName(
             session
           )}`,
           text,
@@ -113,8 +116,11 @@ const handler = nc<Request, NextApiResponse>()
       }
     });
     const updatedYear = { ...yearData, camps: updatedCamps || [] };
-    // TODO: Make year dynamic
-    const result = await year.updateYear(req.db, '2024', updatedYear);
+    const result = await year.updateYear(
+      req.db,
+      currentYearString,
+      updatedYear
+    );
 
     res.send({ year: result });
   });

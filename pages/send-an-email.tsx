@@ -26,7 +26,7 @@ export default function SendAnEmail() {
       <SendAnEmailComponent>
         <div className="container">
           <h3>Send a an email</h3>
-          <p>Use this form to send a an email with the WBYOC branding.</p>
+          <p>Use this form to send an email with the WBYOC branding.</p>
           <Formik
             initialValues={{
               to: 'seanhasenstein@gmail.com',

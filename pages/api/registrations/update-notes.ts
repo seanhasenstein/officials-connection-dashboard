@@ -3,6 +3,9 @@ import nc from 'next-connect';
 import { withAuth } from '../../../utils/withAuth';
 import database from '../../../middleware/db';
 import { registration } from '../../../db';
+
+import { currentYearString } from 'constants/currentYear';
+
 import { Registration, Request } from '../../../types';
 
 const handler = nc<Request, NextApiResponse>()
@@ -11,8 +14,7 @@ const handler = nc<Request, NextApiResponse>()
     const updatedRegistration: Registration = req.body;
     const result = await registration.updateRegistration(
       req.db,
-      // TODO: make year dynamic
-      '2024',
+      currentYearString,
       updatedRegistration
     );
     res.send({ ...result });

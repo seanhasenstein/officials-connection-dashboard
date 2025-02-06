@@ -8,6 +8,8 @@ import { year } from '../../db';
 
 import { withAuth } from '../../utils/withAuth';
 
+import { currentYearString } from 'constants/currentYear';
+
 interface ExtendedRequest extends NextApiRequest {
   db: Db;
   query: {
@@ -30,7 +32,7 @@ const handler = nc<ExtendedRequest, NextApiResponse>()
     // c: 'kaukauna' | 'plymouth' | 'uw-stevens point';
     const { c } = req.query;
 
-    const yearData = await year.getYear(req.db, '2024');
+    const yearData = await year.getYear(req.db, currentYearString);
 
     if (!yearData) {
       throw new Error('Failed to find the year');

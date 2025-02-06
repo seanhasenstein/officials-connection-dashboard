@@ -1,16 +1,20 @@
 import { NextApiResponse } from 'next';
 import nc from 'next-connect';
-import database from '../../../middleware/db';
+
 import { withAuth } from '../../../utils/withAuth';
-import { Request } from '../../../types';
+
+import database from '../../../middleware/db';
 import { registration } from '../../../db';
+
+import { currentYearString } from 'constants/currentYear';
+
+import { Request } from '../../../types';
 
 const handler = nc<Request, NextApiResponse>()
   .use(database)
   .post(async (req, res) => {
     const id = req.body;
-    // TODO: make year dynamic
-    await registration.deleteRegistration(req.db, '2024', id);
+    await registration.deleteRegistration(req.db, currentYearString, id);
     res.json({ success: true });
   });
 

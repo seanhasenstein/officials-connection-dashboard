@@ -1,6 +1,12 @@
 import React from 'react';
 import { useRouter } from 'next/router';
 import styled from 'styled-components';
+
+import ButtonSwitch from '../ButtonSwitch';
+import Camp from './Camp';
+
+import { currentYearString } from 'constants/currentYear';
+
 import {
   Camp as ICamp,
   FilmedGame,
@@ -8,8 +14,6 @@ import {
   Session,
   Year,
 } from '../../types';
-import ButtonSwitch from '../ButtonSwitch';
-import Camp from './Camp';
 
 type Props = {
   year: Year | undefined;
@@ -67,8 +71,7 @@ export default function FilmedGames(props: Props) {
     <FilmedGamesStyles>
       <div className="box">
         <div className="header-row">
-          {/* TODO: make year dynamic */}
-          <h2>2024 filmed games</h2>
+          <h2>{currentYearString} filmed games</h2>
           <button
             type="button"
             onClick={() => setOpen(!open)}
