@@ -2,24 +2,21 @@ import { NextApiResponse } from 'next';
 import nc from 'next-connect';
 
 import { withAuth } from '../../utils/withAuth';
+
 import database from '../../middleware/db';
 import { year } from '../../db';
-import { mailgunAuthToken } from '../../constants/mailgun';
-import { Request } from 'types';
 
-export const config = {
-  cache: {
-    maxAge: 60,
-    swr: true,
-  },
-};
+import { mailgunAuthToken } from '../../constants/mailgun';
+import { currentYearString } from 'constants/currentYear';
+
+import { Request } from 'types';
 
 const handler = nc<Request, NextApiResponse>()
   .use(database)
   .get(async (req, res) => {
     const mailingList = '2024-hs-marketing@mg.officialsconnection.org';
 
-    const fetchedYear = await year.getYear(req.db, '2024');
+    const fetchedYear = await year.getYear(req.db, currentYearString);
 
     const allRegistrations = fetchedYear?.registrations || [];
 

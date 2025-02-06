@@ -1,5 +1,6 @@
 import React from 'react';
 import { format } from 'date-fns';
+import { currentYearString } from 'constants/currentYear';
 
 export default function useDownloadQuestionnaires() {
   const questionnaireRef = React.useRef<HTMLAnchorElement>(null);
@@ -22,8 +23,7 @@ export default function useDownloadQuestionnaires() {
 
     questionnaireRef.current?.setAttribute(
       'download',
-      // TODO: make the year dynamic
-      `2024-wbyoc-${camp}-questionnaires-${format(
+      `${currentYearString}-wbyoc-${camp}-questionnaires-${format(
         new Date(),
         'MMddyyHHmmss'
       )}.csv`

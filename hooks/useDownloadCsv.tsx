@@ -1,6 +1,8 @@
 import React from 'react';
 import { format } from 'date-fns';
 
+import { currentYearString } from 'constants/currentYear';
+
 export default function useDownloadToCsv() {
   const csvLinkRef = React.useRef<HTMLAnchorElement>(null);
 
@@ -18,8 +20,10 @@ export default function useDownloadToCsv() {
     );
     csvLinkRef.current?.setAttribute(
       'download',
-      // TODO: make the year dynamic
-      `2024-wbyoc-registrations-${format(new Date(), 'MMddyyHHmmss')}.csv`
+      `${currentYearString}-wbyoc-registrations-${format(
+        new Date(),
+        'MMddyyHHmmss'
+      )}.csv`
     );
     csvLinkRef.current?.click();
   };

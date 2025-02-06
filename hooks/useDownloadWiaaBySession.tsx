@@ -1,5 +1,8 @@
 import React from 'react';
+
 import { createIdNumber } from '../utils/misc';
+
+import { currentYearString } from 'constants/currentYear';
 
 export default function useDownloadWiaaBySession() {
   const wiaaSessionRef = React.useRef<HTMLAnchorElement>(null);
@@ -18,8 +21,7 @@ export default function useDownloadWiaaBySession() {
     );
     wiaaSessionRef.current?.setAttribute(
       'download',
-      // TODO: make the year dynamic
-      `2024-wiaa-by-session-${createIdNumber()}.csv`
+      `${currentYearString}-wiaa-by-session-${createIdNumber()}.csv`
     );
     wiaaSessionRef.current?.click();
   };

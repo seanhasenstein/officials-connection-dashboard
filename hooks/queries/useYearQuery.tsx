@@ -1,5 +1,8 @@
 import React from 'react';
 import { useQuery } from 'react-query';
+
+import { currentYearString } from 'constants/currentYear';
+
 import { Session, Year } from '../../types';
 
 async function fetchYear() {
@@ -14,10 +17,13 @@ async function fetchYear() {
 }
 
 export default function useYearQuery() {
-  // TODO: make year dynamic
-  const yearQuery = useQuery<Year, Error>(['year', '2024'], fetchYear, {
-    staleTime: 300000, // 5min
-  });
+  const yearQuery = useQuery<Year, Error>(
+    ['year', currentYearString],
+    fetchYear,
+    {
+      staleTime: 300000, // 5min
+    }
+  );
 
   const kaukaunaCamp = yearQuery.data?.camps.find(
     c => c.name === 'Kaukauna Camp'

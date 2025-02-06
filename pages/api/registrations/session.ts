@@ -1,17 +1,23 @@
 import { NextApiResponse } from 'next';
 import nc from 'next-connect';
+
 import { withAuth } from '../../../utils/withAuth';
+
 import database from '../../../middleware/db';
 import { registration } from '../../../db';
-import { Request, Registration } from '../../../types';
+
 import { getUrlParam } from '../../../utils/misc';
+
+import { currentYearString } from 'constants/currentYear';
+
+import { Request, Registration } from '../../../types';
 
 const handler = nc<Request, NextApiResponse>()
   .use(database)
   .get(async (req, res) => {
     const result = await registration.getSessionRegistrations(
       req.db,
-      '2024',
+      currentYearString,
       getUrlParam(req.query.id)
     );
     const sortedResult = result?.sort((a, b) => {

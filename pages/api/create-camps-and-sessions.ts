@@ -5,6 +5,7 @@ import database from '../../middleware/db';
 import { Camp, Request } from '../../types';
 import { year } from '../../db';
 import { createId } from '../../utils/misc';
+import { currentYearString } from 'constants/currentYear';
 
 const handler = nc<Request, NextApiResponse>()
   .use(database)
@@ -295,7 +296,7 @@ const handler = nc<Request, NextApiResponse>()
       updatedAt: now,
     };
 
-    const yearData = await year.updateYear(req.db, '2024', {
+    const yearData = await year.updateYear(req.db, currentYearString, {
       camps: [kaukaunaCamp, plymouthCamp],
     });
 

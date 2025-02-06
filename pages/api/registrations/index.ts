@@ -1,17 +1,21 @@
 import { NextApiResponse } from 'next';
 import nc from 'next-connect';
+
 import { withAuth } from '../../../utils/withAuth';
+
 import database from '../../../middleware/db';
 import { registration } from '../../../db';
+
+import { currentYearString } from 'constants/currentYear';
+
 import { Request } from '../../../types';
 
 const handler = nc<Request, NextApiResponse>()
   .use(database)
   .get(async (req, res) => {
-    // TODO: make year dynamic
     const result = await registration.getAllRegistrationsForYear(
       req.db,
-      '2024'
+      currentYearString
     );
 
     const sortedResults = result?.sort((a, b) => {

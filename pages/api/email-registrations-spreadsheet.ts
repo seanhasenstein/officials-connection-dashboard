@@ -5,14 +5,18 @@ import { createObjectCsvStringifier, createObjectCsvWriter } from 'csv-writer';
 import { format, utcToZonedTime } from 'date-fns-tz';
 import fs from 'fs';
 
-import { sendEmail } from '../../utils/mailgun';
 import database from '../../middleware/db';
 import { year, registration } from '../../db';
+
+import { sendEmail } from '../../utils/mailgun';
 import {
   formatPhoneNumber,
   formatSessionNameFromId,
   formatToMoney,
 } from 'utils/misc';
+
+import { currentYearString } from 'constants/currentYear';
+
 import { Registration } from 'types';
 
 interface Request extends NextApiRequest {
@@ -44,16 +48,16 @@ const handler = nc<Request, NextApiResponse>()
         return;
       }
 
-      // TODO: make year dynamic
-      const allSessions = await year.getSessions(req.db, '2024');
+      const allSessions = await year.getSessions(req.db, currentYearString);
 
       if (!allSessions) {
         throw new Error('Failed to find the server sessions');
       }
 
-      const allRegistrations =
-        // TODO: make year dynamic
-        await registration.getAllRegistrationsForYear(req.db, '2024');
+      const allRegistrations = await registration.getAllRegistrationsForYear(
+        req.db,
+        currentYearString
+      );
 
       if (!allRegistrations) {
         throw new Error('Failed to find the server registrations');

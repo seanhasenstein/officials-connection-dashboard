@@ -1,16 +1,22 @@
 import { NextApiResponse } from 'next';
 import nc from 'next-connect';
+
 import { withAuth } from '../../../utils/withAuth';
+
 import database from '../../../middleware/db';
-import { RegistrationInput, Request } from '../../../types';
 import { registration, year } from '../../../db';
+
 import { formatRegistrationForDb } from '../../../utils/registration';
+
+import { currentYearString } from 'constants/currentYear';
+
+import { RegistrationInput, Request } from '../../../types';
 
 const handler = nc<Request, NextApiResponse>()
   .use(database)
   .post(async (req, res) => {
     const requestBody: RegistrationInput = req.body;
-    const serverSessions = await year.getSessions(req.db, '2024');
+    const serverSessions = await year.getSessions(req.db, currentYearString);
 
     // TODO: Is this the correct way to handle this?
     if (!serverSessions) {
@@ -23,7 +29,7 @@ const handler = nc<Request, NextApiResponse>()
     );
     const createdRegistration = await registration.addRegistration(
       req.db,
-      '2024', // TODO: make this dynamic
+      currentYearString,
       dbFormattedRegistration
     );
     res.json({ id: createdRegistration?.id });

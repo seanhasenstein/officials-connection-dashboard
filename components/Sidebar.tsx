@@ -1,11 +1,15 @@
 import React from 'react';
 import styled from 'styled-components';
 import Link from 'next/link';
-import { formatSessionName } from '../utils/misc';
+
 import useEscapeKeydownClose from '../hooks/useEscapeKeydownClose';
 import useCloseOnOutsideClick from '../hooks/useCloseOnOutsideClick';
 import useRegistrationsQuery from '../hooks/queries/useRegistrationsQuery';
 import useYearQuery from '../hooks/queries/useYearQuery';
+
+import { formatSessionName } from '../utils/misc';
+
+import { currentYearString } from 'constants/currentYear';
 
 type Props = {
   isOpen: boolean;
@@ -83,8 +87,7 @@ export default function Sidebar({ isOpen, setIsOpen }: Props) {
           </div>
         ) : (
           <>
-            {/* TODO: make year dynamic */}
-            <h4>2024 WBYOC Sessions</h4>
+            <h4>{currentYearString} WBYOC Sessions</h4>
             <button
               type="button"
               className="close-btn"
