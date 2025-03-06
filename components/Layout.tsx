@@ -43,9 +43,9 @@ export default function Layout({ children }: Props) {
       <Sidebar isOpen={isOpen} setIsOpen={setIsOpen} />
       <div className="secondary-nav">
         <div className="container">
-          <Link href="/registrations/add">Add an offline registration</Link>
+          <Link href="/registrations/add">+ offline registration</Link>
           <button type="button" onClick={handleDownloadToCsvClick}>
-            Registrations to csv
+            Registrations csv
           </button>
           <button type="button" onClick={handleDownloadNameLabelsClick}>
             Name labels
