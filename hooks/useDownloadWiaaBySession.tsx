@@ -10,7 +10,7 @@ export default function useDownloadWiaaBySession() {
   const handleDownloadWiaaBySession = async () => {
     const response = await fetch('api/download-wiaa-by-session');
     if (!response.ok) {
-      throw new Error('Failed to fetch the name labels csv file.');
+      throw new Error('Failed to fetch the WIAA by session csv file.');
     }
 
     const data = await response.json();

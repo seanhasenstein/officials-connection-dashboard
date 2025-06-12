@@ -14,6 +14,7 @@ import Logo from './Logo';
 
 import GlobalStyles from '../styles/GlobalStyles';
 import useDownloadWiaaBySession from 'hooks/useDownloadWiaaBySession';
+import useDownloadWiaaBySessionThreeTimes from 'hooks/useDownloadWiaaBySessionThreeTimes';
 
 type Props = {
   children: React.ReactNode;
@@ -28,6 +29,8 @@ export default function Layout({ children }: Props) {
     useDownloadQuestionnaires();
   const { handleDownloadWiaaBySession, wiaaSessionRef } =
     useDownloadWiaaBySession();
+  const { handleDownloadWiaaBySessionThreeTimes, wiaaSessionThreeTimesRef } =
+    useDownloadWiaaBySessionThreeTimes();
   const [isOpen, setIsOpen] = React.useState(false);
 
   React.useEffect(() => {
@@ -45,7 +48,7 @@ export default function Layout({ children }: Props) {
         <div className="container">
           <Link href="/registrations/add">Add an offline registration</Link>
           <button type="button" onClick={handleDownloadToCsvClick}>
-            Registrations to csv
+            Registrations csv
           </button>
           <button type="button" onClick={handleDownloadNameLabelsClick}>
             Name labels
@@ -53,8 +56,14 @@ export default function Layout({ children }: Props) {
           <button type="button" onClick={handleDownloadWiaaBySession}>
             WIAA form by session
           </button>
+          <button type="button" onClick={handleDownloadWiaaBySessionThreeTimes}>
+            WIAA form by session 3X
+          </button>
           <a ref={wiaaSessionRef} className="sr-only">
             WIAA form by session
+          </a>
+          <a ref={wiaaSessionThreeTimesRef} className="sr-only">
+            WIAA form by session 3X
           </a>
           <a ref={csvLinkRef} className="sr-only">
             Download registrations
@@ -71,7 +80,7 @@ export default function Layout({ children }: Props) {
           <a ref={questionnaireRef} className="sr-only">
             Kau questionnaires
           </a>
-          {/* <button
+          <button
             type="button"
             onClick={() => handleDownloadQuestionnairesClick('plymouth')}
           >
@@ -79,7 +88,7 @@ export default function Layout({ children }: Props) {
           </button>
           <a ref={questionnaireRef} className="sr-only">
             Ply questionnaires
-          </a> */}
+          </a>
           <button
             type="button"
             onClick={() =>
@@ -230,9 +239,10 @@ const LayoutStyles = styled.div`
     .container {
       margin: 0 auto;
       display: flex;
-      justify-content: flex-end;
-      gap: 1.875rem;
-      max-width: 90rem;
+      justify-content: center;
+      flex-wrap: wrap;
+      gap: 0.75rem 1.875rem;
+      max-width: 55rem;
       width: 100%;
     }
 
