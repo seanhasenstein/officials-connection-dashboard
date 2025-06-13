@@ -84,7 +84,7 @@ export default function ClinicianForm(props: Props) {
       <Formik
         initialValues={{
           id: id ?? createId(),
-          camp: camp ?? 'UW-Stevens Point Camp',
+          camp: camp ?? 'Kaukauna Camp',
           firstName: firstName ?? '',
           lastName: lastName ?? '',
           email: email ?? '',

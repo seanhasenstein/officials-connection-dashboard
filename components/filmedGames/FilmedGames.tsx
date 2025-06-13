@@ -29,7 +29,7 @@ export default function FilmedGames(props: Props) {
   const router = useRouter();
   const [open, setOpen] = React.useState(true);
   const [activeTab, setActiveTab] = React.useState<'kaukauna' | 'stevensPoint'>(
-    'stevensPoint'
+    'kaukauna'
   );
   const [kaukaunaFilmedGames, setKaukaunaFilmedGames] = React.useState<
     FilmedGame[]
