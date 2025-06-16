@@ -20,15 +20,31 @@ interface Request extends NextApiRequest {
     lastName: string;
     email: string;
     phone: string;
+    address: {
+      city: string;
+      state: string;
+    };
   };
 }
 
 const handler = nc<Request, NextApiResponse>()
   .use(database)
   .post(async (req, res) => {
-    const { mode, camp, id, firstName, lastName, email, phone } = req.body;
+    const { mode, camp, id, firstName, lastName, email, phone, address } =
+      req.body;
+    const { city = '', state = '' } = address;
 
-    if (!mode || !camp || !id || !firstName || !lastName || !email || !phone) {
+    if (
+      !mode ||
+      !camp ||
+      !id ||
+      !firstName ||
+      !lastName ||
+      !email ||
+      !phone ||
+      !city ||
+      !state
+    ) {
       return res.status(400).json({ message: 'Missing fields' });
     }
 
@@ -38,6 +54,10 @@ const handler = nc<Request, NextApiResponse>()
       lastName: lastName.trim(),
       email: email.trim().toLowerCase(),
       phone: removeNonDigits(phone).trim(),
+      address: {
+        city: city.trim(),
+        state: state.trim().toUpperCase(),
+      },
       camp,
     };
 

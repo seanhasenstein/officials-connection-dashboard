@@ -28,18 +28,18 @@ type Props = {
 export default function FilmedGames(props: Props) {
   const router = useRouter();
   const [open, setOpen] = React.useState(true);
-  const [activeTab, setActiveTab] = React.useState<'kaukauna' | 'stevensPoint'>(
-    'kaukauna'
+  const [activeTab, setActiveTab] = React.useState<'kaukauna' | 'plymouth'>(
+    'plymouth'
   );
   const [kaukaunaFilmedGames, setKaukaunaFilmedGames] = React.useState<
     FilmedGame[]
   >([]);
-  // const [plymouthFilmedGames, setPlymouthFilmedGames] = React.useState<
-  //   FilmedGame[]
-  // >([]);
-  const [stevensPointFilmedGames, setStevensPointFilmedGames] = React.useState<
+  const [plymouthFilmedGames, setPlymouthFilmedGames] = React.useState<
     FilmedGame[]
   >([]);
+  // const [stevensPointFilmedGames, setStevensPointFilmedGames] = React.useState<
+  //   FilmedGame[]
+  // >([]);
 
   React.useEffect(() => {
     if (props.isSuccess) {
@@ -48,16 +48,16 @@ export default function FilmedGames(props: Props) {
           props.year?.filmedGames.filter(g => g.camp === 'kaukauna') || []
         );
       }
-      // if (props.plymouthCamp) {
-      //   setPlymouthFilmedGames(
-      //     props.year?.filmedGames.filter(g => g.camp === 'plymouth') || []
-      //   );
-      // }
-      if (props.stevensPointCamp) {
-        setStevensPointFilmedGames(
-          props.year?.filmedGames.filter(g => g.camp === 'stevensPoint') || []
+      if (props.plymouthCamp) {
+        setPlymouthFilmedGames(
+          props.year?.filmedGames.filter(g => g.camp === 'plymouth') || []
         );
       }
+      // if (props.stevensPointCamp) {
+      //   setStevensPointFilmedGames(
+      //     props.year?.filmedGames.filter(g => g.camp === 'stevensPoint') || []
+      //   );
+      // }
     }
   }, [
     props.isSuccess,
@@ -85,11 +85,11 @@ export default function FilmedGames(props: Props) {
         {open ? (
           <div>
             <div className="tab-buttons">
-              <ButtonSwitch<'kaukauna', 'stevensPoint'>
+              <ButtonSwitch<'kaukauna', 'plymouth'>
                 active={activeTab}
                 setActive={setActiveTab}
                 optionA="kaukauna"
-                optionB="stevensPoint"
+                optionB="plymouth"
                 handleClick={option =>
                   router.push(`/filmed-games?active=${option}`)
                 }
@@ -103,15 +103,15 @@ export default function FilmedGames(props: Props) {
                   registrations={props.registrations}
                   sessions={props.sessions || []}
                   activeGames={kaukaunaFilmedGames}
-                  inactiveGames={stevensPointFilmedGames}
+                  inactiveGames={plymouthFilmedGames}
                 />
-              ) : activeTab === 'stevensPoint' ? (
+              ) : activeTab === 'plymouth' ? (
                 <Camp
                   activeTab={activeTab}
                   setActiveTab={setActiveTab}
                   registrations={props.registrations}
                   sessions={props.sessions || []}
-                  activeGames={stevensPointFilmedGames}
+                  activeGames={plymouthFilmedGames}
                   inactiveGames={kaukaunaFilmedGames}
                 />
               ) : null}

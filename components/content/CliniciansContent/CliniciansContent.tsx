@@ -15,7 +15,11 @@ const blankClinician: Clinician = {
   lastName: '',
   email: '',
   phone: '',
-  camp: 'UW-Stevens Point Camp',
+  address: {
+    city: '',
+    state: 'WI',
+  },
+  camp: 'Plymouth Camp',
 };
 
 export default function CliniciansContent() {

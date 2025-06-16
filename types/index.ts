@@ -133,6 +133,13 @@ export interface Clinician {
   email: string;
   phone: string;
   camp: Camps;
+  address?: {
+    street?: string;
+    street2?: string;
+    city?: string;
+    state?: string;
+    zipcode?: string;
+  };
 }
 
 export interface SessionWithAttachment extends Session {
