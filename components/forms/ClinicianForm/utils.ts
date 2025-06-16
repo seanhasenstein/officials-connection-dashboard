@@ -11,6 +11,23 @@ export interface FormValues {
   lastName: string;
   email: string;
   phone: string;
+  address?: {
+    city?: string;
+    state?: string;
+  };
+}
+
+export interface SubmitFormValues {
+  id: string;
+  camp: Camps;
+  firstName: string;
+  lastName: string;
+  email: string;
+  phone: string;
+  address: {
+    city: string;
+    state: string;
+  };
 }
 
 export const validationSchema = Yup.object({
@@ -29,4 +46,8 @@ export const validationSchema = Yup.object({
       'A valid 10 digit phone number is required'
     )
     .required('Phone is required'),
+  address: Yup.object({
+    city: Yup.string().required('City is required'),
+    state: Yup.string().required('State is required'),
+  }),
 });

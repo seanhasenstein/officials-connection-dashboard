@@ -38,7 +38,14 @@ export default function CampClinicians(props: Props) {
                 {props.clinicians.map(c => (
                   <tr key={c.id} className="list-item">
                     <td>
-                      {c.firstName} {c.lastName}
+                      <p className="name">
+                        {c.firstName} {c.lastName}
+                      </p>
+                      {c.address && c.address.city && c.address.state && (
+                        <p className="location">
+                          {c.address?.city}, {c.address?.state}
+                        </p>
+                      )}
                     </td>
                     <td>{c.email}</td>
                     <td>{formatPhoneNumber(c.phone)}</td>

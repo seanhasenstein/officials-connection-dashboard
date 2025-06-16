@@ -64,6 +64,16 @@ export default styled.div`
       padding-right: 0;
       text-align: right;
     }
+
+    p {
+      margin: 0;
+      &.location {
+        margin-top: 0.125rem;
+        font-size: 0.75rem;
+        font-weight: 400;
+        color: #4b5563;
+      }
+    }
   }
 
   .edit-button {

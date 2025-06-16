@@ -4,7 +4,7 @@ import { useMutation, useQueryClient } from 'react-query';
 
 import { Clinician } from 'types';
 
-import { FormValues, validationSchema } from './utils';
+import { FormValues, SubmitFormValues, validationSchema } from './utils';
 import { createId, formatPhoneNumber } from 'utils/misc';
 import { formatPhoneNumberOnChange } from 'utils/inputFormat';
 
@@ -29,8 +29,9 @@ export default function ClinicianForm(props: Props) {
 
   const queryClient = useQueryClient();
 
-  const { id, camp, firstName, lastName, email, phone } =
+  const { id, camp, firstName, lastName, email, phone, address } =
     props.initialValues ?? {};
+  const { city, state } = address ?? { city: '', state: 'WI' };
 
   const clinicianMutation = useMutation(
     async (formValues: FormValues) => {
@@ -65,8 +66,8 @@ export default function ClinicianForm(props: Props) {
   const { isLoading, isError } = clinicianMutation;
 
   const handleSubmit = (
-    values: FormValues,
-    formikHelpers: FormikHelpers<FormValues>
+    values: SubmitFormValues,
+    formikHelpers: FormikHelpers<SubmitFormValues>
   ) => {
     clinicianMutation.mutate(values, {
       onError: () => {
@@ -89,6 +90,10 @@ export default function ClinicianForm(props: Props) {
           lastName: lastName ?? '',
           email: email ?? '',
           phone: phone ? formatPhoneNumber(phone) : '',
+          address: {
+            city: city ?? '',
+            state: state ?? '',
+          },
         }}
         enableReinitialize
         validationSchema={validationSchema}
@@ -104,7 +109,7 @@ export default function ClinicianForm(props: Props) {
                 role="group"
                 aria-labelledby="camp"
               >
-                <label
+                {/* <label
                   htmlFor="stevensPoint"
                   className={`
                     ${values.camp === 'UW-Stevens Point Camp' ? 'active' : ''}
@@ -119,7 +124,7 @@ export default function ClinicianForm(props: Props) {
                     disabled={props.mode === 'update'}
                   />
                   UW-Stevens Point Camp
-                </label>
+                </label> */}
                 <label
                   htmlFor="kaukauna"
                   className={`
@@ -191,6 +196,24 @@ export default function ClinicianForm(props: Props) {
                   }
                 }}
               />
+              <div className="form-item">
+                <label htmlFor="address.city">City</label>
+                <Field type="text" name="address.city" id="address.city" />
+                <ErrorMessage
+                  name="address.city"
+                  component="div"
+                  className="error"
+                />
+              </div>
+              <div className="form-item">
+                <label htmlFor="address.state">State</label>
+                <Field type="text" name="address.state" id="address.state" />
+                <ErrorMessage
+                  name="address.state"
+                  component="div"
+                  className="error"
+                />
+              </div>
               <div className="actions">
                 <button
                   type="submit"
