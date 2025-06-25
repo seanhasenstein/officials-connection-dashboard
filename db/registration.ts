@@ -28,7 +28,7 @@ export async function getSessionRegistrations(
   const fetchedYear = await db.collection<Year>('years').findOne({ year });
   const sessionRegistrations = fetchedYear?.registrations.filter(r => {
     return r.sessions.some(s => {
-      s.sessionId === sessionId && s.attending;
+      return s.sessionId === sessionId && s.attending;
     });
   });
 
