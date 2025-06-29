@@ -60,7 +60,7 @@ const handler = nc<Request, NextApiResponse>()
       );
 
       const { html, text } = generateEmail({
-        registrationId: registration.id,
+        // registrationId: registration.id,
         sessionId: requestedSessionId,
         firstName: registration.firstName,
         year: currentYearString,
