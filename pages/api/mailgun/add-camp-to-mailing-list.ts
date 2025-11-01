@@ -10,7 +10,6 @@ import { mailgunAuthToken } from 'constants/mailgun';
 
 const handler = nc<NextApiRequest, NextApiResponse>().post(async (req, res) => {
   try {
-    // upsert email to the mailing list with subscribed to no (after the camps are over we will resubscribe them)
     const { mailingList, year, campId } = req.body;
 
     if (!mailingList || !year || !campId) {
