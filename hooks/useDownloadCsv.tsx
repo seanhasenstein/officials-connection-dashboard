@@ -16,7 +16,7 @@ export default function useDownloadToCsv() {
 
     csvLinkRef.current?.setAttribute(
       'href',
-      `data:text/csv;charset=utf-8,${data.csv}`
+      `data:text/csv;charset=utf-8,${encodeURIComponent(data.csv)}`
     );
     csvLinkRef.current?.setAttribute(
       'download',
