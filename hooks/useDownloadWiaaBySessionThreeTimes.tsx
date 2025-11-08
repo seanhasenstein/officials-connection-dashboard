@@ -19,7 +19,7 @@ export default function useDownloadWiaaBySession() {
 
     wiaaSessionThreeTimesRef.current?.setAttribute(
       'href',
-      `data:text/csv;charset=utf-8,${data.csv}`
+      `data:text/csv;charset=utf-8,${encodeURIComponent(data.csv)}`
     );
     wiaaSessionThreeTimesRef.current?.setAttribute(
       'download',
