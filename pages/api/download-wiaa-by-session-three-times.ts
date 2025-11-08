@@ -31,12 +31,10 @@ const handler = nc<Request, NextApiResponse>()
     }
 
     const sessionIdsArray = sessions?.map(s => s.sessionId);
-    const sessionsAccumulator = sessionIdsArray?.reduce(
-      (accumulator, currentId) => {
+    const sessionsAccumulator: Record<string, RegObjType[]> =
+      sessionIdsArray?.reduce((accumulator, currentId) => {
         return { ...accumulator, [currentId]: [] };
-      },
-      {}
-    );
+      }, {} as Record<string, RegObjType[]>);
 
     type RegObjType = {
       firstName: string;
@@ -57,8 +55,8 @@ const handler = nc<Request, NextApiResponse>()
               wiaaNumber: cr.wiaaNumber,
               sessionName: formatSessionName(s),
             };
-            // acc[s.sessionId] = [...acc[s.sessionId], regObj, regObj];
-            acc[s.sessionId] = [...acc[s.sessionId], regObj, regObj, regObj];
+            acc[s.sessionId] = [...acc[s.sessionId], regObj, regObj]; // two times
+            // acc[s.sessionId] = [...acc[s.sessionId], regObj, regObj, regObj]; // three times
             acc[s.sessionId].sort((a: RegObjType, b: RegObjType) => {
               if (a.lastName === b.lastName) {
                 if (a.firstName > b.firstName) {
