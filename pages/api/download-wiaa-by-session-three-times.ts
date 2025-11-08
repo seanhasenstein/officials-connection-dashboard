@@ -39,6 +39,7 @@ const handler = nc<Request, NextApiResponse>()
     type RegObjType = {
       firstName: string;
       lastName: string;
+      wiaaClass: string;
       city: string;
       wiaaNumber: string;
       sessionName: string;
@@ -51,6 +52,7 @@ const handler = nc<Request, NextApiResponse>()
             const regObj = {
               firstName: cr.firstName,
               lastName: cr.lastName,
+              wiaaClass: cr.wiaaClass,
               city: cr.address.city,
               wiaaNumber: cr.wiaaNumber,
               sessionName: formatSessionName(s),
@@ -92,8 +94,10 @@ const handler = nc<Request, NextApiResponse>()
     const records = combinedArray.map(regObj => ({
       name: `${regObj.firstName} ${regObj.lastName}`,
       blankOne: '',
-      city: regObj.city,
+      wiaaClass: regObj.wiaaClass,
       blankTwo: '',
+      city: regObj.city,
+      blankThree: '',
       wiaaNumber: regObj.wiaaNumber,
       sessionName: regObj.sessionName,
     }));
@@ -102,8 +106,10 @@ const handler = nc<Request, NextApiResponse>()
       header: [
         { id: 'name', title: '' },
         { id: 'blankOne', title: '' },
-        { id: 'city', title: '' },
+        { id: 'wiaaClass', title: '' },
         { id: 'blankTwo', title: '' },
+        { id: 'city', title: '' },
+        { id: 'blankThree', title: '' },
         { id: 'wiaaNumber', title: '' },
         { id: 'sessionName', title: '' },
       ],

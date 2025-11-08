@@ -18,7 +18,7 @@ export default function useDownloadQuestionnaires() {
 
     questionnaireRef.current?.setAttribute(
       'href',
-      `data:text/csv;charset=utf-8,${data.csv}`
+      `data:text/csv;charset=utf-8,${encodeURIComponent(data.csv)}`
     );
 
     questionnaireRef.current?.setAttribute(
