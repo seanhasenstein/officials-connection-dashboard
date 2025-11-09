@@ -85,7 +85,7 @@ export default function ClinicianForm(props: Props) {
       <Formik
         initialValues={{
           id: id ?? createId(),
-          camp: camp ?? 'Kaukauna Camp',
+          camp: camp ?? 'UW-Stevens Point Camp',
           firstName: firstName ?? '',
           lastName: lastName ?? '',
           email: email ?? '',
@@ -109,7 +109,7 @@ export default function ClinicianForm(props: Props) {
                 role="group"
                 aria-labelledby="camp"
               >
-                {/* <label
+                <label
                   htmlFor="stevensPoint"
                   className={`
                     ${values.camp === 'UW-Stevens Point Camp' ? 'active' : ''}
@@ -124,7 +124,7 @@ export default function ClinicianForm(props: Props) {
                     disabled={props.mode === 'update'}
                   />
                   UW-Stevens Point Camp
-                </label> */}
+                </label>
                 <label
                   htmlFor="kaukauna"
                   className={`
@@ -141,7 +141,7 @@ export default function ClinicianForm(props: Props) {
                   />
                   Kaukauna Camp
                 </label>
-                <label
+                {/* <label
                   htmlFor="plymouth"
                   className={`
                   ${values.camp === 'Plymouth Camp' ? 'active' : ''}
@@ -156,7 +156,7 @@ export default function ClinicianForm(props: Props) {
                     disabled={props.mode === 'update'}
                   />
                   Plymouth Camp
-                </label>
+                </label> */}
               </div>
               <div className="grid-col-2">
                 <div className="form-item">
