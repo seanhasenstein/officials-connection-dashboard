@@ -79,7 +79,7 @@ const handler = nc<Request, NextApiResponse>()
       ) {
         const filmedGames = filmedGamesBySessionAndOfficial[registrationId];
         const { html, text } = generateEmail({
-          // registrationId: registration.id,
+          registrationId: registration.id,
           sessionId: requestedSessionId,
           firstName: registration.firstName,
           year: currentYearString,
