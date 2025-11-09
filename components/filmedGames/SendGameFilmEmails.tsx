@@ -34,14 +34,14 @@ export default function SendGameFilmEmails(props: Props) {
   return (
     <SendGameFilmEmailsStyles>
       <div className="email-grid">
-        <div className="column box">
+        {/* <div className="column box">
           <h3>Kaukauna Game Film Emails</h3>
           {hydratedSessions
             ?.filter(s => s.camp.name.toLowerCase() === 'kaukauna')
             .map(s => (
               <SendButton key={s.sessionId} camp="Kaukauna" session={s} />
             ))}
-        </div>
+        </div> */}
         <div className="column box">
           <h3>Plymouth Game Film Emails</h3>
           {hydratedSessions
@@ -50,7 +50,7 @@ export default function SendGameFilmEmails(props: Props) {
               <SendButton key={s.sessionId} camp="Plymouth" session={s} />
             ))}
         </div>
-        {/* <div className="column box">
+        <div className="column box">
           <h3>UW-Stevens Point Game Film Emails</h3>
           {hydratedSessions
             ?.filter(s => s.camp.name === 'UW-Stevens Point')
@@ -61,7 +61,7 @@ export default function SendGameFilmEmails(props: Props) {
                 session={s}
               />
             ))}
-        </div> */}
+        </div>
       </div>
     </SendGameFilmEmailsStyles>
   );
