@@ -30,48 +30,53 @@ interface Request extends NextApiRequest {
 const handler = nc<Request, NextApiResponse>()
   .use(database)
   .post(async (req, res) => {
-    const { mode, camp, id, firstName, lastName, email, phone, address } =
-      req.body;
-    const { city = '', state = '' } = address;
+    try {
+      const { mode, camp, id, firstName, lastName, email, phone, address } =
+        req.body;
+      const { city = '', state = '' } = address;
 
-    if (
-      !mode ||
-      !camp ||
-      !id ||
-      !firstName ||
-      !lastName ||
-      !email ||
-      !phone ||
-      !city ||
-      !state
-    ) {
-      return res.status(400).json({ message: 'Missing fields' });
+      if (
+        !mode ||
+        !camp ||
+        !id ||
+        !firstName ||
+        !lastName ||
+        !email ||
+        !phone ||
+        !city ||
+        !state
+      ) {
+        return res.status(400).json({ message: 'Missing fields' });
+      }
+
+      const clinician = {
+        id: mode === 'add' ? createId() : id,
+        firstName: firstName.trim(),
+        lastName: lastName.trim(),
+        email: email.trim().toLowerCase(),
+        phone: removeNonDigits(phone).trim(),
+        address: {
+          city: city.trim(),
+          state: state.trim().toUpperCase(),
+        },
+        camp,
+      };
+
+      let result;
+
+      if (mode === 'add') {
+        result = await year.addClinician(req.db, camp, clinician);
+      }
+
+      if (mode === 'update') {
+        result = await year.updateClinician(req.db, camp, clinician);
+      }
+
+      return res.json({ ...result });
+    } catch (error) {
+      console.error('Error in add-or-update clinician API:', error);
+      return res.status(500).json({ message: 'Internal server error' });
     }
-
-    const clinician = {
-      id: mode === 'add' ? createId() : id,
-      firstName: firstName.trim(),
-      lastName: lastName.trim(),
-      email: email.trim().toLowerCase(),
-      phone: removeNonDigits(phone).trim(),
-      address: {
-        city: city.trim(),
-        state: state.trim().toUpperCase(),
-      },
-      camp,
-    };
-
-    let result;
-
-    if (mode === 'add') {
-      result = await year.addClinician(req.db, camp, clinician);
-    }
-
-    if (mode === 'update') {
-      result = await year.updateClinician(req.db, camp, clinician);
-    }
-
-    return res.json({ ...result });
   });
 
 export default withAuth(handler);
