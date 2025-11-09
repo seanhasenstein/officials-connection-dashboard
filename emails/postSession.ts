@@ -3,7 +3,7 @@ import { currentYearString } from 'constants/currentYear';
 import { FilmedGame } from '../types';
 
 interface PostSession {
-  // registrationId: string;
+  registrationId: string;
   sessionId: string;
   firstName: string;
   year: string;
@@ -12,7 +12,7 @@ interface PostSession {
 }
 
 function generateHtmlEmail({
-  // registrationId,
+  registrationId,
   sessionId,
   firstName,
   year,
@@ -260,7 +260,7 @@ function generateHtmlEmail({
                           line-height: 1.5;
                         "
                       >
-                      Finally, be on the lookout in the next few days for an email with a post camp questionnaire. Your feedback is important to us and helps us continue to be one of the top officials camps around.
+                      Finally, we would appreciate if you could also take a few minutes to complete <a href="https://officialsconnection.org/questionnaire?camp=${camp.toLowerCase()}&rid=${registrationId}&sid=${sessionId}" style="color: #1d4ed8; text-decoration: underline;">this post camp questionnaire</a>. Your feedback helps us to make improvements to continue to be one of the top officials camps around.
                       </p>
                     </td>
                   </tr>
@@ -275,7 +275,7 @@ function generateHtmlEmail({
                           line-height: 1.5;
                         "
                       >
-                        Have a great rest of your summer,
+                        Have a great upcoming season,
                       </p>
                     </td>
                   </tr>
@@ -416,8 +416,8 @@ function generateHtmlEmail({
 }
 
 function generateTextEmail({
-  // registrationId,
-  // sessionId,
+  registrationId,
+  sessionId,
   firstName,
   year,
   camp,
@@ -432,7 +432,9 @@ function generateTextEmail({
     .map(fg => `${fg.url}\n\n`)
     .join(
       ''
-    )}\n\nFinally, Be on the lookout for another email in the next few days with a post camp questionnaire. Your feedback is important to us and helps us continue to be one of the top officials camps around.\n\nHave a great rest of your summer,\n\nTom Rusch\nWBYOC Director\n
+    )}\n\nWe'd appreciate if you could take a few minutes to complete <a href="https://officialsconnection.org/questionnaire?camp=${
+    camp === 'UW-Stevens Point' ? 'stevensPoint' : camp.toLowerCase()
+  }&rid=${registrationId}&sid=${sessionId}" style="color: #1d4ed8; text-decoration: underline;">this post camp questionnaire</a>. Your feedback helps us to continue to be one of the top officials camps around.\n\nHave a great upcoming season,\n\nTom Rusch\nWBYOC Director\n
   `;
 }
 
