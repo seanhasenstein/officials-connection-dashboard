@@ -1,5 +1,5 @@
 import { NextApiRequest } from 'next';
-import { Db, MongoClient } from 'mongodb';
+import { Db, MongoClient, ObjectId } from 'mongodb';
 
 export type Camps = 'Kaukauna Camp' | 'Plymouth Camp' | 'UW-Stevens Point Camp';
 
@@ -132,13 +132,11 @@ export interface Clinician {
   lastName: string;
   email: string;
   phone: string;
-  camp: Camps;
-  address?: {
-    street?: string;
-    street2?: string;
-    city?: string;
-    state?: string;
-    zipcode?: string;
+  city: string;
+  state: string;
+  address: {
+    city: string;
+    state: string;
   };
 }
 
@@ -199,10 +197,6 @@ export interface Registration {
 }
 
 export type TemporaryDiscountName = 'default' | 'hscrew' | 'other' | 'skip';
-
-// export interface RegistrationInput extends Omit<Registration, '_id'> {
-//   temporaryDiscountName: TemporaryDiscountName;
-// }
 
 export type RegistrationInput = Omit<Registration, '_id'>;
 
@@ -269,3 +263,76 @@ export interface Questionnaire {
   };
   testimonial: string;
 }
+
+// API version 2
+
+export type User = {
+  _id: ObjectId | string;
+  email: string; // unique
+  phone: string; // unique
+
+  // Profile
+  firstName: string;
+  lastName: string;
+  address: {
+    street: string;
+    street2?: string;
+    city: string;
+    state: string;
+    zipcode: string;
+  };
+
+  // Official Info
+  wiaaClass: WiaaClass;
+  wiaaNumber: string;
+  associations?: string;
+  foodAllergies?: string;
+  emergencyContact: {
+    name: string;
+    phone: string;
+  };
+
+  // Auth preferences (optional, for future use)
+  // preferredAuthMethod?: 'email' | 'sms';
+
+  // Metadata
+  meta: {
+    isAdmin: boolean;
+    isClinician: boolean;
+  };
+
+  // Timestamps
+  createdAt: Date;
+  updatedAt: Date;
+  lastLoginAt?: Date;
+};
+
+export type RegistrationV2 = {
+  // Id's
+  _id: ObjectId | string;
+  receiptId: string;
+
+  // Linked user
+  user: User | ObjectId | string;
+
+  // Camp-specific data
+  sessions: Session[];
+  crewMembers: string[];
+
+  // Financial
+  discounts?: RegistrationDiscount[];
+  subtotal: number;
+  total: number;
+  refundAmount: number;
+
+  // Payment
+  paymentStatus: PaymentStatus;
+  paymentMethod: PaymentMethod;
+  checkNumber?: string;
+  stripeId: string | null;
+
+  // Metadata
+  notes: Note[];
+  createdAt: Date;
+  updatedAt: Date;
+};
