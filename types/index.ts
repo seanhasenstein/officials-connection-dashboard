@@ -86,8 +86,22 @@ export interface Year {
   questionnaires: Questionnaire[];
 }
 
+export type CampLocation = {
+  _id: ObjectId | string;
+  name: string;
+  street: string;
+  city: string;
+  state: string;
+  zipcode: string;
+  mapUrl: string;
+  createdAt: Date;
+  updatedAt: Date;
+};
+
 export interface Camp {
+  _id: ObjectId | string;
   campId: string;
+  year: number;
   name: string;
   dates: string;
   location: {
@@ -98,32 +112,35 @@ export interface Camp {
     zipcode: string;
     mapUrl: string;
   };
-  sessions: Session[];
+  // sessions: CampSession[]; // remove for v2
   active: boolean;
-  clinicians: Clinician[];
+  clinicians: ObjectId[] | Clinician[];
   questionnaireEmailSent: boolean;
-  createdAt: string;
-  updatedAt: string;
+  createdAt: Date;
+  updatedAt: Date;
 }
 
-export interface Session {
-  sessionId: string;
-  camp: {
-    campId: string;
-    name: string;
-  };
+export interface CampSession {
+  _id: ObjectId | string;
+  sessionId: string; // eventually phase out
+  camp: ObjectId | string | Camp;
+  // camp: {
+  //   campId: string;
+  //   name: string;
+  // };
+  year: number;
   dates: string;
   times: string;
   category: SessionCategory;
   levels: string | null;
   mechanics: number;
   price: number;
-  attending?: boolean;
-  active?: boolean;
-  isChecked?: boolean;
+  // attending: boolean; // this is only for registrations
+  active: boolean;
+  // isChecked?: boolean; // UI use only, add where needed
   filmedGamesEmailSent: boolean;
-  createdAt?: string;
-  updatedAt?: string;
+  createdAt?: Date;
+  updatedAt?: Date;
 }
 
 export interface Clinician {
@@ -140,11 +157,11 @@ export interface Clinician {
   };
 }
 
-export interface SessionWithAttachment extends Session {
+export interface SessionWithAttachment extends CampSession {
   attachment: CloudinaryAttachment;
 }
 
-export interface HydratedSession extends Session {
+export interface HydratedSession extends CampSession {
   isReadyToSendEmail: boolean;
 }
 
@@ -172,7 +189,7 @@ export interface Registration {
     state: string;
     zipcode: string;
   };
-  sessions: Session[];
+  sessions: CampSession[];
   wiaaClass: WiaaClass;
   wiaaNumber: string;
   associations: string;
@@ -217,18 +234,11 @@ type QuestionnaireOptions =
   | 'not_applicable';
 
 export interface Questionnaire {
-  id: string;
-  camp: string;
-  official: {
-    registrationId: string;
-    name: string;
-    email: string;
-    phone: string;
-    session: {
-      id: string;
-      name: string;
-    };
-  };
+  _id: ObjectId | string;
+  year: number;
+  camp: ObjectId | string;
+  session: ObjectId | string;
+  official: ObjectId | string;
   overall: {
     registration: QuestionnaireOptions;
     checkin: QuestionnaireOptions;
@@ -262,14 +272,20 @@ export interface Questionnaire {
     comments: string;
   };
   testimonial: string;
+  createdAt: Date;
+  updatedAt: Date;
 }
 
 // API version 2
+
+export type UserRole = 'admin' | 'clinician' | 'official';
 
 export type User = {
   _id: ObjectId | string;
   email: string; // unique
   phone: string; // unique
+  roles: UserRole[];
+  // primaryRole: UserRole; // potential future use
 
   // Profile
   firstName: string;
@@ -295,12 +311,6 @@ export type User = {
   // Auth preferences (optional, for future use)
   // preferredAuthMethod?: 'email' | 'sms';
 
-  // Metadata
-  meta: {
-    isAdmin: boolean;
-    isClinician: boolean;
-  };
-
   // Timestamps
   createdAt: Date;
   updatedAt: Date;
@@ -316,7 +326,31 @@ export type RegistrationV2 = {
   user: User | ObjectId | string;
 
   // Camp-specific data
-  sessions: Session[];
+  year: number;
+  sessions: Array<{
+    sessionId: ObjectId | string;
+    session?: CampSession; // Optional - populated on frontend
+    attending: boolean;
+
+    // Camp snapshot for this session
+    camp: {
+      campId: ObjectId | string;
+      year: number;
+      name: string;
+      dates: string;
+    };
+
+    // Session snapshot
+    registeredAs: {
+      dates: string;
+      times: string;
+      category: SessionCategory;
+      levels: string;
+      mechanics: number;
+      price: number;
+    };
+  }>;
+
   crewMembers: string[];
 
   // Financial
